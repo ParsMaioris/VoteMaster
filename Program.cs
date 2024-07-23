@@ -18,6 +18,8 @@ builder.Services.AddScoped<IVoteRepository, AdoNetVoteRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEligibilityService, EligibilityService>();
 builder.Services.AddScoped<IReferendumService, ReferendumService>();
+builder.Services.AddScoped<EligibilityCommandService>();
+builder.Services.AddScoped<EligibilityQueryService>();
 
 // Register application services
 builder.Services.AddScoped<UserCommandService>();

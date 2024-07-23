@@ -8,11 +8,13 @@ public class AdoNetUserRepository : IUserRepository
 {
     private readonly string _connectionString;
     private readonly IVoteService _voteService;
+    private readonly IEligibilityService _eligibilityService;
 
-    public AdoNetUserRepository(IConfiguration configuration, IVoteService voteService)
+    public AdoNetUserRepository(IConfiguration configuration, IVoteService voteService, IEligibilityService eligibilityService)
     {
         _connectionString = configuration.GetConnectionString("DefaultConnection");
         _voteService = voteService;
+        _eligibilityService = eligibilityService;
     }
 
     public void AddUser(User user)
@@ -49,7 +51,7 @@ public class AdoNetUserRepository : IUserRepository
                     return new User(
                         reader.GetGuid(reader.GetOrdinal("Id")),
                         reader.GetString(reader.GetOrdinal("Name")),
-                        null, // You need to pass an instance of IEligibilityService here
+                        _eligibilityService,
                         _voteService
                     );
                 }
