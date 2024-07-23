@@ -4,31 +4,53 @@ public class User
 {
     public int Id { get; private set; }
     public string Name { get; private set; }
-    private List<Vote> _votes;
 
-    public User(int id, string name)
+    private readonly IEligibilityService _eligibilityService;
+    private readonly IVoteService _voteService;
+
+    public User(int id, string name, IEligibilityService eligibilityService, IVoteService voteService)
     {
         Id = id;
         Name = name;
-        _votes = new List<Vote>();
+        _eligibilityService = eligibilityService;
+        _voteService = voteService;
     }
 
-    public Vote Vote(Referendum referendum, bool choice, IEligibilityService eligibilityService)
+    public void AddEligibility(Referendum referendum)
     {
-        if (!eligibilityService.IsUserEligibleForReferendum(this, referendum))
+        _eligibilityService.AddEligibility(this, referendum);
+    }
+
+    public void RemoveEligibility(Referendum referendum)
+    {
+        _eligibilityService.RemoveEligibility(this, referendum);
+    }
+
+    public bool IsEligibleForReferendum(Referendum referendum)
+    {
+        return _eligibilityService.IsUserEligibleForReferendum(this, referendum);
+    }
+
+    public Vote Vote(Referendum referendum, bool choice)
+    {
+        if (!IsEligibleForReferendum(referendum))
         {
             throw new InvalidOperationException("User is not eligible to vote on this referendum.");
         }
 
-        if (_votes.Any(v => v.ReferendumId == referendum.Id))
+        var existingVotes = _voteService.GetVotesByReferendum(referendum.Id, 1, int.MaxValue);
+        if (existingVotes.Any(v => v.UserId == Id))
         {
             throw new InvalidOperationException("User has already voted on this referendum.");
         }
 
         var vote = new Vote(Id, referendum.Id, choice);
-        _votes.Add(vote);
+        _voteService.AddVote(vote);
         return vote;
     }
 
-    public IEnumerable<Vote> GetVotes() => _votes.AsReadOnly();
+    public IEnumerable<Vote> GetVotes()
+    {
+        return _voteService.GetVotesByReferendum(Id, 1, int.MaxValue).Where(v => v.UserId == Id);
+    }
 }

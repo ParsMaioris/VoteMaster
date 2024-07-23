@@ -22,8 +22,6 @@ public class Vote
 
     private static int GenerateId()
     {
-        // Implement a method to generate a unique ID for each vote
-        // This could be a simple counter or a more sophisticated ID generation mechanism
         return new Random().Next(1, int.MaxValue);
     }
 }

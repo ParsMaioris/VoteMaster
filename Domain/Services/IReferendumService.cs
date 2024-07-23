@@ -1,6 +1,6 @@
 namespace VoteMaster.Domain;
 
-public interface IReferendumRepository
+public interface IReferendumService
 {
     void AddReferendum(Referendum referendum);
     Referendum GetReferendumById(int referendumId);

@@ -1,6 +1,6 @@
 namespace VoteMaster.Domain;
 
-public class VoteService
+public class VoteService : IVoteService
 {
     private readonly IVoteRepository _voteRepository;
 
@@ -25,7 +25,7 @@ public class VoteService
     public IEnumerable<Vote> GetRecentVotesByReferendum(int referendumId, int count)
     {
         return _voteRepository.GetVotesByReferendumId(referendumId)
-                              .OrderByDescending(v => v.Id) // Assuming Id is sequential
+                              .OrderByDescending(v => v.Id)
                               .Take(count)
                               .ToList();
     }
@@ -43,5 +43,10 @@ public class VoteService
     public int GetNoVotes(int referendumId)
     {
         return _voteRepository.GetVotesByReferendumId(referendumId).Count(v => !v.VoteChoice);
+    }
+
+    public IEnumerable<Vote> GetVotesByUserId(int userId)
+    {
+        return _voteRepository.GetVotesByReferendumId(userId).Where(v => v.UserId == userId).ToList();
     }
 }

@@ -6,47 +6,53 @@ namespace VoteMaster.Tests.Domain;
 
 public class EligibilityServiceTests
 {
+    private readonly Mock<IEligibilityRepository> _mockEligibilityRepo;
+    private readonly IEligibilityService _eligibilityService;
+
+    public EligibilityServiceTests()
+    {
+        _mockEligibilityRepo = new Mock<IEligibilityRepository>();
+        _eligibilityService = new EligibilityService(_mockEligibilityRepo.Object);
+    }
+
     [Fact]
     public void AddEligibility_ShouldAddEligibility()
     {
         // Arrange
-        var user = new User(1, "John Doe");
-        var referendum = new Referendum(1, "Referendum Title", new VoteService(new Mock<IVoteRepository>().Object));
-        var eligibilityService = new EligibilityService();
+        var user = new User(1, "John Doe", new Mock<IEligibilityService>().Object, new Mock<IVoteService>().Object);
+        var referendum = new Referendum(1, "Referendum Title", new Mock<IVoteService>().Object);
 
         // Act
-        eligibilityService.AddEligibility(user, referendum);
+        _eligibilityService.AddEligibility(user, referendum);
 
         // Assert
-        Assert.True(eligibilityService.IsUserEligibleForReferendum(user, referendum));
+        _mockEligibilityRepo.Verify(repo => repo.AddEligibility(It.Is<Eligibility>(e => e.UserId == user.Id && e.ReferendumId == referendum.Id)), Times.Once);
     }
 
     [Fact]
     public void RemoveEligibility_ShouldRemoveEligibility()
     {
         // Arrange
-        var user = new User(1, "John Doe");
-        var referendum = new Referendum(1, "Referendum Title", new VoteService(new Mock<IVoteRepository>().Object));
-        var eligibilityService = new EligibilityService();
-        eligibilityService.AddEligibility(user, referendum);
+        var user = new User(1, "John Doe", new Mock<IEligibilityService>().Object, new Mock<IVoteService>().Object);
+        var referendum = new Referendum(1, "Referendum Title", new Mock<IVoteService>().Object);
 
         // Act
-        eligibilityService.RemoveEligibility(user, referendum);
+        _eligibilityService.RemoveEligibility(user, referendum);
 
         // Assert
-        Assert.False(eligibilityService.IsUserEligibleForReferendum(user, referendum));
+        _mockEligibilityRepo.Verify(repo => repo.RemoveEligibility(It.Is<Eligibility>(e => e.UserId == user.Id && e.ReferendumId == referendum.Id)), Times.Once);
     }
 
     [Fact]
     public void IsUserEligibleForReferendum_ShouldReturnFalseWhenNotEligible()
     {
         // Arrange
-        var user = new User(1, "John Doe");
-        var referendum = new Referendum(1, "Referendum Title", new VoteService(new Mock<IVoteRepository>().Object));
-        var eligibilityService = new EligibilityService();
+        var user = new User(1, "John Doe", new Mock<IEligibilityService>().Object, new Mock<IVoteService>().Object);
+        var referendum = new Referendum(1, "Referendum Title", new Mock<IVoteService>().Object);
+        _mockEligibilityRepo.Setup(repo => repo.IsUserEligibleForReferendum(It.Is<Eligibility>(e => e.UserId == user.Id && e.ReferendumId == referendum.Id))).Returns(false);
 
         // Act
-        var isEligible = eligibilityService.IsUserEligibleForReferendum(user, referendum);
+        var isEligible = _eligibilityService.IsUserEligibleForReferendum(user, referendum);
 
         // Assert
         Assert.False(isEligible);
@@ -56,13 +62,12 @@ public class EligibilityServiceTests
     public void IsUserEligibleForReferendum_ShouldReturnTrueWhenEligible()
     {
         // Arrange
-        var user = new User(1, "John Doe");
-        var referendum = new Referendum(1, "Referendum Title", new VoteService(new Mock<IVoteRepository>().Object));
-        var eligibilityService = new EligibilityService();
-        eligibilityService.AddEligibility(user, referendum);
+        var user = new User(1, "John Doe", new Mock<IEligibilityService>().Object, new Mock<IVoteService>().Object);
+        var referendum = new Referendum(1, "Referendum Title", new Mock<IVoteService>().Object);
+        _mockEligibilityRepo.Setup(repo => repo.IsUserEligibleForReferendum(It.Is<Eligibility>(e => e.UserId == user.Id && e.ReferendumId == referendum.Id))).Returns(true);
 
         // Act
-        var isEligible = eligibilityService.IsUserEligibleForReferendum(user, referendum);
+        var isEligible = _eligibilityService.IsUserEligibleForReferendum(user, referendum);
 
         // Assert
         Assert.True(isEligible);
@@ -72,15 +77,14 @@ public class EligibilityServiceTests
     public void AddEligibility_ShouldNotAddDuplicateEligibility()
     {
         // Arrange
-        var user = new User(1, "John Doe");
-        var referendum = new Referendum(1, "Referendum Title", new VoteService(new Mock<IVoteRepository>().Object));
-        var eligibilityService = new EligibilityService();
-        eligibilityService.AddEligibility(user, referendum);
+        var user = new User(1, "John Doe", new Mock<IEligibilityService>().Object, new Mock<IVoteService>().Object);
+        var referendum = new Referendum(1, "Referendum Title", new Mock<IVoteService>().Object);
+        _mockEligibilityRepo.Setup(repo => repo.IsUserEligibleForReferendum(It.Is<Eligibility>(e => e.UserId == user.Id && e.ReferendumId == referendum.Id))).Returns(true);
 
         // Act
-        eligibilityService.AddEligibility(user, referendum);
+        _eligibilityService.AddEligibility(user, referendum);
 
         // Assert
-        Assert.True(eligibilityService.IsUserEligibleForReferendum(user, referendum));
+        _mockEligibilityRepo.Verify(repo => repo.AddEligibility(It.Is<Eligibility>(e => e.UserId == user.Id && e.ReferendumId == referendum.Id)), Times.Once);
     }
 }

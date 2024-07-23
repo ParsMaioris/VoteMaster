@@ -8,7 +8,7 @@ namespace VoteMaster.Tests.Domain;
 public class ReferendumTests
 {
     private readonly Mock<IVoteRepository> _mockVoteRepo;
-    private readonly VoteService _voteService;
+    private readonly IVoteService _voteService;
 
     public ReferendumTests()
     {
@@ -28,35 +28,7 @@ public class ReferendumTests
     }
 
     [Fact]
-    public void RegisterVote_ShouldRegisterVote()
-    {
-        // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
-        var vote = new Vote(1, 1, true);
-
-        // Act
-        referendum.RegisterVote(vote);
-
-        // Assert
-        _mockVoteRepo.Verify(repo => repo.AddVote(It.Is<Vote>(v => v.UserId == vote.UserId && v.ReferendumId == vote.ReferendumId)), Times.Once);
-    }
-
-    [Fact]
-    public void RegisterVote_ShouldPreventDoubleVoting()
-    {
-        // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
-        var vote = new Vote(1, 1, true);
-
-        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(1)).Returns(new List<Vote> { vote });
-
-        // Act & Assert
-        var ex = Assert.Throws<InvalidOperationException>(() => referendum.RegisterVote(vote));
-        Assert.Equal("User has already voted on this referendum.", ex.Message);
-    }
-
-    [Fact]
-    public void GetVotes_ShouldReturnAllVotes()
+    public void GetVotes_ShouldReturnVotes()
     {
         // Arrange
         var referendum = new Referendum(1, "Referendum Title", _voteService);
@@ -75,37 +47,13 @@ public class ReferendumTests
     }
 
     [Fact]
-    public void RegisterVote_ShouldThrowExceptionWhenVoteIsNull()
-    {
-        // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
-
-        // Act & Assert
-        var ex = Assert.Throws<ArgumentNullException>(() => referendum.RegisterVote(null));
-        Assert.Equal("Vote cannot be null. (Parameter 'vote')", ex.Message);
-    }
-
-    [Fact]
-    public void RegisterVote_ShouldThrowExceptionForInvalidReferendumId()
-    {
-        // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
-        var vote = new Vote(1, 2, true); // Mismatched ReferendumId
-
-        // Act & Assert
-        var ex = Assert.Throws<InvalidOperationException>(() => referendum.RegisterVote(vote));
-        Assert.Equal("Vote is for a different referendum.", ex.Message);
-    }
-
-    [Fact]
     public void GetRecentVotes_ShouldReturnRecentVotes()
     {
         // Arrange
         var referendum = new Referendum(1, "Referendum Title", _voteService);
-        var vote1 = new Vote(1, 1, true, 1);  // Assigned specific Id
-        var vote2 = new Vote(2, 1, false, 2); // Assigned specific Id
+        var vote1 = new Vote(1, 1, true, 1);
+        var vote2 = new Vote(2, 1, false, 2);
 
-        // Setup repository to return the votes in the specified order
         _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(1)).Returns(new List<Vote> { vote1, vote2 });
 
         // Act

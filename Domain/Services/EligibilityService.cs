@@ -2,25 +2,25 @@ namespace VoteMaster.Domain;
 
 public class EligibilityService : IEligibilityService
 {
-    private readonly HashSet<Eligibility> _eligibilities;
+    private readonly IEligibilityRepository _eligibilityRepository;
 
-    public EligibilityService()
+    public EligibilityService(IEligibilityRepository eligibilityRepository)
     {
-        _eligibilities = new HashSet<Eligibility>();
+        _eligibilityRepository = eligibilityRepository;
     }
 
     public void AddEligibility(User user, Referendum referendum)
     {
-        _eligibilities.Add(new Eligibility(user.Id, referendum.Id));
+        _eligibilityRepository.AddEligibility(new Eligibility(user.Id, referendum.Id));
     }
 
     public void RemoveEligibility(User user, Referendum referendum)
     {
-        _eligibilities.Remove(new Eligibility(user.Id, referendum.Id));
+        _eligibilityRepository.RemoveEligibility(new Eligibility(user.Id, referendum.Id));
     }
 
     public bool IsUserEligibleForReferendum(User user, Referendum referendum)
     {
-        return _eligibilities.Contains(new Eligibility(user.Id, referendum.Id));
+        return _eligibilityRepository.IsUserEligibleForReferendum(new Eligibility(user.Id, referendum.Id));
     }
 }

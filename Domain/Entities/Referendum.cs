@@ -5,34 +5,13 @@ public class Referendum
     public int Id { get; private set; }
     public string Title { get; private set; }
 
-    private readonly VoteService _voteService;
+    private readonly IVoteService _voteService;
 
-    public Referendum(int id, string title, VoteService voteService)
+    public Referendum(int id, string title, IVoteService voteService)
     {
         Id = id;
         Title = title;
         _voteService = voteService;
-    }
-
-    public void RegisterVote(Vote vote)
-    {
-        if (vote == null)
-        {
-            throw new ArgumentNullException(nameof(vote), "Vote cannot be null.");
-        }
-
-        if (vote.ReferendumId != Id)
-        {
-            throw new InvalidOperationException("Vote is for a different referendum.");
-        }
-
-        var existingVotes = _voteService.GetVotesByReferendum(Id, 1, int.MaxValue);
-        if (existingVotes.Any(v => v.UserId == vote.UserId))
-        {
-            throw new InvalidOperationException("User has already voted on this referendum.");
-        }
-
-        _voteService.AddVote(vote);
     }
 
     public IEnumerable<Vote> GetVotes(int pageNumber, int pageSize)
