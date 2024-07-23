@@ -36,7 +36,7 @@ public class GlobalExceptionHandlerMiddleware
         var errorResponse = new
         {
             Message = "An unexpected error occurred.",
-            Detail = exception.Message // You can add more details if necessary
+            Detail = exception.Message
         };
 
         var errorJson = JsonConvert.SerializeObject(errorResponse);
