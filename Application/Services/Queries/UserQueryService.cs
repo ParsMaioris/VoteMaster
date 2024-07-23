@@ -6,13 +6,16 @@ public class UserQueryService
 {
     private readonly IUserService _userService;
 
-    public UserQueryService(IUserService userRepository)
+    public UserQueryService(IUserService userService)
     {
-        _userService = userRepository;
+        _userService = userService;
     }
 
-    public User GetUserById(Guid userId)
+    public Task<User> GetUserById(Guid userId)
     {
-        return _userService.GetUserById(userId);
+        return Task.Run(() =>
+        {
+            return _userService.GetUserById(userId);
+        });
     }
 }
