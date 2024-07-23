@@ -2,14 +2,21 @@ namespace VoteMaster.Domain;
 
 public class Referendum
 {
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
     public string Title { get; private set; }
 
     private readonly IVoteService _voteService;
 
-    public Referendum(int id, string title, IVoteService voteService)
+    public Referendum(Guid id, string title, IVoteService voteService)
     {
         Id = id;
+        Title = title;
+        _voteService = voteService;
+    }
+
+    public Referendum(string title, IVoteService voteService)
+    {
+        Id = Guid.NewGuid();
         Title = title;
         _voteService = voteService;
     }

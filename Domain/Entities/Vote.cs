@@ -2,17 +2,17 @@ namespace VoteMaster.Domain;
 
 public class Vote
 {
-    public int Id { get; private set; }
-    public int UserId { get; private set; }
-    public int ReferendumId { get; private set; }
+    public Guid Id { get; private set; }
+    public Guid UserId { get; private set; }
+    public Guid ReferendumId { get; private set; }
     public bool VoteChoice { get; private set; }
 
-    public Vote(int userId, int referendumId, bool voteChoice)
+    public Vote(Guid userId, Guid referendumId, bool voteChoice)
         : this(userId, referendumId, voteChoice, GenerateId())
     {
     }
 
-    public Vote(int userId, int referendumId, bool voteChoice, int id)
+    public Vote(Guid userId, Guid referendumId, bool voteChoice, Guid id)
     {
         Id = id;
         UserId = userId;
@@ -20,8 +20,8 @@ public class Vote
         VoteChoice = voteChoice;
     }
 
-    private static int GenerateId()
+    private static Guid GenerateId()
     {
-        return new Random().Next(1, int.MaxValue);
+        return Guid.NewGuid();
     }
 }

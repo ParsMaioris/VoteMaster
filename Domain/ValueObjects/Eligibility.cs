@@ -2,10 +2,10 @@ namespace VoteMaster.Domain;
 
 public class Eligibility
 {
-    public int UserId { get; }
-    public int ReferendumId { get; }
+    public Guid UserId { get; }
+    public Guid ReferendumId { get; }
 
-    public Eligibility(int userId, int referendumId)
+    public Eligibility(Guid userId, Guid referendumId)
     {
         UserId = userId;
         ReferendumId = referendumId;

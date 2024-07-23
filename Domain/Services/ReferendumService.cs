@@ -14,7 +14,7 @@ public class ReferendumService : IReferendumService
         _referendumRepository.AddReferendum(referendum);
     }
 
-    public Referendum GetReferendumById(int referendumId)
+    public Referendum GetReferendumById(Guid referendumId)
     {
         return _referendumRepository.GetReferendumById(referendumId);
     }

@@ -2,13 +2,13 @@ namespace VoteMaster.Domain;
 
 public class User
 {
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
     public string Name { get; private set; }
 
     private readonly IEligibilityService _eligibilityService;
     private readonly IVoteService _voteService;
 
-    public User(int id, string name, IEligibilityService eligibilityService, IVoteService voteService)
+    public User(Guid id, string name, IEligibilityService eligibilityService, IVoteService voteService)
     {
         Id = id;
         Name = name;

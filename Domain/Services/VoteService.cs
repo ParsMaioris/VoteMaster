@@ -14,7 +14,7 @@ public class VoteService : IVoteService
         _voteRepository.AddVote(vote);
     }
 
-    public IEnumerable<Vote> GetVotesByReferendum(int referendumId, int pageNumber, int pageSize)
+    public IEnumerable<Vote> GetVotesByReferendum(Guid referendumId, int pageNumber, int pageSize)
     {
         return _voteRepository.GetVotesByReferendumId(referendumId)
                               .Skip((pageNumber - 1) * pageSize)
@@ -22,7 +22,7 @@ public class VoteService : IVoteService
                               .ToList();
     }
 
-    public IEnumerable<Vote> GetRecentVotesByReferendum(int referendumId, int count)
+    public IEnumerable<Vote> GetRecentVotesByReferendum(Guid referendumId, int count)
     {
         return _voteRepository.GetVotesByReferendumId(referendumId)
                               .OrderByDescending(v => v.Id)
@@ -30,23 +30,23 @@ public class VoteService : IVoteService
                               .ToList();
     }
 
-    public int GetTotalVotes(int referendumId)
+    public int GetTotalVotes(Guid referendumId)
     {
         return _voteRepository.GetVotesByReferendumId(referendumId).Count();
     }
 
-    public int GetYesVotes(int referendumId)
+    public int GetYesVotes(Guid referendumId)
     {
         return _voteRepository.GetVotesByReferendumId(referendumId).Count(v => v.VoteChoice);
     }
 
-    public int GetNoVotes(int referendumId)
+    public int GetNoVotes(Guid referendumId)
     {
         return _voteRepository.GetVotesByReferendumId(referendumId).Count(v => !v.VoteChoice);
     }
 
-    public IEnumerable<Vote> GetVotesByUserId(int userId)
+    public IEnumerable<Vote> GetVotesByUserId(Guid userId)
     {
-        return _voteRepository.GetVotesByReferendumId(userId).Where(v => v.UserId == userId).ToList();
+        return _voteRepository.GetVotesByUserId(userId);
     }
 }
