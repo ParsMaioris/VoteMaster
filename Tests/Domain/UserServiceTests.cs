@@ -20,7 +20,8 @@ public class UserServiceTests
     public void AddUser_ShouldAddUser()
     {
         // Arrange
-        var user = new User(1, "John Doe", new Mock<IEligibilityService>().Object, new Mock<IVoteService>().Object);
+        var userId = Guid.NewGuid();
+        var user = new User(userId, "John Doe", new Mock<IEligibilityService>().Object, new Mock<IVoteService>().Object);
 
         // Act
         _userService.AddUser(user);
@@ -33,11 +34,12 @@ public class UserServiceTests
     public void GetUserById_ShouldReturnUser()
     {
         // Arrange
-        var user = new User(1, "John Doe", new Mock<IEligibilityService>().Object, new Mock<IVoteService>().Object);
-        _mockUserRepo.Setup(repo => repo.GetUserById(1)).Returns(user);
+        var userId = Guid.NewGuid();
+        var user = new User(userId, "John Doe", new Mock<IEligibilityService>().Object, new Mock<IVoteService>().Object);
+        _mockUserRepo.Setup(repo => repo.GetUserById(userId)).Returns(user);
 
         // Act
-        var retrievedUser = _userService.GetUserById(1);
+        var retrievedUser = _userService.GetUserById(userId);
 
         // Assert
         Assert.Equal(user, retrievedUser);

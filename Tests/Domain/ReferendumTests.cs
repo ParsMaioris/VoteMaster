@@ -20,10 +20,11 @@ public class ReferendumTests
     public void CreateReferendum_ShouldCreateReferendum()
     {
         // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
+        var referendumId = Guid.NewGuid();
+        var referendum = new Referendum(referendumId, "Referendum Title", _voteService);
 
         // Act & Assert
-        Assert.Equal(1, referendum.Id);
+        Assert.Equal(referendumId, referendum.Id);
         Assert.Equal("Referendum Title", referendum.Title);
     }
 
@@ -31,11 +32,12 @@ public class ReferendumTests
     public void GetVotes_ShouldReturnVotes()
     {
         // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
-        var vote1 = new Vote(1, 1, true);
-        var vote2 = new Vote(2, 1, false);
+        var referendumId = Guid.NewGuid();
+        var referendum = new Referendum(referendumId, "Referendum Title", _voteService);
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
 
-        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(1)).Returns(new List<Vote> { vote1, vote2 });
+        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(referendumId)).Returns(new List<Vote> { vote1, vote2 });
 
         // Act
         var votes = referendum.GetVotes(1, 10);
@@ -50,11 +52,12 @@ public class ReferendumTests
     public void GetRecentVotes_ShouldReturnRecentVotes()
     {
         // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
-        var vote1 = new Vote(1, 1, true, 1);
-        var vote2 = new Vote(2, 1, false, 2);
+        var referendumId = Guid.NewGuid();
+        var referendum = new Referendum(referendumId, "Referendum Title", _voteService);
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
 
-        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(1)).Returns(new List<Vote> { vote1, vote2 });
+        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(referendumId)).Returns(new List<Vote> { vote1, vote2 });
 
         // Act
         var recentVotes = referendum.GetRecentVotes(1);
@@ -68,11 +71,12 @@ public class ReferendumTests
     public void TotalVotes_ShouldReturnTotalVotes()
     {
         // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
-        var vote1 = new Vote(1, 1, true);
-        var vote2 = new Vote(2, 1, false);
+        var referendumId = Guid.NewGuid();
+        var referendum = new Referendum(referendumId, "Referendum Title", _voteService);
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
 
-        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(1)).Returns(new List<Vote> { vote1, vote2 });
+        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(referendumId)).Returns(new List<Vote> { vote1, vote2 });
 
         // Act
         var totalVotes = referendum.TotalVotes;
@@ -85,11 +89,12 @@ public class ReferendumTests
     public void YesVotes_ShouldReturnYesVotes()
     {
         // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
-        var vote1 = new Vote(1, 1, true);
-        var vote2 = new Vote(2, 1, false);
+        var referendumId = Guid.NewGuid();
+        var referendum = new Referendum(referendumId, "Referendum Title", _voteService);
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
 
-        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(1)).Returns(new List<Vote> { vote1, vote2 });
+        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(referendumId)).Returns(new List<Vote> { vote1, vote2 });
 
         // Act
         var yesVotes = referendum.YesVotes;
@@ -102,11 +107,12 @@ public class ReferendumTests
     public void NoVotes_ShouldReturnNoVotes()
     {
         // Arrange
-        var referendum = new Referendum(1, "Referendum Title", _voteService);
-        var vote1 = new Vote(1, 1, true);
-        var vote2 = new Vote(2, 1, false);
+        var referendumId = Guid.NewGuid();
+        var referendum = new Referendum(referendumId, "Referendum Title", _voteService);
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
 
-        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(1)).Returns(new List<Vote> { vote1, vote2 });
+        _mockVoteRepo.Setup(repo => repo.GetVotesByReferendumId(referendumId)).Returns(new List<Vote> { vote1, vote2 });
 
         // Act
         var noVotes = referendum.NoVotes;

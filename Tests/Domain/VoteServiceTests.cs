@@ -19,13 +19,14 @@ public class VoteServiceTests
     public void AddVote_ShouldAddVote()
     {
         // Arrange
-        var vote = new Vote(1, 1, true);
+        var referendumId = Guid.NewGuid();
+        var vote = new Vote(Guid.NewGuid(), referendumId, true);
 
         // Act
         _voteService.AddVote(vote);
 
         // Assert
-        var votes = _voteRepository.GetVotesByReferendumId(1);
+        var votes = _voteRepository.GetVotesByReferendumId(referendumId);
         Assert.Contains(vote, votes);
     }
 
@@ -33,13 +34,14 @@ public class VoteServiceTests
     public void GetVotesByReferendum_ShouldReturnVotesForReferendum()
     {
         // Arrange
-        var vote1 = new Vote(1, 1, true);
-        var vote2 = new Vote(2, 1, false);
+        var referendumId = Guid.NewGuid();
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
         _voteService.AddVote(vote1);
         _voteService.AddVote(vote2);
 
         // Act
-        var votes = _voteService.GetVotesByReferendum(1, 1, 10);
+        var votes = _voteService.GetVotesByReferendum(referendumId, 1, 10);
 
         // Assert
         Assert.Equal(2, votes.Count());
@@ -51,13 +53,14 @@ public class VoteServiceTests
     public void GetRecentVotesByReferendum_ShouldReturnMostRecentVotes()
     {
         // Arrange
-        var vote1 = new Vote(1, 1, true, 1);
-        var vote2 = new Vote(2, 1, false, 2);
+        var referendumId = Guid.NewGuid();
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
         _voteService.AddVote(vote1);
         _voteService.AddVote(vote2);
 
         // Act
-        var recentVotes = _voteService.GetRecentVotesByReferendum(1, 1);
+        var recentVotes = _voteService.GetRecentVotesByReferendum(referendumId, 1);
 
         // Assert
         Assert.Single(recentVotes);
@@ -68,13 +71,14 @@ public class VoteServiceTests
     public void GetTotalVotes_ShouldReturnTotalVotes()
     {
         // Arrange
-        var vote1 = new Vote(1, 1, true);
-        var vote2 = new Vote(2, 1, false);
+        var referendumId = Guid.NewGuid();
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
         _voteService.AddVote(vote1);
         _voteService.AddVote(vote2);
 
         // Act
-        var totalVotes = _voteService.GetTotalVotes(1);
+        var totalVotes = _voteService.GetTotalVotes(referendumId);
 
         // Assert
         Assert.Equal(2, totalVotes);
@@ -84,13 +88,14 @@ public class VoteServiceTests
     public void GetYesVotes_ShouldReturnYesVotes()
     {
         // Arrange
-        var vote1 = new Vote(1, 1, true);
-        var vote2 = new Vote(2, 1, false);
+        var referendumId = Guid.NewGuid();
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
         _voteService.AddVote(vote1);
         _voteService.AddVote(vote2);
 
         // Act
-        var yesVotes = _voteService.GetYesVotes(1);
+        var yesVotes = _voteService.GetYesVotes(referendumId);
 
         // Assert
         Assert.Equal(1, yesVotes);
@@ -100,13 +105,14 @@ public class VoteServiceTests
     public void GetNoVotes_ShouldReturnNoVotes()
     {
         // Arrange
-        var vote1 = new Vote(1, 1, true);
-        var vote2 = new Vote(2, 1, false);
+        var referendumId = Guid.NewGuid();
+        var vote1 = new Vote(Guid.NewGuid(), referendumId, true);
+        var vote2 = new Vote(Guid.NewGuid(), referendumId, false);
         _voteService.AddVote(vote1);
         _voteService.AddVote(vote2);
 
         // Act
-        var noVotes = _voteService.GetNoVotes(1);
+        var noVotes = _voteService.GetNoVotes(referendumId);
 
         // Assert
         Assert.Equal(1, noVotes);

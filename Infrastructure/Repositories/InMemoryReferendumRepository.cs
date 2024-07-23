@@ -11,7 +11,7 @@ public class InMemoryReferendumRepository : IReferendumRepository
         _referendums.Add(referendum);
     }
 
-    public Referendum GetReferendumById(int referendumId)
+    public Referendum GetReferendumById(Guid referendumId)
     {
         return _referendums.SingleOrDefault(r => r.Id == referendumId);
     }

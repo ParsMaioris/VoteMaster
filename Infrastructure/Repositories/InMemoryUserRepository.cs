@@ -11,7 +11,7 @@ public class InMemoryUserRepository : IUserRepository
         _users.Add(user);
     }
 
-    public User GetUserById(int userId)
+    public User GetUserById(Guid userId)
     {
         return _users.SingleOrDefault(u => u.Id == userId);
     }

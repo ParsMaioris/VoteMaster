@@ -11,8 +11,13 @@ public class InMemoryVoteRepository : IVoteRepository
         _votes.Add(vote);
     }
 
-    public IEnumerable<Vote> GetVotesByReferendumId(int referendumId)
+    public IEnumerable<Vote> GetVotesByReferendumId(Guid referendumId)
     {
         return _votes.Where(v => v.ReferendumId == referendumId).ToList();
+    }
+
+    public IEnumerable<Vote> GetVotesByUserId(Guid userId)
+    {
+        return _votes.Where(v => v.UserId == userId).ToList();
     }
 }
