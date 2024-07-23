@@ -1,9 +1,19 @@
+using VoteMaster.Domain;
+using VoteMaster.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Register your repositories and services
+builder.Services.AddScoped<IVoteService, VoteService>();
+builder.Services.AddScoped<IUserRepository, AdoNetUserRepository>();
+builder.Services.AddScoped<IEligibilityRepository, AdoNetEligibilityRepository>();
+builder.Services.AddScoped<IReferendumRepository, AdoNetReferendumRepository>();
+builder.Services.AddScoped<IVoteRepository, AdoNetVoteRepository>();
 
 var app = builder.Build();
 
@@ -23,7 +33,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
