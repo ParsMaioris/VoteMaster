@@ -22,6 +22,8 @@ builder.Services.AddScoped<IReferendumService, ReferendumService>();
 // Register application services
 builder.Services.AddScoped<UserCommandService>();
 builder.Services.AddScoped<UserQueryService>();
+builder.Services.AddScoped<ReferendumCommandService>();
+builder.Services.AddScoped<ReferendumQueryService>();
 
 var app = builder.Build();
 
