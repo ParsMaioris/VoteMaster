@@ -1,19 +1,27 @@
+using VoteMaster.Application;
 using VoteMaster.Domain;
 using VoteMaster.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers(); // Add this line to register controller services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register your repositories and services
+// Register repositories and services
 builder.Services.AddScoped<IVoteService, VoteService>();
 builder.Services.AddScoped<IUserRepository, AdoNetUserRepository>();
 builder.Services.AddScoped<IEligibilityRepository, AdoNetEligibilityRepository>();
 builder.Services.AddScoped<IReferendumRepository, AdoNetReferendumRepository>();
 builder.Services.AddScoped<IVoteRepository, AdoNetVoteRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEligibilityService, EligibilityService>();
+builder.Services.AddScoped<IReferendumService, ReferendumService>();
+
+// Register application services
+builder.Services.AddScoped<UserCommandService>();
+builder.Services.AddScoped<UserQueryService>();
 
 var app = builder.Build();
 
@@ -26,29 +34,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Use the global exception handler middleware
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+// Map controllers
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
