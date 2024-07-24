@@ -21,16 +21,26 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Profile</Text>
-            <View style={styles.infoContainer}>
-                <Text style={styles.label}>User Name:</Text>
-                <Text style={styles.info}>{userName}</Text>
+            <View style={styles.header}>
+                <Text style={styles.headerText}>Profile</Text>
             </View>
-            <View style={styles.recentActivityContainer}>
-                <Text style={styles.recentActivityTitle}>Recent Activity</Text>
-                <Text style={styles.recentActivityText}>You voted on Infrastructure Referendum</Text>
-                <Text style={styles.recentActivityText}>You created a new referendum</Text>
-                {/* Add more recent activities here */}
+            <View style={styles.profileContainer}>
+                <Ionicons name="person-circle-outline" size={100} color="#007BFF" style={styles.profileIcon} />
+                <Text style={styles.userName}>{userName}</Text>
+            </View>
+            <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>User Information</Text>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.label}>Name:</Text>
+                    <Text style={styles.info}>{userName}</Text>
+                </View>
+                {/* Additional user information can go here */}
+            </View>
+            <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Recent Activity</Text>
+                <Text style={styles.activityItem}>Voted on Infrastructure Referendum</Text>
+                <Text style={styles.activityItem}>Created a new referendum</Text>
+                {/* Additional recent activities can go here */}
             </View>
             <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
                 <Ionicons name="log-out-outline" size={20} color="#fff" />
@@ -43,17 +53,47 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-        backgroundColor: '#fff',
+        backgroundColor: '#f7f7f7',
     },
-    title: {
+    header: {
+        backgroundColor: '#007BFF',
+        padding: 20,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+    },
+    headerText: {
         fontSize: 24,
         fontWeight: '600',
-        color: '#333',
+        color: '#fff',
         textAlign: 'center',
+    },
+    profileContainer: {
+        alignItems: 'center',
+        marginVertical: 30,
+    },
+    profileIcon: {
+        marginBottom: 10,
+    },
+    userName: {
+        fontSize: 22,
+        fontWeight: '600',
+        color: '#333',
+    },
+    sectionContainer: {
+        backgroundColor: '#fff',
+        padding: 20,
+        marginHorizontal: 20,
         marginBottom: 20,
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 10,
     },
     infoContainer: {
         flexDirection: 'row',
@@ -70,17 +110,7 @@ const styles = StyleSheet.create({
         color: '#333',
         fontWeight: '500',
     },
-    recentActivityContainer: {
-        marginTop: 30,
-        width: '100%',
-        alignItems: 'center',
-    },
-    recentActivityTitle: {
-        fontSize: 20,
-        fontWeight: '600',
-        marginBottom: 10,
-    },
-    recentActivityText: {
+    activityItem: {
         fontSize: 16,
         color: '#555',
         marginBottom: 5,
@@ -90,11 +120,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#DC3545',
-        padding: 10,
-        borderRadius: 5,
-        marginTop: 20,
-        alignSelf: 'center',
-        width: '40%',
+        padding: 15,
+        borderRadius: 10,
+        marginHorizontal: 20,
+        marginBottom: 20,
     },
     signOutButtonText: {
         marginLeft: 5,
