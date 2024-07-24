@@ -3,7 +3,7 @@ import {View, TextInput, Button, Text, StyleSheet, Image, Linking} from 'react-n
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {useAppDispatch, useAppSelector} from '../Redux/Hooks'
-import {fetchUserName} from '../Redux/UserSlice'
+import {fetchUserName, selectUserName} from '../Redux/UserSlice'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -17,6 +17,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
     const [errorMessage, setErrorMessage] = useState('')
     const dispatch = useAppDispatch()
     const {status, error} = useAppSelector((state) => state.user)
+    const name = useAppSelector(selectUserName)
 
     const handleSignIn = async () =>
     {
@@ -28,9 +29,9 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
 
         try
         {
-            const userData = await dispatch(fetchUserName(userId))
+            await dispatch(fetchUserName(userId))
             setErrorMessage('')
-            navigateToLandingPage(userData)
+            navigateToLandingPage({id: userId, name: name})
         } catch (error)
         {
             setErrorMessage('An error occurred. Please check your User ID and try again.')

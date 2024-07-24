@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
 import axios from 'axios'
 import Constants from 'expo-constants'
+import {RootState} from './Store'
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl
 
@@ -41,6 +42,7 @@ const userSlice = createSlice({
         clearUserName(state)
         {
             state.name = ''
+            state.id = ''
         },
     },
     extraReducers: (builder) =>
@@ -51,7 +53,7 @@ const userSlice = createSlice({
                 state.status = 'loading'
                 state.error = null
             })
-            .addCase(fetchUserName.fulfilled, (state, action: PayloadAction<{id: string, name: string}>) =>
+            .addCase(fetchUserName.fulfilled, (state, action: PayloadAction<{id: string; name: string}>) =>
             {
                 state.name = action.payload.name
                 state.id = action.payload.id
@@ -66,5 +68,8 @@ const userSlice = createSlice({
 })
 
 export const {clearUserName} = userSlice.actions
+
+export const selectUserName = (state: RootState) => state.user.name
+export const selectUserId = (state: RootState) => state.user.id
 
 export default userSlice.reducer
