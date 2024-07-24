@@ -19,11 +19,11 @@ const ReferendumPromptScreen: React.FC<ReferendumPromptScreenProps> = ({route}) 
         switch (referendumId)
         {
             case '1':
-                return <InfrastructurePrompt />
+                return <InfrastructurePrompt referendumId={referendumId} />
             case '2':
-                return <EducationPrompt />
+                return <EducationPrompt referendumId={referendumId} />
             case '3':
-                return <HealthcarePrompt />
+                return <HealthcarePrompt referendumId={referendumId} />
             default:
                 return <NotFoundPrompt />
         }

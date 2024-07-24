@@ -1,12 +1,19 @@
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
+import VotePrompt from '../VotePrompt'
 
-const InfrastructurePrompt: React.FC = () =>
+interface InfrastructurePromptProps
+{
+    referendumId: string
+}
+
+const InfrastructurePrompt: React.FC<InfrastructurePromptProps> = ({referendumId}) =>
 {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Infrastructure Referendum</Text>
             <Text style={styles.description}>Details about the infrastructure referendum and the voting prompt...</Text>
+            <VotePrompt referendumId={referendumId} />
         </View>
     )
 }
@@ -29,6 +36,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '400',
         color: '#666666',
+        marginBottom: 40,
         textAlign: 'center',
     },
 })

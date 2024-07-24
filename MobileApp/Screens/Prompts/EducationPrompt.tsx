@@ -1,15 +1,19 @@
 import React from 'react'
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
+import {View, Text, StyleSheet} from 'react-native'
+import VotePrompt from '../VotePrompt'
 
-const EducationPrompt: React.FC = () =>
+interface EducationPromptProps
+{
+    referendumId: string
+}
+
+const EducationPrompt: React.FC<EducationPromptProps> = ({referendumId}) =>
 {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Education Referendum</Text>
             <Text style={styles.description}>Details about the education referendum and the voting prompt...</Text>
-            <TouchableOpacity style={styles.voteButton} onPress={() => { /* Handle vote confirmation here */}}>
-                <Text style={styles.buttonText}>Confirm Vote</Text>
-            </TouchableOpacity>
+            <VotePrompt referendumId={referendumId} />
         </View>
     )
 }
@@ -33,18 +37,6 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         color: '#666666',
         marginBottom: 40,
-        textAlign: 'center',
-    },
-    voteButton: {
-        backgroundColor: '#007BFF',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 8,
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: '500',
         textAlign: 'center',
     },
 })
