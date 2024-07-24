@@ -2,7 +2,8 @@ import React, {useState} from 'react'
 import {View, TextInput, Button, Text, StyleSheet, Image, Linking} from 'react-native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
-import {signInUser} from '../Api/apiService'
+import {useAppDispatch, useAppSelector} from '../Redux/Hooks'
+import {fetchUserName} from '../Redux/UserSlice'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -14,11 +15,12 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
 {
     const [userId, setUserId] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
+    const dispatch = useAppDispatch()
+    const {status, error} = useAppSelector((state) => state.user)
 
     const handleSignIn = async () =>
     {
-        const isValid = validateUserId(userId)
-        if (!isValid)
+        if (!isUserIdValid(userId))
         {
             setErrorMessage('Please enter a valid User ID.')
             return
@@ -26,8 +28,8 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
 
         try
         {
-            const userData = await signInUser(userId)
-            setErrorMessage('') // Clear the error message on successful sign-in
+            const userData = await dispatch(fetchUserName(userId))
+            setErrorMessage('')
             navigateToLandingPage(userData)
         } catch (error)
         {
@@ -35,39 +37,76 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
         }
     }
 
-    const validateUserId = (id: string): boolean =>
-    {
-        // Add any validation logic here (e.g., check format or length)
-        return id.trim().length > 0
-    }
+    const isUserIdValid = (id: string): boolean => id.trim().length > 0
 
     const navigateToLandingPage = (userData: any) =>
     {
-        navigation.navigate('LandingPage', {userId: userData.id, userName: userData.name})
+        navigation.reset({
+            index: 0,
+            routes: [{name: 'LandingPage', params: {userId: userData.id, userName: userData.name}}],
+        })
     }
 
     return (
         <View style={styles.container}>
-            <Image source={require('../assets/logo.png')} style={styles.logo} />
-            <Text style={styles.title}>Welcome to VoteMaster</Text>
-            <Text style={styles.subtitle}>
-                Powered by{' '}
-                <Text style={styles.link} onPress={() => Linking.openURL('https://www.directdemocracycorporation.com')}>
-                    Direct Democracy Corporation
-                </Text>
-            </Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter User ID"
-                value={userId}
-                onChangeText={setUserId}
-                autoCapitalize="none"
-            />
-            <Button title="Sign In" onPress={handleSignIn} />
-            {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+            <Logo />
+            <Title />
+            <Subtitle />
+            <UserIdInput value={userId} onChange={setUserId} />
+            <SignInButton onPress={handleSignIn} />
+            {status === 'loading' && <Text>Loading...</Text>}
+            {errorMessage && <ErrorMessage message={errorMessage} />}
         </View>
     )
 }
+
+const Logo: React.FC = () => (
+    <Image source={require('../assets/logo.png')} style={styles.logo} />
+)
+
+const Title: React.FC = () => (
+    <Text style={styles.title}>Welcome to VoteMaster</Text>
+)
+
+const Subtitle: React.FC = () => (
+    <Text style={styles.subtitle}>
+        Powered by{' '}
+        <Text style={styles.link} onPress={() => Linking.openURL('https://directdemocracy.global')}>
+            Direct Democracy Corporation
+        </Text>
+    </Text>
+)
+
+type UserIdInputProps = {
+    value: string
+    onChange: (text: string) => void
+}
+
+const UserIdInput: React.FC<UserIdInputProps> = ({value, onChange}) => (
+    <TextInput
+        style={styles.input}
+        placeholder="Enter User ID"
+        value={value}
+        onChangeText={onChange}
+        autoCapitalize="none"
+    />
+)
+
+type SignInButtonProps = {
+    onPress: () => void
+}
+
+const SignInButton: React.FC<SignInButtonProps> = ({onPress}) => (
+    <Button title="Sign In" onPress={onPress} />
+)
+
+type ErrorMessageProps = {
+    message: string
+}
+
+const ErrorMessage: React.FC<ErrorMessageProps> = ({message}) => (
+    <Text style={styles.error}>{message}</Text>
+)
 
 const styles = StyleSheet.create({
     container: {
