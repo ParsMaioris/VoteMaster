@@ -14,10 +14,18 @@ const LandingPage: React.FC<LandingPageProps> = ({route, navigation}) =>
         })
     }
 
+    const handleViewReferendums = () =>
+    {
+        navigation.navigate('Referendums')
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.welcomeText}>Welcome to VoteMaster, {userName}!</Text>
-            <Button title="Sign Out" onPress={handleSignOut} />
+            <View style={styles.buttonContainer}>
+                <Button title="View Referendums" onPress={handleViewReferendums} color="#007BFF" />
+                <Button title="Sign Out" onPress={handleSignOut} color="#DC3545" />
+            </View>
         </View>
     )
 }
@@ -31,10 +39,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     welcomeText: {
-        fontSize: 20,
-        fontWeight: 'bold',
+        fontSize: 24,
+        fontWeight: '600',
+        color: '#333',
         textAlign: 'center',
         marginBottom: 20,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '80%',
+    },
+    button: {
+        width: '40%',
     },
 })
 
