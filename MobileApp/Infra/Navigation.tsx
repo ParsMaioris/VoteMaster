@@ -23,7 +23,7 @@ const Navigation = () => (
     <NavigationContainer>
         <Stack.Navigator initialRouteName="SignIn">
             <Stack.Screen name="SignIn" component={SignInScreen} />
-            <Stack.Screen name="LandingPage" component={LandingPage} options={{title: 'Home'}} />
+            <Stack.Screen name="LandingPage" component={LandingPage} options={{title: 'Home', headerShown: false}} />
             <Stack.Screen name="Referendums" component={ReferendumsScreen} />
             <Stack.Screen name="ReferendumDetail" component={ReferendumDetailScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
