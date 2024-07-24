@@ -150,6 +150,7 @@ NuGetScratch/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+publish/
 
 # Windows image file caches
 Thumbs.db
