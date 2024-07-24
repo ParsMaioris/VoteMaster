@@ -22,19 +22,19 @@ const referendums: Referendum[] = [
         id: '1',
         title: 'Infrastructure Referendum',
         description: 'Vote on a proposed tax reform that aims to fund public infrastructure improvements and social welfare programs.',
-        image: 'https://images.pexels.com/photos/1904076/pexels-photo-1904076.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+        image: 'https://images.pexels.com/photos/6931306/pexels-photo-6931306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     },
     {
         id: '2',
         title: 'Education Referendum',
         description: 'Support or reject a proposal to increase funding for public education, including enhancing educational resources and teacher salaries.',
-        image: 'https://images.pexels.com/photos/1462630/pexels-photo-1462630.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+        image: 'https://images.pexels.com/photos/3646172/pexels-photo-3646172.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     },
     {
         id: '3',
         title: 'Healthcare Referendum',
         description: 'Cast your vote on a proposal designed to overhaul prescription drug policy, addressing price negotiations, drug importation, cost caps, pricing transparency, and annual price increase control.',
-        image: 'https://images.pexels.com/photos/2280568/pexels-photo-2280568.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+        image: 'https://images.pexels.com/photos/1028599/pexels-photo-1028599.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     },
 ]
 
