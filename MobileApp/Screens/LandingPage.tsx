@@ -1,10 +1,12 @@
 import React from 'react'
 import {View, Text, Button, StyleSheet} from 'react-native'
+import {useSelector} from 'react-redux'
+import {RootState} from '../Redux/Store'
 import {LandingPageProps} from '../Infra/Navigation'
 
-const LandingPage: React.FC<LandingPageProps> = ({route, navigation}) =>
+const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
-    const {userName} = route.params
+    const userName = useSelector((state: RootState) => state.user.name)
 
     const handleSignOut = () =>
     {
@@ -19,10 +21,16 @@ const LandingPage: React.FC<LandingPageProps> = ({route, navigation}) =>
         navigation.navigate('Referendums')
     }
 
+    const handleProfile = () =>
+    {
+        navigation.navigate('Profile')
+    }
+
     return (
         <View style={styles.container}>
-            <Text style={styles.welcomeText}>Welcome to VoteMaster, {userName}!</Text>
+            <Text style={styles.welcomeText}>Welcome to VoteMaster</Text>
             <View style={styles.buttonContainer}>
+                <Button title="Profile" onPress={handleProfile} color="#007BFF" />
                 <Button title="View Referendums" onPress={handleViewReferendums} color="#007BFF" />
                 <Button title="Sign Out" onPress={handleSignOut} color="#DC3545" />
             </View>
@@ -46,12 +54,13 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: 'column',
+        alignItems: 'center',
         width: '80%',
     },
     button: {
-        width: '40%',
+        width: '100%',
+        marginBottom: 10,
     },
 })
 
