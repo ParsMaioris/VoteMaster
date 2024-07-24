@@ -29,9 +29,19 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
 
         try
         {
-            await dispatch(fetchUserName(userId))
-            setErrorMessage('')
-            navigateToLandingPage({id: userId, name: name})
+            const resultAction = await dispatch(fetchUserName(userId))
+            if (fetchUserName.fulfilled.match(resultAction))
+            {
+                const {id, name} = resultAction.payload
+                setErrorMessage('')
+                navigateToLandingPage({id, name})
+            } else if (fetchUserName.rejected.match(resultAction) && resultAction.payload === 400)
+            {
+                setErrorMessage('Invalid User ID. Please check and try again.')
+            } else
+            {
+                setErrorMessage('An error occurred. Please check your User ID and try again.')
+            }
         } catch (error)
         {
             setErrorMessage('An error occurred. Please check your User ID and try again.')

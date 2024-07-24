@@ -27,7 +27,13 @@ export const fetchUserName = createAsyncThunk(
         try
         {
             const response = await axios.get(`${apiUrl}/user/${userId}`)
-            return response.data.result
+            if (response.status === 200)
+            {
+                return {id: response.data.result.id, name: response.data.result.name, status: response.status}
+            } else
+            {
+                return rejectWithValue(response.status)
+            }
         } catch (error)
         {
             return rejectWithValue('Failed to fetch user')
