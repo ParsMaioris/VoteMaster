@@ -58,13 +58,11 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 
     const handleVote = (id: string) =>
     {
-        // Handle vote action
-        console.log('Vote for referendum:', id)
+        navigation.navigate('ReferendumPrompt', {referendumId: id})
     }
 
     const handleLearnMore = (id: string) =>
     {
-        // Navigate to detailed referendum page
         navigation.navigate('ReferendumDetail', {referendumId: id})
     }
 
@@ -105,14 +103,12 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#333333',
         marginBottom: 10,
-        textAlign: 'left',
     },
     description: {
         fontSize: 16,
         fontWeight: '400',
         color: '#666666',
         marginBottom: 20,
-        textAlign: 'left',
     },
     buttonContainer: {
         flexDirection: 'row',
