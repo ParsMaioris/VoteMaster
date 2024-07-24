@@ -1,21 +1,10 @@
 import React from 'react'
-import {View, Text, Button, StyleSheet} from 'react-native'
-import {useSelector} from 'react-redux'
-import {RootState} from '../Redux/Store'
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native'
 import {LandingPageProps} from '../Infra/Navigation'
+import {Ionicons} from '@expo/vector-icons'
 
 const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
-    const userName = useSelector((state: RootState) => state.user.name)
-
-    const handleSignOut = () =>
-    {
-        navigation.reset({
-            index: 0,
-            routes: [{name: 'SignIn'}],
-        })
-    }
-
     const handleViewReferendums = () =>
     {
         navigation.navigate('Referendums')
@@ -26,14 +15,42 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
         navigation.navigate('Profile')
     }
 
+    const handleProposeReferendum = () =>
+    {
+        // Navigate to propose referendum screen
+        //navigation.navigate('ProposeReferendum')
+    }
+
+    const handleInviteVoter = () =>
+    {
+        // Navigate to invite voter screen
+        //navigation.navigate('InviteVoter')
+    }
+
     return (
         <View style={styles.container}>
-            <Text style={styles.welcomeText}>Welcome to VoteMaster</Text>
+            <Image source={require('../assets/logo.png')} style={styles.logo} />
+            <Text style={styles.headerText}>VoteMaster</Text>
+            <Text style={styles.contextText}>Prototype for a Better Democracy</Text>
             <View style={styles.buttonContainer}>
-                <Button title="Profile" onPress={handleProfile} color="#007BFF" />
-                <Button title="View Referendums" onPress={handleViewReferendums} color="#007BFF" />
-                <Button title="Sign Out" onPress={handleSignOut} color="#DC3545" />
+                <TouchableOpacity style={styles.button} onPress={handleProfile}>
+                    <Ionicons name="person-circle-outline" size={24} color="#007BFF" />
+                    <Text style={styles.buttonText}>Profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleViewReferendums}>
+                    <Ionicons name="document-text-outline" size={24} color="#007BFF" />
+                    <Text style={styles.buttonText}>View Referendums</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleProposeReferendum}>
+                    <Ionicons name="create-outline" size={24} color="#007BFF" />
+                    <Text style={styles.buttonText}>Propose Referendum</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleInviteVoter}>
+                    <Ionicons name="person-add-outline" size={24} color="#007BFF" />
+                    <Text style={styles.buttonText}>Invite Voter</Text>
+                </TouchableOpacity>
             </View>
+            <Text style={styles.tagline}>Designing the Future of Governance</Text>
         </View>
     )
 }
@@ -46,21 +63,53 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#fff',
     },
-    welcomeText: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: '#333',
+    logo: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 20,
+    },
+    headerText: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#007BFF',
+        textAlign: 'center',
+        marginBottom: 10,
+    },
+    contextText: {
+        fontSize: 18,
+        fontWeight: '400',
+        color: '#555',
         textAlign: 'center',
         marginBottom: 20,
     },
     buttonContainer: {
-        flexDirection: 'column',
-        alignItems: 'center',
         width: '80%',
     },
     button: {
-        width: '100%',
-        marginBottom: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f0f0f0',
+        padding: 15,
+        marginVertical: 10,
+        borderRadius: 5,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+    },
+    buttonText: {
+        marginLeft: 10,
+        fontSize: 18,
+        color: '#333',
+    },
+    tagline: {
+        fontSize: 16,
+        fontWeight: '300',
+        color: '#007BFF',
+        textAlign: 'center',
+        marginTop: 20,
     },
 })
 
