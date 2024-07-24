@@ -18,13 +18,13 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
     const handleProposeReferendum = () =>
     {
         // Navigate to propose referendum screen
-        //navigation.navigate('ProposeReferendum')
+        // navigation.navigate('ProposeReferendum');
     }
 
     const handleInviteVoter = () =>
     {
         // Navigate to invite voter screen
-        //navigation.navigate('InviteVoter')
+        // navigation.navigate('InviteVoter');
     }
 
     return (
@@ -61,48 +61,49 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff',
     },
     logo: {
         width: 100,
         height: 100,
-        borderRadius: 50,
+        borderRadius: 20,
         marginBottom: 20,
     },
     headerText: {
         fontSize: 28,
-        fontWeight: 'bold',
-        color: '#007BFF',
+        fontWeight: '600',
+        color: '#333333',
         textAlign: 'center',
         marginBottom: 10,
     },
     contextText: {
         fontSize: 18,
         fontWeight: '400',
-        color: '#555',
+        color: '#666666',
         textAlign: 'center',
-        marginBottom: 20,
+        marginBottom: 30,
     },
     buttonContainer: {
-        width: '80%',
+        width: '100%',
+        paddingHorizontal: 20,
     },
     button: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#f0f0f5',
         padding: 15,
         marginVertical: 10,
-        borderRadius: 5,
-        shadowColor: '#000',
+        borderRadius: 10,
+        shadowColor: '#000000',
         shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
-        shadowRadius: 5,
+        shadowRadius: 4,
     },
     buttonText: {
         marginLeft: 10,
         fontSize: 18,
-        color: '#333',
+        color: '#333333',
     },
     tagline: {
         fontSize: 16,
