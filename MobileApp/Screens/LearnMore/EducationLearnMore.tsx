@@ -59,17 +59,17 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         padding: 20,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#F5F5F7',
     },
     highlight: {
         fontWeight: '600',
         fontSize: 20,
-        color: '#000',
+        color: '#007AFF',
     },
     sectionTitle: {
         fontSize: 22,
-        fontWeight: '600',
-        color: '#000',
+        fontWeight: '700',
+        color: '#333',
         marginBottom: 10,
         marginTop: 20,
     },
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         color: '#333',
         lineHeight: 26,
+        marginBottom: 20,
     },
     prosConsContainer: {
         marginTop: 15,
@@ -98,9 +99,10 @@ const styles = StyleSheet.create({
     },
     financialImpactTitle: {
         fontSize: 22,
-        fontWeight: '600',
-        color: '#000',
+        fontWeight: '700',
+        color: '#333',
         marginTop: 20,
+        marginBottom: 10,
     },
 })
 
