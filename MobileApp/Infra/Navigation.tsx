@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import {createNativeStackNavigator, NativeStackScreenProps} from '@react-navigation/native-stack'
 import {NavigationContainer} from '@react-navigation/native'
 import SignInScreen from '../Screens/SignInScreen'
@@ -8,7 +8,7 @@ import ReferendumDetailScreen from '../Screens/ReferendumDetailScreen'
 import ProfileScreen from '../Screens/ProfileScreen'
 import ReferendumPrompt from '../Screens/ReferendumPrompt'
 import {ActivityIndicator, View} from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import useInitialRoute from './useInitialRoute'
 
 export type RootStackParamList = {
     SignIn: undefined
@@ -25,31 +25,7 @@ export type LandingPageProps = NativeStackScreenProps<RootStackParamList, 'Landi
 
 const Navigation: React.FC = () =>
 {
-    const [initialRouteName, setInitialRouteName] = useState<keyof RootStackParamList | null>(null)
-
-    useEffect(() =>
-    {
-        const checkUserSession = async () =>
-        {
-            try
-            {
-                const userData = await AsyncStorage.getItem('user')
-                if (userData)
-                {
-                    setInitialRouteName('LandingPage')
-                } else
-                {
-                    setInitialRouteName('SignIn')
-                }
-            } catch (e)
-            {
-                console.error('Failed to load user session', e)
-                setInitialRouteName('SignIn')
-            }
-        }
-
-        checkUserSession()
-    }, [])
+    const initialRouteName = useInitialRoute()
 
     if (initialRouteName === null)
     {
