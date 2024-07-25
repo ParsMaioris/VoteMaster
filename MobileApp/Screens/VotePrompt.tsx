@@ -1,9 +1,10 @@
 import React from 'react'
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
-import {selectUserId} from '../Redux/UserSlice'
+import {selectUserId, selectUserName} from '../Redux/UserSlice'
 import {submitVote} from '../Redux/VoteSlice'
-import {AppDispatch} from '../Redux/Store'
+import {AppDispatch, RootState} from '../Redux/Store'
+import {selectReferendumById} from '../Redux/ReferendumSlice'
 
 interface VotePromptProps
 {
@@ -14,12 +15,15 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
 {
     const dispatch = useDispatch<AppDispatch>()
     const userId = useSelector(selectUserId)
+    const userName = useSelector(selectUserName)
+    const referendum = useSelector((state: RootState) => selectReferendumById(state, referendumId))
+    const referendumTitle = referendum?.title as string
 
-    const handleVote = (vote: 'yes' | 'no') =>
+    const handleVote = (voteChoice: boolean) =>
     {
         if (userId)
         {
-            dispatch(submitVote({userId, referendumId, vote}))
+            dispatch(submitVote({userId, userName, referendumId, referendumTitle, voteChoice}))
         }
     }
 
@@ -27,10 +31,10 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
         <View style={styles.container}>
             <Text style={styles.question}>Do you support this referendum?</Text>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => handleVote('yes')}>
+                <TouchableOpacity style={styles.button} onPress={() => handleVote(true)}>
                     <Text style={styles.buttonText}>Yes</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => handleVote('no')}>
+                <TouchableOpacity style={styles.button} onPress={() => handleVote(false)}>
                     <Text style={styles.buttonText}>No</Text>
                 </TouchableOpacity>
             </View>

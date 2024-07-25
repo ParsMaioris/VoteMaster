@@ -61,6 +61,8 @@ const userSlice = createSlice({
             })
             .addCase(fetchUserName.fulfilled, (state, action: PayloadAction<{id: string; name: string}>) =>
             {
+                console.log(action.payload)
+
                 state.name = action.payload.name
                 state.id = action.payload.id
                 state.status = 'idle'

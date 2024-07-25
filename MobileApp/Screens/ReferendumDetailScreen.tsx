@@ -6,6 +6,9 @@ import InfrastructureLearnMore from './LearnMore/InfrastructureLearnMore'
 import EducationLearnMore from './LearnMore/EducationLearnMore'
 import HealthcareLearnMore from './LearnMore/HealthcareLearnMore'
 import NotFoundLearnMore from './Exceptions/NotfoundLearnMore'
+import {selectReferendumById} from '../Redux/ReferendumSlice'
+import {RootState} from '../Redux/Store'
+import {useSelector} from 'react-redux'
 
 type ReferendumDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'ReferendumDetail'>
 
@@ -13,19 +16,19 @@ const ReferendumDetailScreen: React.FC<ReferendumDetailScreenProps> = ({route}) 
 {
     const {referendumId} = route.params
 
+    const referendum = useSelector((state: RootState) => selectReferendumById(state, referendumId))
+    const referendumKey = referendum?.key
+
     const renderLearnMoreScreen = () =>
     {
-        switch (referendumId)
-        {
-            case '1':
-                return <InfrastructureLearnMore />
-            case '2':
-                return <EducationLearnMore />
-            case '3':
-                return <HealthcareLearnMore />
-            default:
-                return <NotFoundLearnMore />
-        }
+        if (referendumKey === "infrastructure")
+            return <InfrastructureLearnMore />
+        else if (referendumKey === "education")
+            return <EducationLearnMore />
+        else if (referendumKey === "healthcare")
+            return <HealthcareLearnMore />
+        else
+            return <NotFoundLearnMore />
     }
 
     return <View style={styles.container}>{renderLearnMoreScreen()}</View>

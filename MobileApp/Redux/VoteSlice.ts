@@ -19,8 +19,10 @@ const initialState: VoteState = {
 interface VotePayload
 {
     userId: string
+    userName: string
     referendumId: string
-    vote: 'yes' | 'no'
+    referendumTitle: string
+    voteChoice: boolean
 }
 
 export const submitVote = createAsyncThunk(
@@ -29,7 +31,7 @@ export const submitVote = createAsyncThunk(
     {
         try
         {
-            const response = await axios.post(`${apiUrl}/api/Vote/add`, payload)
+            const response = await axios.post(`${apiUrl}/Vote/add`, payload)
             if (response.status === 200)
             {
                 return response.data

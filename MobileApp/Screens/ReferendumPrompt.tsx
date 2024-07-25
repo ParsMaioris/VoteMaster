@@ -7,6 +7,9 @@ import InfrastructurePrompt from './Prompts/InfrastructurePrompt'
 import EducationPrompt from './Prompts/EducationPrompt'
 import HealthcarePrompt from './Prompts/HealthcarePrompt'
 import NotFoundPrompt from './Exceptions/NotFoundPrompt'
+import {useSelector} from 'react-redux'
+import {selectReferendumById} from '../Redux/ReferendumSlice'
+import {RootState} from '../Redux/Store'
 
 type ReferendumPromptScreenProps = NativeStackScreenProps<RootStackParamList, 'ReferendumPrompt'>
 
@@ -14,19 +17,19 @@ const ReferendumPromptScreen: React.FC<ReferendumPromptScreenProps> = ({route}) 
 {
     const {referendumId} = route.params
 
+    const referendum = useSelector((state: RootState) => selectReferendumById(state, referendumId))
+    const referendumKey = referendum?.key
+
     const renderPromptScreen = () =>
     {
-        switch (referendumId)
-        {
-            case '1':
-                return <InfrastructurePrompt referendumId={referendumId} />
-            case '2':
-                return <EducationPrompt referendumId={referendumId} />
-            case '3':
-                return <HealthcarePrompt referendumId={referendumId} />
-            default:
-                return <NotFoundPrompt />
-        }
+        if (referendumKey === 'infrastructure')
+            return <InfrastructurePrompt referendumId={referendumId} />
+        else if (referendumKey === 'education')
+            return <EducationPrompt referendumId={referendumId} />
+        else if (referendumKey === 'healthcare')
+            return <HealthcarePrompt referendumId={referendumId} />
+        else
+            return <NotFoundPrompt />
     }
 
     return <View style={styles.container}>{renderPromptScreen()}</View>

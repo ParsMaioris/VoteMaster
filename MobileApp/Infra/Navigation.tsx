@@ -29,7 +29,7 @@ const Navigation = () => (
             <Stack.Screen name="Referendums" component={ReferendumsScreen} />
             <Stack.Screen name="ReferendumDetail" component={ReferendumDetailScreen} options={{title: ''}} />
             <Stack.Screen name="Profile" component={ProfileScreen} options={{title: ''}} />
-            <Stack.Screen name="ReferendumPrompt" component={ReferendumPrompt} />
+            <Stack.Screen name="ReferendumPrompt" component={ReferendumPrompt} options={{title: ''}} />
         </Stack.Navigator>
     </NavigationContainer>
 )
