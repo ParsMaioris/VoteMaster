@@ -16,8 +16,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
     const [userId, setUserId] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
     const dispatch = useAppDispatch()
-    const {status, error} = useAppSelector((state) => state.user)
-    const name = useAppSelector(selectUserName)
+    const {status} = useAppSelector((state) => state.user)
 
     const handleSignIn = async () =>
     {
@@ -27,29 +26,31 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
             return
         }
 
-        try
+        const resultAction = await dispatch(fetchUserName(userId))
+
+        if (fetchUserName.fulfilled.match(resultAction) && isFetchUserNameFulfilled(resultAction))
         {
-            const resultAction = await dispatch(fetchUserName(userId))
-            if (fetchUserName.fulfilled.match(resultAction))
-            {
-                const {id, name} = resultAction.payload
-                setErrorMessage('')
-                navigateToLandingPage({id, name})
-            } else if (fetchUserName.rejected.match(resultAction) && resultAction.payload === 400)
-            {
-                setErrorMessage('Invalid User ID. Please check and try again.')
-            } else
-            {
-                setErrorMessage('An error occurred. Please check your User ID and try again.')
-            }
-        } catch (error)
+            const {id, name} = resultAction.payload
+            setErrorMessage('')
+            navigateToLandingPage({id, name})
+        }
         {
-            setErrorMessage('An error occurred. Please check your User ID and try again.')
+            setErrorMessage(resultAction.payload as string)
         }
     }
 
-    const isUserIdValid = (id: string): boolean => id.trim().length > 0
+    const isFetchUserNameFulfilled = (
+        action: ReturnType<typeof fetchUserName.fulfilled>
+    ): action is ReturnType<typeof fetchUserName.fulfilled> & {payload: {id: any; name: any; status: number}} =>
+    {
+        return action.payload !== undefined && 'name' in action.payload
+    }
 
+    const isUserIdValid = (id: string): boolean =>
+    {
+        const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+        return guidRegex.test(id.trim())
+    }
     const navigateToLandingPage = (userData: any) =>
     {
         navigation.reset({
