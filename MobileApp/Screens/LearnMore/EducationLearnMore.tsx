@@ -3,10 +3,8 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native'
 import {Ionicons} from '@expo/vector-icons'
 import EducationBarChart from '../../Components/EducationBarChart'
 
-const EducationLearnMore: React.FC = () =>
-(
+const EducationLearnMore: React.FC = () => (
     <ScrollView contentContainerStyle={styles.container}>
-
         <Text style={styles.description}>
             The <Text style={styles.highlight}>Education Referendum</Text> proposes significant investments in the education sector to improve the quality of education for all students. This initiative includes raising funds for teacher salaries, school supplies, infrastructure improvements, and extracurricular activities.
         </Text>
@@ -83,16 +81,20 @@ const styles = StyleSheet.create({
     },
     prosConsContainer: {
         marginTop: 15,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
     },
     prosCons: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 10,
+        width: '100%',
     },
     prosConsText: {
         fontSize: 18,
         marginLeft: 10,
         color: '#333',
+        flexShrink: 1,
     },
     financialImpactTitle: {
         fontSize: 22,

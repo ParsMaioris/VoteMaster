@@ -79,16 +79,20 @@ const styles = StyleSheet.create({
     },
     prosConsContainer: {
         marginTop: 15,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
     },
     prosCons: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 10,
+        width: '100%',
     },
     prosConsText: {
         fontSize: 18,
         marginLeft: 10,
         color: '#333',
+        flexShrink: 1,
     },
     financialImpactTitle: {
         fontSize: 22,
