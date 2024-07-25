@@ -34,7 +34,7 @@ const referendums: Referendum[] = [
         id: '7d918783-073f-4b99-bc38-0ee9a7762940',
         title: 'Healthcare Referendum',
         description: 'Cast your vote on a proposal designed to overhaul prescription drug policy, addressing price negotiations, drug importation, cost caps, pricing transparency, and annual price increase control.',
-        image: 'https://images.pexels.com/photos/257816/pexels-photo-257816.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+        image: 'https://images.pexels.com/photos/139398/thermometer-headache-pain-pills-139398.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     },
 ]
 

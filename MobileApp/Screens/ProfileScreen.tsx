@@ -52,18 +52,21 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#f7f7f7',
+        flexGrow: 1,
+        backgroundColor: '#F5F5F7',
+        paddingBottom: 20,
     },
     header: {
         backgroundColor: '#007BFF',
-        padding: 20,
+        padding: 30,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
+        alignItems: 'center',
+        marginBottom: 20,
     },
     headerText: {
-        fontSize: 24,
-        fontWeight: '600',
+        fontSize: 26,
+        fontWeight: '700',
         color: '#fff',
         textAlign: 'center',
     },
@@ -80,7 +83,7 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     sectionContainer: {
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff',
         padding: 20,
         marginHorizontal: 20,
         marginBottom: 20,
@@ -89,10 +92,12 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
         shadowRadius: 5,
+        elevation: 3,
     },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: '600',
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#333',
         marginBottom: 10,
     },
     infoContainer: {
@@ -129,6 +134,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         fontSize: 16,
         color: '#fff',
+        fontWeight: '600',
     },
 })
 
