@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
 import axios from 'axios'
 import Constants from 'expo-constants'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import {RootState} from './Store'
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl
@@ -20,6 +21,17 @@ const initialState: UserState = {
     error: null,
 }
 
+const saveUserToStorage = async (id: string, name: string) =>
+{
+    try
+    {
+        await AsyncStorage.setItem('user', JSON.stringify({id, name}))
+    } catch (e)
+    {
+        console.error('Failed to save user to storage', e)
+    }
+}
+
 export const fetchUserName = createAsyncThunk(
     'user/fetchUserName',
     async (userId: string, {rejectWithValue}) =>
@@ -29,7 +41,9 @@ export const fetchUserName = createAsyncThunk(
             const response = await axios.get(`${apiUrl}/user/${userId}`)
             if (response.status === 200)
             {
-                return {id: response.data.result.id, name: response.data.result.name, status: response.status}
+                const data = response.data.data
+                saveUserToStorage(data.id, data.name)
+                return {id: data.id, name: data.name, status: response.status}
             } else
             {
                 return rejectWithValue(response.statusText)
@@ -58,6 +72,7 @@ const userSlice = createSlice({
         {
             state.name = ''
             state.id = ''
+            AsyncStorage.removeItem('user')
         },
     },
     extraReducers: (builder) =>
