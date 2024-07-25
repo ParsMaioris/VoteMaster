@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {View, TextInput, Button, Text, StyleSheet, Image, Linking} from 'react-native'
+import {View, TextInput, Text, StyleSheet, Image, Linking, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {useAppDispatch, useAppSelector} from '../Redux/Hooks'
@@ -33,7 +33,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
             const {id, name} = resultAction.payload
             setErrorMessage('')
             navigateToLandingPage({id, name})
-        }
+        } else
         {
             setErrorMessage(resultAction.payload as string)
         }
@@ -51,6 +51,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
         const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
         return guidRegex.test(id.trim())
     }
+
     const navigateToLandingPage = (userData: any) =>
     {
         navigation.reset({
@@ -63,11 +64,11 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
         <View style={styles.container}>
             <Logo />
             <Title />
-            <Subtitle />
             <UserIdInput value={userId} onChange={setUserId} />
             <SignInButton onPress={handleSignIn} />
-            {status === 'loading' && <Text>Loading...</Text>}
+            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" />}
             {errorMessage && <ErrorMessage message={errorMessage} />}
+            <Footer />
         </View>
     )
 }
@@ -77,16 +78,16 @@ const Logo: React.FC = () => (
 )
 
 const Title: React.FC = () => (
-    <Text style={styles.title}>Welcome to VoteMaster</Text>
+    <Text style={styles.title}>Welcome</Text>
 )
 
-const Subtitle: React.FC = () => (
-    <Text style={styles.subtitle}>
-        Powered by{' '}
-        <Text style={styles.link} onPress={() => Linking.openURL('https://directdemocracy.global')}>
-            Direct Democracy Corporation
+const Footer: React.FC = () => (
+    <View style={styles.footer}>
+        <Text style={styles.appName}>VoteMaster</Text>
+        <Text style={styles.subtitle}>
+            Powered by Direct Democracy Corporation
         </Text>
-    </Text>
+    </View>
 )
 
 type UserIdInputProps = {
@@ -101,6 +102,7 @@ const UserIdInput: React.FC<UserIdInputProps> = ({value, onChange}) => (
         value={value}
         onChangeText={onChange}
         autoCapitalize="none"
+        keyboardType="default"
     />
 )
 
@@ -109,7 +111,9 @@ type SignInButtonProps = {
 }
 
 const SignInButton: React.FC<SignInButtonProps> = ({onPress}) => (
-    <Button title="Sign In" onPress={onPress} />
+    <TouchableOpacity style={styles.signInButton} onPress={onPress}>
+        <Text style={styles.signInButtonText}>Sign In</Text>
+    </TouchableOpacity>
 )
 
 type ErrorMessageProps = {
@@ -126,44 +130,71 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
-        backgroundColor: '#fff',
+        backgroundColor: '#F5F5F7',
     },
     logo: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+        width: 150,
+        height: 150,
+        borderRadius: 20,
         marginBottom: 20,
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 36,
+        fontWeight: '700',
         textAlign: 'center',
-        marginBottom: 10,
+        color: '#333',
+        marginBottom: 20,
+    },
+    footer: {
+        marginTop: 30,
+        alignItems: 'center',
+    },
+    appName: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#007BFF',
+        marginBottom: 5,
     },
     subtitle: {
         fontSize: 14,
+        color: '#666',
         textAlign: 'center',
-        marginBottom: 20,
-        color: '#555',
     },
     link: {
-        color: '#4169E1',
-        textDecorationLine: 'none',
-        fontWeight: 'bold',
+        color: '#007BFF',
+        fontWeight: '600',
     },
     input: {
         width: '100%',
-        height: 40,
+        height: 50,
         borderColor: '#ccc',
         borderWidth: 1,
+        borderRadius: 10,
         marginBottom: 20,
-        paddingHorizontal: 10,
-        borderRadius: 5,
+        paddingHorizontal: 15,
+        backgroundColor: '#fff',
+        fontSize: 16,
+    },
+    signInButton: {
+        width: '100%',
+        height: 50,
+        backgroundColor: '#007BFF',
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    signInButtonText: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: '600',
     },
     error: {
-        color: 'red',
+        color: '#FF3B30',
         textAlign: 'center',
         marginTop: 10,
+        fontSize: 16,
+        fontWeight: '500',
     },
 })
 
