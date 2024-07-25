@@ -32,11 +32,20 @@ export const fetchUserName = createAsyncThunk(
                 return {id: response.data.result.id, name: response.data.result.name, status: response.status}
             } else
             {
-                return rejectWithValue(response.status)
+                return rejectWithValue(response.statusText)
             }
-        } catch (error)
+        } catch (error: any)
         {
-            return rejectWithValue('Failed to fetch user')
+            if (axios.isAxiosError(error) && error.response)
+            {
+                return rejectWithValue(error.response.data.detail || 'Failed to fetch user')
+            } else if (axios.isAxiosError(error) && error.request)
+            {
+                return rejectWithValue('No response from server')
+            } else
+            {
+                return rejectWithValue('Failed to fetch user')
+            }
         }
     }
 )

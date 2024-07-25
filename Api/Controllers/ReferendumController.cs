@@ -1,38 +1,70 @@
 using Microsoft.AspNetCore.Mvc;
 using VoteMaster.Application;
+using VoteMaster.Domain;
+using VoteMaster.Infrastructure;
 
-namespace VoteMaster.Api;
-
-[ApiController]
-[Route("api/[controller]")]
-public class ReferendumController : ControllerBase
+namespace VoteMaster.Api
 {
-    private readonly ReferendumCommandService _commandService;
-    private readonly ReferendumQueryService _queryService;
-
-    public ReferendumController(ReferendumCommandService commandService, ReferendumQueryService queryService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ReferendumController : ControllerBase
     {
-        _commandService = commandService;
-        _queryService = queryService;
-    }
+        private readonly ReferendumCommandService _commandService;
+        private readonly ReferendumQueryService _queryService;
+        private readonly ILogger<ReferendumController> _logger;
 
-    [HttpPost]
-    [Route("add")]
-    public async Task<IActionResult> AddReferendum([FromBody] AddReferendumRequest request)
-    {
-        await _commandService.AddReferendum(request.Title);
-        return Ok();
-    }
-
-    [HttpGet]
-    [Route("{id}")]
-    public async Task<IActionResult> GetReferendumById(Guid id)
-    {
-        var referendum = await _queryService.GetReferendumById(id);
-        if (referendum == null)
+        public ReferendumController(ReferendumCommandService commandService, ReferendumQueryService queryService, ILogger<ReferendumController> logger)
         {
-            return NotFound();
+            _commandService = commandService;
+            _queryService = queryService;
+            _logger = logger;
         }
-        return Ok(referendum);
+
+        [HttpPost("add")]
+        public async Task<IActionResult> AddReferendum([FromBody] AddReferendumRequest request)
+        {
+            try
+            {
+                await _commandService.AddReferendum(request.Title);
+                return Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "Referendum added successfully.",
+                    Data = null
+                });
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHandlerUtility.HandleException(ex, _logger);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetReferendumById(Guid id)
+        {
+            try
+            {
+                var referendum = await _queryService.GetReferendumById(id);
+                if (referendum == null)
+                {
+                    return NotFound(new ApiResponse<string>
+                    {
+                        Success = false,
+                        Message = "Referendum not found.",
+                        Data = null
+                    });
+                }
+                return Ok(new ApiResponse<Referendum>
+                {
+                    Success = true,
+                    Message = "Referendum retrieved successfully.",
+                    Data = referendum
+                });
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHandlerUtility.HandleException(ex, _logger);
+            }
+        }
     }
 }

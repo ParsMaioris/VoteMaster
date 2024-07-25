@@ -20,7 +20,6 @@ interface ReferendumState
     error: string | null
 }
 
-
 const initialState: ReferendumState = {
     referendums: [],
     referendumMap: {
@@ -56,11 +55,20 @@ export const fetchReferendums = createAsyncThunk(
                 return response.data
             } else
             {
-                return rejectWithValue(response.status)
+                return rejectWithValue(response.statusText)
             }
-        } catch (error)
+        } catch (error: any)
         {
-            return rejectWithValue('Failed to fetch referendums')
+            if (axios.isAxiosError(error) && error.response)
+            {
+                return rejectWithValue(error.response.data.detail || 'Failed to fetch referendums')
+            } else if (axios.isAxiosError(error) && error.request)
+            {
+                return rejectWithValue('No response from server')
+            } else
+            {
+                return rejectWithValue('Failed to fetch referendums')
+            }
         }
     }
 )

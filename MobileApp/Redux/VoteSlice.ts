@@ -47,11 +47,20 @@ export const submitVote = createAsyncThunk(
                 return response.data
             } else
             {
-                return rejectWithValue(response.status)
+                return rejectWithValue(response.statusText)
             }
-        } catch (error)
+        } catch (error: any)
         {
-            return rejectWithValue('Failed to submit vote')
+            if (axios.isAxiosError(error) && error.response)
+            {
+                return rejectWithValue(error.response.data.detail || 'Failed to submit vote')
+            } else if (axios.isAxiosError(error) && error.request)
+            {
+                return rejectWithValue('No response from server')
+            } else
+            {
+                return rejectWithValue('Failed to submit vote')
+            }
         }
     }
 )
@@ -68,11 +77,20 @@ export const fetchVotesByUserId = createAsyncThunk(
                 return response.data
             } else
             {
-                return rejectWithValue(response.status)
+                return rejectWithValue(response.statusText)
             }
-        } catch (error)
+        } catch (error: any)
         {
-            return rejectWithValue('Failed to fetch votes')
+            if (axios.isAxiosError(error) && error.response)
+            {
+                return rejectWithValue(error.response.data.detail || 'Failed to fetch votes')
+            } else if (axios.isAxiosError(error) && error.request)
+            {
+                return rejectWithValue('No response from server')
+            } else
+            {
+                return rejectWithValue('Failed to fetch votes')
+            }
         }
     }
 )

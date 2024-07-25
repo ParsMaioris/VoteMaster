@@ -1,38 +1,70 @@
 using Microsoft.AspNetCore.Mvc;
 using VoteMaster.Application;
+using VoteMaster.Domain;
+using VoteMaster.Infrastructure;
 
-namespace VoteMaster.Api;
-
-[ApiController]
-[Route("api/[controller]")]
-public class UserController : ControllerBase
+namespace VoteMaster.Api
 {
-    private readonly UserCommandService _commandService;
-    private readonly UserQueryService _queryService;
-
-    public UserController(UserCommandService commandService, UserQueryService queryService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UserController : ControllerBase
     {
-        _commandService = commandService;
-        _queryService = queryService;
-    }
+        private readonly UserCommandService _commandService;
+        private readonly UserQueryService _queryService;
+        private readonly ILogger<UserController> _logger;
 
-    [HttpPost]
-    [Route("create")]
-    public IActionResult CreateUser([FromBody] CreateUserRequest request)
-    {
-        _commandService.CreateUser(request.Name);
-        return Ok();
-    }
-
-    [HttpGet]
-    [Route("{id}")]
-    public IActionResult GetUserById(Guid id)
-    {
-        var user = _queryService.GetUserById(id);
-        if (user == null)
+        public UserController(UserCommandService commandService, UserQueryService queryService, ILogger<UserController> logger)
         {
-            return NotFound();
+            _commandService = commandService;
+            _queryService = queryService;
+            _logger = logger;
         }
-        return Ok(user);
+
+        [HttpPost("create")]
+        public IActionResult CreateUser([FromBody] CreateUserRequest request)
+        {
+            try
+            {
+                _commandService.CreateUser(request.Name);
+                return Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "User created successfully.",
+                    Data = null
+                });
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHandlerUtility.HandleException(ex, _logger);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(Guid id)
+        {
+            try
+            {
+                var user = await _queryService.GetUserById(id);
+                if (user == null)
+                {
+                    return NotFound(new ApiResponse<string>
+                    {
+                        Success = false,
+                        Message = "User not found.",
+                        Data = null
+                    });
+                }
+                return Ok(new ApiResponse<User>
+                {
+                    Success = true,
+                    Message = "User retrieved successfully.",
+                    Data = user
+                });
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHandlerUtility.HandleException(ex, _logger);
+            }
+        }
     }
 }
