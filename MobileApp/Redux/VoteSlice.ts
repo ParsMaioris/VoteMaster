@@ -74,7 +74,7 @@ export const fetchVotesByUserId = createAsyncThunk(
             const response = await axios.get(`${apiUrl}/Vote/user/${userId}`)
             if (response.status === 200)
             {
-                return response.data
+                return response.data.data
             } else
             {
                 return rejectWithValue(response.statusText)
