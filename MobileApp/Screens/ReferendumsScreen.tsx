@@ -79,7 +79,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 const styles = StyleSheet.create({
     container: {
         padding: 15,
-        backgroundColor: '#f0f0f5',
+        backgroundColor: '#F5F5F7',
     },
     card: {
         backgroundColor: '#ffffff',
@@ -94,13 +94,13 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height: 150,
-        borderRadius: 10,
+        height: 200,
+        borderRadius: 12,
         marginBottom: 15,
     },
     title: {
-        fontSize: 22,
-        fontWeight: '600',
+        fontSize: 24,
+        fontWeight: '700',
         color: '#333333',
         marginBottom: 10,
     },
@@ -120,7 +120,12 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 16,
         borderRadius: 8,
-        marginRight: 10,
+        marginRight: 5,
+        shadowColor: '#007BFF',
+        shadowOpacity: 0.3,
+        shadowOffset: {width: 0, height: 2},
+        shadowRadius: 4,
+        elevation: 3,
     },
     learnButton: {
         flex: 1,
@@ -128,12 +133,17 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 16,
         borderRadius: 8,
-        marginLeft: 10,
+        marginLeft: 5,
+        shadowColor: '#6C757D',
+        shadowOpacity: 0.3,
+        shadowOffset: {width: 0, height: 2},
+        shadowRadius: 4,
+        elevation: 3,
     },
     buttonText: {
         color: '#ffffff',
         fontSize: 16,
-        fontWeight: '500',
+        fontWeight: '600',
         textAlign: 'center',
     },
 })
