@@ -74,6 +74,11 @@ const userSlice = createSlice({
             state.id = ''
             AsyncStorage.removeItem('user')
         },
+        setUser(state, action: PayloadAction<{id: string, name: string}>)
+        {
+            state.id = action.payload.id
+            state.name = action.payload.name
+        }
     },
     extraReducers: (builder) =>
     {
@@ -97,7 +102,7 @@ const userSlice = createSlice({
     },
 })
 
-export const {clearUserName} = userSlice.actions
+export const {clearUserName, setUser} = userSlice.actions
 
 export const selectUserName = (state: RootState) => state.user.name
 export const selectUserId = (state: RootState) => state.user.id
