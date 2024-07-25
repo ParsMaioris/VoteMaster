@@ -5,15 +5,25 @@ import {RootState} from './Store'
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl
 
+interface Vote
+{
+    id: string
+    userId: string
+    referendumId: string
+    voteChoice: boolean
+}
+
 interface VoteState
 {
     status: 'idle' | 'loading' | 'failed'
     error: string | null
+    votes: Vote[]
 }
 
 const initialState: VoteState = {
     status: 'idle',
     error: null,
+    votes: [],
 }
 
 interface VotePayload
@@ -46,6 +56,27 @@ export const submitVote = createAsyncThunk(
     }
 )
 
+export const fetchVotesByUserId = createAsyncThunk(
+    'vote/fetchVotesByUserId',
+    async (userId: string, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await axios.get(`${apiUrl}/Vote/user/${userId}`)
+            if (response.status === 200)
+            {
+                return response.data
+            } else
+            {
+                return rejectWithValue(response.status)
+            }
+        } catch (error)
+        {
+            return rejectWithValue('Failed to fetch votes')
+        }
+    }
+)
+
 const voteSlice = createSlice({
     name: 'vote',
     initialState,
@@ -67,10 +98,26 @@ const voteSlice = createSlice({
                 state.status = 'failed'
                 state.error = action.payload as string
             })
+            .addCase(fetchVotesByUserId.pending, (state) =>
+            {
+                state.status = 'loading'
+                state.error = null
+            })
+            .addCase(fetchVotesByUserId.fulfilled, (state, action: PayloadAction<Vote[]>) =>
+            {
+                state.status = 'idle'
+                state.votes = action.payload
+            })
+            .addCase(fetchVotesByUserId.rejected, (state, action) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload as string
+            })
     },
 })
 
 export const selectVoteStatus = (state: RootState) => state.vote.status
 export const selectVoteError = (state: RootState) => state.vote.error
+export const selectVotesByUserId = (state: RootState) => state.vote.votes
 
 export default voteSlice.reducer

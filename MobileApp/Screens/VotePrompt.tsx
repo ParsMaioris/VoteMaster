@@ -1,10 +1,12 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {selectUserId, selectUserName} from '../Redux/UserSlice'
-import {submitVote} from '../Redux/VoteSlice'
+import {submitVote, fetchVotesByUserId, selectVotesByUserId} from '../Redux/VoteSlice'
 import {AppDispatch, RootState} from '../Redux/Store'
 import {selectReferendumById} from '../Redux/ReferendumSlice'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {RootStackParamList} from '../Infra/Navigation'
 
 interface VotePromptProps
 {
@@ -17,7 +19,20 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
     const userId = useSelector(selectUserId)
     const userName = useSelector(selectUserName)
     const referendum = useSelector((state: RootState) => selectReferendumById(state, referendumId))
+    const votes = useSelector(selectVotesByUserId)
     const referendumTitle = referendum?.title as string
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+
+    useEffect(() =>
+    {
+        if (userId)
+        {
+            dispatch(fetchVotesByUserId(userId))
+        }
+    }, [])
+
+
+    const hasVoted = votes.some(vote => vote.referendumId === referendumId)
 
     const handleVote = (voteChoice: boolean) =>
     {
@@ -25,6 +40,17 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
         {
             dispatch(submitVote({userId, userName, referendumId, referendumTitle, voteChoice}))
         }
+
+        navigation.goBack()
+    }
+
+    if (hasVoted)
+    {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.message}>You have already voted for this referendum.</Text>
+            </View>
+        )
     }
 
     return (
@@ -70,6 +96,12 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontSize: 16,
         fontWeight: '500',
+        textAlign: 'center',
+    },
+    message: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: 'green',
         textAlign: 'center',
     },
 })
