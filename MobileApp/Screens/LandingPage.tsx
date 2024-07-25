@@ -34,19 +34,19 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
             <Text style={styles.contextText}>Prototype for a Better Democracy</Text>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={handleProfile}>
-                    <Ionicons name="person-circle-outline" size={24} color="#007BFF" />
+                    <Ionicons name="person-circle-outline" size={24} color="#fff" />
                     <Text style={styles.buttonText}>Profile</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={handleViewReferendums}>
-                    <Ionicons name="document-text-outline" size={24} color="#007BFF" />
+                    <Ionicons name="document-text-outline" size={24} color="#fff" />
                     <Text style={styles.buttonText}>View Referendums</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={handleProposeReferendum}>
-                    <Ionicons name="create-outline" size={24} color="#007BFF" />
+                    <Ionicons name="create-outline" size={24} color="#fff" />
                     <Text style={styles.buttonText}>Propose Referendum</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={handleInviteVoter}>
-                    <Ionicons name="person-add-outline" size={24} color="#007BFF" />
+                    <Ionicons name="person-add-outline" size={24} color="#fff" />
                     <Text style={styles.buttonText}>Invite Voter</Text>
                 </TouchableOpacity>
             </View>
@@ -61,16 +61,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#F5F5F7',
     },
     logo: {
-        width: 120,
-        height: 120,
-        borderRadius: 20,
-        marginBottom: 20,
+        width: 150,
+        height: 150,
+        marginBottom: 30,
     },
     headerText: {
-        fontSize: 32,
+        fontSize: 36,
         fontWeight: '700',
         color: '#333333',
         textAlign: 'center',
@@ -81,36 +80,39 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         color: '#666666',
         textAlign: 'center',
-        marginBottom: 30,
+        marginBottom: 40,
     },
     buttonContainer: {
         width: '100%',
-        paddingHorizontal: 20,
+        alignItems: 'center',
     },
     button: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f0f0f5',
+        backgroundColor: '#007BFF',
         padding: 15,
         marginVertical: 10,
-        borderRadius: 10,
+        borderRadius: 30,
+        width: '90%',
         shadowColor: '#000000',
-        shadowOffset: {width: 0, height: 2},
+        shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 8,
+        elevation: 5,
     },
     buttonText: {
         marginLeft: 10,
         fontSize: 18,
-        color: '#333333',
+        color: '#ffffff',
+        fontWeight: '600',
     },
     tagline: {
         fontSize: 18,
         fontWeight: '300',
         color: '#007BFF',
         textAlign: 'center',
-        marginTop: 20,
+        marginTop: 30,
     },
 })
 
