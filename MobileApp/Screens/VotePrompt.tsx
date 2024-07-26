@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react'
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
+import React, {useEffect, useState} from 'react'
+import {View, Text, TouchableOpacity, StyleSheet, ActivityIndicator} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {selectUserId, selectUserName} from '../Redux/UserSlice'
 import {submitVote, fetchVotesByUserId, selectVotesByUserId} from '../Redux/VoteSlice'
@@ -22,15 +22,15 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
     const votes = useSelector(selectVotesByUserId)
     const referendumTitle = referendum?.title as string
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+    const [loading, setLoading] = useState(true)
 
     useEffect(() =>
     {
         if (userId)
         {
-            dispatch(fetchVotesByUserId(userId))
+            dispatch(fetchVotesByUserId(userId)).then(() => setLoading(false))
         }
-    }, [])
-
+    }, [dispatch, userId])
 
     const hasVoted = votes.some(vote => vote.referendumId === referendumId)
 
@@ -42,6 +42,15 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
         }
 
         navigation.goBack()
+    }
+
+    if (loading)
+    {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#007BFF" />
+            </View>
+        )
     }
 
     if (hasVoted)

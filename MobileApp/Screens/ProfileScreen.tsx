@@ -1,16 +1,35 @@
-import React from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, ScrollView} from 'react-native'
+import React, {useEffect, useState} from 'react'
+import {View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
 import {RootState} from '../Redux/Store'
 import {clearUserName} from '../Redux/UserSlice'
+import {fetchVotesByUserId} from '../Redux/VoteSlice'
+import {getReferendumById} from '../Redux/ReferendumSlice'
 import {Ionicons} from '@expo/vector-icons'
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
     const dispatch = useDispatch()
     const userName = useSelector((state: RootState) => state.user.name)
+    const userId = useSelector((state: RootState) => state.user.id)
     const votes = useSelector((state: RootState) => state.vote.votes)
     const referendums = useSelector((state: RootState) => state.referendum.referendumMap)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() =>
+    {
+        const fetchData = async () =>
+        {
+            if (userId)
+            {
+                await dispatch(fetchVotesByUserId(userId))
+                const votePromises = votes.map(vote => dispatch(getReferendumById(vote.referendumId)))
+                await Promise.all(votePromises)
+                setLoading(false)
+            }
+        }
+        fetchData()
+    }, [dispatch, userId, votes])
 
     const handleSignOut = () =>
     {
@@ -54,7 +73,13 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
             </View>
             <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Recent Activity</Text>
-                {votes.length > 0 ? renderVoteActivity() : <Text style={styles.noActivity}>No recent activity</Text>}
+                {loading ? (
+                    <ActivityIndicator size="large" color="#007BFF" />
+                ) : votes.length > 0 ? (
+                    renderVoteActivity()
+                ) : (
+                    <Text style={styles.noActivity}>No recent activity</Text>
+                )}
             </View>
             <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
                 <Ionicons name="log-out-outline" size={20} color="#fff" />

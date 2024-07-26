@@ -43,36 +43,6 @@ const initialState: ReferendumState = {
     error: null,
 }
 
-export const fetchReferendums = createAsyncThunk(
-    'referendum/fetchReferendums',
-    async (_, {rejectWithValue}) =>
-    {
-        try
-        {
-            const response = await axios.get(`${apiUrl}/Referendum`)
-            if (response.status === 200)
-            {
-                return response.data
-            } else
-            {
-                return rejectWithValue(response.statusText)
-            }
-        } catch (error: any)
-        {
-            if (axios.isAxiosError(error) && error.response)
-            {
-                return rejectWithValue(error.response.data.detail || 'Failed to fetch referendums')
-            } else if (axios.isAxiosError(error) && error.request)
-            {
-                return rejectWithValue('No response from server')
-            } else
-            {
-                return rejectWithValue('Failed to fetch referendums')
-            }
-        }
-    }
-)
-
 export const getReferendumById = createAsyncThunk(
     'referendum/getReferendumById',
     async (id: string, {rejectWithValue}) =>
@@ -110,20 +80,9 @@ const referendumSlice = createSlice({
     extraReducers: (builder) =>
     {
         builder
-            .addCase(fetchReferendums.pending, (state) =>
+            .addCase(getReferendumById.pending, (state) =>
             {
                 state.status = 'loading'
-                state.error = null
-            })
-            .addCase(fetchReferendums.fulfilled, (state, action: PayloadAction<Referendum[]>) =>
-            {
-                state.referendums = action.payload
-                state.status = 'idle'
-            })
-            .addCase(fetchReferendums.rejected, (state, action) =>
-            {
-                state.status = 'failed'
-                state.error = action.payload as string
             })
             .addCase(getReferendumById.fulfilled, (state, action: PayloadAction<Referendum>) =>
             {
