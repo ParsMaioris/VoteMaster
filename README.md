@@ -2,7 +2,7 @@
 
 ## Overview
 
-VoteMaster is a prototype that evaluates alternative designs for a direct democracy application, specifically referendum management. It is not the final application. Initially, it will use SQL as a backend for testing. The final application will use different strategies and technologies, including interaction with a blockchain backend. Instead of using tools like Figma, we are using C# and JavaScript for greater flexibility. Ultimately, this is just a prototype.
+This project is a proof-of-concept prototype for a referendum application developed using React Native Expo. The primary objective is to explore the capabilities, performance, and development experience of React Native Expo. Unlike a pre-existing full-scale application, this prototype does not incorporate blockchain technology and relies on SQL for the backend. This exploration aims to provide insights into how React Native Expo can be utilized effectively in the development process and to understand its strengths and limitations for future projects.
 
 ## Features
 
@@ -17,7 +17,7 @@ VoteMaster is a prototype that evaluates alternative designs for a direct democr
 
 - .NET SDK 8.0
 - SQL Server
-- React Native
+- React Native Expo
 
 ## License
 
