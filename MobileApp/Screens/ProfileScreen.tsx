@@ -9,6 +9,8 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
     const dispatch = useDispatch()
     const userName = useSelector((state: RootState) => state.user.name)
+    const votes = useSelector((state: RootState) => state.vote.votes)
+    const referendums = useSelector((state: RootState) => state.referendum.referendumMap)
 
     const handleSignOut = () =>
     {
@@ -16,6 +18,21 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
         navigation.reset({
             index: 0,
             routes: [{name: 'SignIn'}],
+        })
+    }
+
+    const renderVoteActivity = () =>
+    {
+        return votes.map((vote) =>
+        {
+            const referendum = referendums[vote.referendumId]
+            return (
+                <View key={vote.id} style={styles.activityItemContainer}>
+                    <Text style={styles.activityItem}>
+                        Voted on {referendum ? referendum.title : 'Unknown Referendum'}
+                    </Text>
+                </View>
+            )
         })
     }
 
@@ -34,13 +51,10 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                     <Text style={styles.label}>Name:</Text>
                     <Text style={styles.info}>{userName}</Text>
                 </View>
-                {/* Additional user information can go here */}
             </View>
             <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Recent Activity</Text>
-                <Text style={styles.activityItem}>Voted on Infrastructure Referendum</Text>
-                <Text style={styles.activityItem}>Created a new referendum</Text>
-                {/* Additional recent activities can go here */}
+                {votes.length > 0 ? renderVoteActivity() : <Text style={styles.noActivity}>No recent activity</Text>}
             </View>
             <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
                 <Ionicons name="log-out-outline" size={20} color="#fff" />
@@ -115,10 +129,18 @@ const styles = StyleSheet.create({
         color: '#333',
         fontWeight: '500',
     },
+    activityItemContainer: {
+        marginBottom: 5,
+    },
     activityItem: {
         fontSize: 16,
         color: '#555',
-        marginBottom: 5,
+    },
+    noActivity: {
+        fontSize: 16,
+        color: '#555',
+        textAlign: 'center',
+        marginTop: 10,
     },
     signOutButton: {
         flexDirection: 'row',
