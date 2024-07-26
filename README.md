@@ -2,7 +2,7 @@
 
 ## Overview
 
-VoteMaster is a project designed to review skills related to C#, SQL, and TypeScript. The goal is to create a comprehensive voting application that includes user management, referendum management, eligibility management, and voting. 
+VoteMaster is a prototype that evaluates alternative designs for a direct democracy application, specifically referendum management. It is not the final application. Initially, it will use SQL as a backend for testing. The final application will use different strategies and technologies, including interaction with a blockchain backend. Instead of using tools like Figma, we are using C# and JavaScript for greater flexibility. Ultimately, this is just a prototype.
 
 ## Features
 
