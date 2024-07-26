@@ -23,6 +23,8 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
     const referendumTitle = referendum?.title as string
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
     const [loading, setLoading] = useState(true)
+    const [submitting, setSubmitting] = useState(false)
+    const [message, setMessage] = useState<string | null>(null)
 
     useEffect(() =>
     {
@@ -38,17 +40,32 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
     {
         if (userId)
         {
+            setSubmitting(true)
             dispatch(submitVote({userId, userName, referendumId, referendumTitle, voteChoice}))
+                .unwrap()
+                .then(() =>
+                {
+                    setMessage('Your vote has been successfully submitted.')
+                    setTimeout(() =>
+                    {
+                        setSubmitting(false)
+                        navigation.goBack()
+                    }, 2000)
+                })
+                .catch(() =>
+                {
+                    setMessage('There was an error submitting your vote. Please try again.')
+                    setSubmitting(false)
+                })
         }
-
-        navigation.goBack()
     }
 
-    if (loading)
+    if (loading || submitting)
     {
         return (
             <View style={styles.container}>
                 <ActivityIndicator size="large" color="#007BFF" />
+                {message && <Text style={styles.message}>{message}</Text>}
             </View>
         )
     }
@@ -112,6 +129,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: 'green',
         textAlign: 'center',
+        marginTop: 20,
     },
 })
 
