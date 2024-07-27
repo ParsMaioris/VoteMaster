@@ -18,4 +18,12 @@ public class UserQueryService
             return _userService.GetUserById(userId);
         });
     }
+
+    internal Task<IEnumerable<User>> GetAllUsers()
+    {
+        return Task.Run(() =>
+        {
+            return _userService.GetAllUsers();
+        });
+    }
 }

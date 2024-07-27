@@ -12,7 +12,7 @@ interface Owner
     name: string
     status: 'idle' | 'loading' | 'failed'
     error: string | null
-    ownedReferendums: string[]
+    ownedReferendumIds: string[]
     ownsReferendumResult: boolean | null
 }
 
@@ -21,7 +21,7 @@ const initialState: Owner = {
     name: '',
     status: 'idle',
     error: null,
-    ownedReferendums: [],
+    ownedReferendumIds: [],
     ownsReferendumResult: null,
 }
 
@@ -95,7 +95,7 @@ const ownerSlice = createSlice({
             state.name = ''
             state.status = 'idle'
             state.error = null
-            state.ownedReferendums = []
+            state.ownedReferendumIds = []
             state.ownsReferendumResult = null
             AsyncStorage.removeItem('owner')
         },
@@ -156,12 +156,12 @@ const ownerSlice = createSlice({
             {
                 state.status = 'loading'
                 state.error = null
-                state.ownedReferendums = []
+                state.ownedReferendumIds = []
             })
             .addCase(getOwnedReferendums.fulfilled, (state, action) =>
             {
                 state.status = 'idle'
-                state.ownedReferendums = action.payload
+                state.ownedReferendumIds = action.payload
             })
             .addCase(getOwnedReferendums.rejected, (state, action) =>
             {
@@ -175,7 +175,7 @@ export const {clearOwnerState, setOwner} = ownerSlice.actions
 
 export const selectOwnerId = (state: RootState) => state.owner.id
 export const selectOwnerName = (state: RootState) => state.owner.name
-export const selectOwnedReferendums = (state: RootState) => state.owner.ownedReferendums
+export const selectOwnedReferendumIds = (state: RootState) => state.owner.ownedReferendumIds
 export const selectOwnsReferendumResult = (state: RootState) => state.owner.ownsReferendumResult
 export const selectOwnerStatus = (state: RootState) => state.owner.status
 export const selectOwnerError = (state: RootState) => state.owner.error

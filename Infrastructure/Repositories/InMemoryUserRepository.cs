@@ -15,4 +15,9 @@ public class InMemoryUserRepository : IUserRepository
     {
         return _users.SingleOrDefault(u => u.Id == userId);
     }
+
+    public IEnumerable<User> GetAllUsers()
+    {
+        return _users;
+    }
 }

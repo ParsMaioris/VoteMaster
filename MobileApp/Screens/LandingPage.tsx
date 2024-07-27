@@ -23,8 +23,7 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 
     const handleInviteVoter = () =>
     {
-        // Navigate to invite voter screen
-        // navigation.navigate('InviteVoter');
+        navigation.navigate('InviteVoter')
     }
 
     return (

@@ -18,4 +18,9 @@ public class UserService : IUserService
     {
         return _userRepository.GetUserById(userId);
     }
+
+    public IEnumerable<User> GetAllUsers()
+    {
+        return _userRepository.GetAllUsers();
+    }
 }

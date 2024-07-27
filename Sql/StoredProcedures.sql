@@ -134,3 +134,12 @@ BEGIN
     FROM ReferendumOwners
     WHERE UserId = @UserId
 END
+GO
+
+CREATE OR ALTER PROCEDURE GetAllUsers
+AS
+BEGIN
+    SELECT Id, Name
+    FROM Users
+END
+GO

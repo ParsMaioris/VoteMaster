@@ -9,6 +9,9 @@ import ProfileScreen from '../Screens/ProfileScreen'
 import ReferendumPrompt from '../Screens/ReferendumPrompt'
 import {ActivityIndicator, View} from 'react-native'
 import useInitialRoute from './useInitialRoute'
+import VotersScreen from '../Screens/VotersScreen'
+import VoterDetailScreen from '../Screens/VoterDetailScreen'
+import InviteVoterScreen from '../Screens/InviteVoterScreen'
 
 export type RootStackParamList = {
     SignIn: undefined
@@ -17,11 +20,15 @@ export type RootStackParamList = {
     ReferendumDetail: {referendumId: string},
     Profile: undefined,
     ReferendumPrompt: {referendumId: string}
+    InviteVoter: undefined,
+    VoterList: undefined
+    VoterDetail: {id: string, name: string}
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export type LandingPageProps = NativeStackScreenProps<RootStackParamList, 'LandingPage'>
+export type VoterDetailRouteProp = NativeStackScreenProps<RootStackParamList, 'VoterDetail'>
 
 const Navigation: React.FC = () =>
 {
@@ -45,6 +52,9 @@ const Navigation: React.FC = () =>
                 <Stack.Screen name="ReferendumDetail" component={ReferendumDetailScreen} options={{title: ''}} />
                 <Stack.Screen name="Profile" component={ProfileScreen} options={{title: ''}} />
                 <Stack.Screen name="ReferendumPrompt" component={ReferendumPrompt} options={{title: ''}} />
+                <Stack.Screen name="VoterList" component={VotersScreen} options={{title: ''}} />
+                <Stack.Screen name="VoterDetail" component={VoterDetailScreen} options={{title: ''}} />
+                <Stack.Screen name="InviteVoter" component={InviteVoterScreen} options={{title: ''}} />
             </Stack.Navigator>
         </NavigationContainer>
     )

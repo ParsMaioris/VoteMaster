@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
-import {RootState} from '../Redux/Store'
+import {AppDispatch, RootState} from '../Redux/Store'
 import {clearUserName} from '../Redux/UserSlice'
 import {fetchVotesByUserId} from '../Redux/VoteSlice'
 import {getReferendumById} from '../Redux/ReferendumSlice'
@@ -9,7 +9,7 @@ import {Ionicons} from '@expo/vector-icons'
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
     const userName = useSelector((state: RootState) => state.user.name)
     const userId = useSelector((state: RootState) => state.user.id)
     const votes = useSelector((state: RootState) => state.vote.votes)

@@ -66,5 +66,24 @@ namespace VoteMaster.Api
                 return ExceptionHandlerUtility.HandleException(ex, _logger);
             }
         }
+
+        [HttpGet()]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await _queryService.GetAllUsers();
+                return Ok(new ApiResponse<IEnumerable<User>>
+                {
+                    Success = true,
+                    Message = "Users retrieved successfully.",
+                    Data = users
+                });
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHandlerUtility.HandleException(ex, _logger);
+            }
+        }
     }
 }

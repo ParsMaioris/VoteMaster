@@ -1,0 +1,114 @@
+import React, {useEffect} from 'react'
+import {View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
+import {useDispatch, useSelector} from 'react-redux'
+import {AppDispatch, RootState} from '../Redux/Store'
+import {fetchUsers} from '../Redux/UserSlice'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {RootStackParamList} from '../Infra/Navigation'
+import {Ionicons} from '@expo/vector-icons'
+
+const VotersScreen: React.FC = () =>
+{
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const dispatch = useDispatch<AppDispatch>()
+  const {users, status, error} = useSelector((state: RootState) => state.user)
+  const voters = users as {id: string; name: string}[]
+
+  useEffect(() =>
+  {
+    dispatch(fetchUsers())
+  }, [dispatch])
+
+  const onSelectUser = (user: any) =>
+  {
+    navigation.navigate('VoterDetail', {id: user.id, name: user.name})
+  }
+
+  if (status === 'loading')
+  {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    )
+  }
+
+  if (error)
+  {
+    return <Text style={styles.errorText}>{error}</Text>
+  }
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={voters}
+        keyExtractor={(item) => item.id}
+        renderItem={({item}) => (
+          <TouchableOpacity style={styles.userContainer} onPress={() => onSelectUser(item)}>
+            <View style={styles.userInfo}>
+              <Ionicons name="person-circle-outline" size={40} color="#007AFF" />
+              <Text style={styles.userText}>{item.name}</Text>
+            </View>
+            <Ionicons name="arrow-forward-circle-outline" size={24} color="#007AFF" />
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#F9F9F9',
+  },
+  headerText: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#1D1D1F',
+    marginBottom: 20,
+  },
+  userContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 15,
+    marginBottom: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userText: {
+    fontSize: 18,
+    color: '#1D1D1F',
+    marginLeft: 10,
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 20,
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 18,
+    color: '#1D1D1F',
+  },
+})
+
+export default VotersScreen

@@ -8,13 +8,15 @@ const apiUrl = Constants.expoConfig?.extra?.apiUrl
 
 interface UserState
 {
-    id: string
+    users: any[],
+    id: string,
     name: string
     status: 'idle' | 'loading' | 'failed'
     error: string | null
 }
 
 const initialState: UserState = {
+    users: [],
     id: '',
     name: '',
     status: 'idle',
@@ -64,6 +66,36 @@ export const fetchUserName = createAsyncThunk(
     }
 )
 
+export const fetchUsers = createAsyncThunk(
+    'user/fetchUsers',
+    async (_, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await axios.get(`${apiUrl}/user`)
+            return response.data.data
+        } catch (error: any)
+        {
+            return rejectWithValue(error.response?.data || error.message)
+        }
+    }
+)
+
+export const inviteUserToReferendum = createAsyncThunk(
+    'user/inviteUserToReferendum',
+    async ({userId, referendumId}: {userId: string; referendumId: string}, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await axios.post(`${apiUrl}/Owner/inviteUser`, {userId, referendumId})
+            return response.data
+        } catch (error: any)
+        {
+            return rejectWithValue(error.response?.data || error.message)
+        }
+    }
+)
+
 const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -95,6 +127,34 @@ const userSlice = createSlice({
                 state.status = 'idle'
             })
             .addCase(fetchUserName.rejected, (state, action) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload as string
+            }).addCase(fetchUsers.pending, (state) =>
+            {
+                state.status = 'loading'
+                state.error = null
+            })
+            .addCase(fetchUsers.fulfilled, (state, action) =>
+            {
+                state.status = 'idle'
+                state.users = action.payload
+            })
+            .addCase(fetchUsers.rejected, (state, action) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload as string
+            })
+            .addCase(inviteUserToReferendum.pending, (state) =>
+            {
+                state.status = 'loading'
+                state.error = null
+            })
+            .addCase(inviteUserToReferendum.fulfilled, (state) =>
+            {
+                state.status = 'idle'
+            })
+            .addCase(inviteUserToReferendum.rejected, (state, action) =>
             {
                 state.status = 'failed'
                 state.error = action.payload as string

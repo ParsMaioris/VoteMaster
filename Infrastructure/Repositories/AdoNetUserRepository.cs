@@ -59,4 +59,31 @@ public class AdoNetUserRepository : IUserRepository
         }
         return null;
     }
+
+    public IEnumerable<User> GetAllUsers()
+    {
+        var users = new List<User>();
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            var command = new SqlCommand("GetAllUsers", connection)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            connection.Open();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    users.Add(new User(
+                        reader.GetGuid(reader.GetOrdinal("Id")),
+                        reader.GetString(reader.GetOrdinal("Name")),
+                        _eligibilityService,
+                        _voteService
+                    ));
+                }
+            }
+        }
+        return users;
+    }
 }
