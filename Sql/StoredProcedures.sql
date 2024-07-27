@@ -104,3 +104,33 @@ BEGIN
     FROM Votes
     WHERE UserId = @UserId;
 END
+GO
+
+CREATE OR ALTER PROCEDURE AddReferendumToOwner
+    @OwnerId UNIQUEIDENTIFIER,
+    @ReferendumId UNIQUEIDENTIFIER
+AS
+BEGIN
+    INSERT INTO ReferendumOwners (UserId, ReferendumId)
+    VALUES (@OwnerId, @ReferendumId)
+END
+GO
+
+CREATE OR ALTER PROCEDURE RemoveReferendumFromOwner
+    @OwnerId UNIQUEIDENTIFIER,
+    @ReferendumId UNIQUEIDENTIFIER
+AS
+BEGIN
+    DELETE FROM ReferendumOwners
+    WHERE UserId = @OwnerId AND ReferendumId = @ReferendumId
+END
+GO
+
+CREATE OR ALTER PROCEDURE GetReferendumsOwnedByUser
+    @UserId UNIQUEIDENTIFIER
+AS
+BEGIN
+    SELECT ReferendumId
+    FROM ReferendumOwners
+    WHERE UserId = @UserId
+END

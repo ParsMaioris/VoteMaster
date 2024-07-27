@@ -24,6 +24,8 @@ builder.Services.AddScoped<IEligibilityService, EligibilityService>();
 builder.Services.AddScoped<IReferendumService, ReferendumService>();
 builder.Services.AddScoped<EligibilityCommandService>();
 builder.Services.AddScoped<EligibilityQueryService>();
+builder.Services.AddScoped<IReferendumOwnerService, ReferendumOwnerService>();
+builder.Services.AddScoped<IReferendumOwnerRepository, AdoNetReferendumOwnerRepository>();
 
 // Register application services
 builder.Services.AddScoped<UserCommandService>();

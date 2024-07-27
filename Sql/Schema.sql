@@ -24,3 +24,11 @@ CREATE TABLE Eligibilities (
     FOREIGN KEY (UserId) REFERENCES Users(Id),
     FOREIGN KEY (ReferendumId) REFERENCES Referendums(Id)
 );
+
+CREATE TABLE ReferendumOwners (
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    ReferendumId UNIQUEIDENTIFIER NOT NULL,
+    PRIMARY KEY (UserId, ReferendumId),
+    FOREIGN KEY (UserId) REFERENCES Users(Id),
+    FOREIGN KEY (ReferendumId) REFERENCES Referendums(Id)
+);
