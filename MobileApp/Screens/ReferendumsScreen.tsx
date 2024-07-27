@@ -1,7 +1,11 @@
 import React from 'react'
 import {View, Text, Image, TouchableOpacity, StyleSheet, FlatList} from 'react-native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
+import {useSelector} from 'react-redux'
+import {RootState} from '../Redux/Store'
 import {RootStackParamList} from '../Infra/Navigation'
+import useEligibility from '../Hooks/useEligibility'
+import {selectUserId} from '../Redux/UserSlice'
 
 interface Referendum
 {
@@ -40,21 +44,12 @@ const referendums: Referendum[] = [
 
 const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 {
-    const renderItem = ({item}: {item: Referendum}) => (
-        <View style={styles.card}>
-            <Image source={{uri: item.image}} style={styles.image} />
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.description}>{item.description}</Text>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.voteButton} onPress={() => handleVote(item.id)}>
-                    <Text style={styles.buttonText}>Vote Now</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.learnButton} onPress={() => handleLearnMore(item.id)}>
-                    <Text style={styles.buttonText}>Learn More</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    )
+    const userId = useSelector(selectUserId)
+    const {
+        isUserEligibleForReferendum,
+        addUserRequestForReferendum,
+        isReferendumPendingForUser,
+    } = useEligibility()
 
     const handleVote = (id: string) =>
     {
@@ -66,9 +61,49 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
         navigation.navigate('ReferendumDetail', {referendumId: id})
     }
 
+    const handleRequestVote = (id: string) =>
+    {
+        addUserRequestForReferendum(userId, id)
+    }
+
+    const eligibleReferendums = referendums.filter(item => isUserEligibleForReferendum(userId, item.id))
+    const otherReferendums = referendums.filter(item => !isUserEligibleForReferendum(userId, item.id))
+
+    const renderItem = ({item}: {item: Referendum}) =>
+    {
+        const isEligibleToVote = isUserEligibleForReferendum(userId, item.id)
+        const isPendingApproval = isReferendumPendingForUser(userId, item.id)
+
+        return (
+            <View style={styles.card}>
+                <Image source={{uri: item.image}} style={styles.image} />
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.description}>{item.description}</Text>
+                <View style={styles.buttonContainer}>
+                    {isEligibleToVote ? (
+                        <TouchableOpacity style={styles.voteButton} onPress={() => handleVote(item.id)}>
+                            <Text style={styles.buttonText}>Vote Now</Text>
+                        </TouchableOpacity>
+                    ) : isPendingApproval ? (
+                        <TouchableOpacity style={styles.pendingButton} disabled>
+                            <Text style={styles.buttonText}>Pending</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity style={styles.requestButton} onPress={() => handleRequestVote(item.id)}>
+                            <Text style={styles.buttonText}>Request to Vote</Text>
+                        </TouchableOpacity>
+                    )}
+                    <TouchableOpacity style={styles.learnButton} onPress={() => handleLearnMore(item.id)}>
+                        <Text style={styles.buttonText}>Learn More</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
+
     return (
         <FlatList
-            data={referendums}
+            data={[...eligibleReferendums, ...otherReferendums]}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.container}
@@ -122,6 +157,32 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginRight: 5,
         shadowColor: '#007AFF',
+        shadowOpacity: 0.3,
+        shadowOffset: {width: 0, height: 2},
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    requestButton: {
+        flex: 1,
+        backgroundColor: '#FF9500',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        marginRight: 5,
+        shadowColor: '#FF9500',
+        shadowOpacity: 0.3,
+        shadowOffset: {width: 0, height: 2},
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    pendingButton: {
+        flex: 1,
+        backgroundColor: '#FFA500',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        marginRight: 5,
+        shadowColor: '#FFA500',
         shadowOpacity: 0.3,
         shadowOffset: {width: 0, height: 2},
         shadowRadius: 4,
