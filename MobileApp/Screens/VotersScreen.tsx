@@ -30,9 +30,16 @@ const VotersScreen: React.FC = () =>
 
   const filteredVoters = voters
     .sort((a, b) => a.name.localeCompare(b.name))
-    .filter((voter) =>
-      voter.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    .filter((voter) => voter.name.toLowerCase().includes(searchQuery.toLowerCase()))
+
+  const colors = [
+    '#007AFF', '#34C759', '#FF9500', '#AF52DE', '#FF3B30',
+    '#5856D6', '#FFCC00', '#FF2D55', '#5AC8FA', '#4CD964',
+    '#FF3B30', '#FF9500', '#FFCC00', '#34C759', '#007AFF',
+    '#5856D6', '#AF52DE', '#FF2D55', '#5AC8FA', '#4CD964'
+  ]
+
+  const getColor = (index: number) => colors[index % colors.length]
 
   if (status === 'loading')
   {
@@ -56,10 +63,10 @@ const VotersScreen: React.FC = () =>
       <FlatList
         data={filteredVoters}
         keyExtractor={(item) => item.id}
-        renderItem={({item}) => (
+        renderItem={({item, index}) => (
           <TouchableOpacity style={styles.userContainer} onPress={() => onSelectUser(item)}>
             <View style={styles.userInfo}>
-              <Ionicons name="person-circle-outline" size={40} color="#007AFF" />
+              <Ionicons name="person-circle-outline" size={40} color={getColor(index)} />
               <Text style={styles.userText}>{item.name}</Text>
             </View>
             <Ionicons name="arrow-forward-circle-outline" size={24} color="#007AFF" />
