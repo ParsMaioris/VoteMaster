@@ -1,33 +1,77 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {AppDispatch, RootState} from '../Redux/Store'
 import {getOwnedReferendums} from '../Redux/OwnerSlice'
-import {inviteUserToReferendum} from '../Redux/UserSlice'
 import {VoterDetailRouteProp} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
+import {addEligibility, checkEligibility, selectEligibility, selectEligibilityError, selectEligibilityStatus} from '../Redux/EligibilitySlice'
 
 const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 {
     const {id, name} = route.params
     const voter = {id, name}
     const dispatch = useDispatch<AppDispatch>()
-    const {ownedReferendumIds, status, error} = useSelector((state: RootState) => state.owner)
-    const allReferendums = useSelector((state: RootState) => state.referendum.referendumMap)
-    const ownedReferendums = ownedReferendumIds.map(id => allReferendums[id])
     const ownerId = useSelector((state: RootState) => state.user.id)
+    const allReferendums = useSelector((state: RootState) => state.referendum.referendumMap)
+
+    const [invitedReferendums, setInvitedReferendums] = useState<string[]>([])
+    const [successMessage, setSuccessMessage] = useState<string | null>(null)
+    const [eligibilityMap, setEligibilityMap] = useState<{[key: string]: boolean}>({})
+    const eligibilityStatus = useSelector((state: RootState) => state.eligibility.status)
+    const eligibilityError = useSelector((state: RootState) => state.eligibility.error)
+    const ownedReferendumIds = useSelector((state: RootState) => state.owner.ownedReferendumIds)
+
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() =>
     {
-        dispatch(getOwnedReferendums(ownerId))
-    }, [dispatch, ownerId])
+        dispatch(getOwnedReferendums(ownerId)).then((action: any) =>
+        {
+            if (action.payload)
+            {
+                const eligibilityPromises = action.payload.map((referendumId: string) =>
+                {
+                    const referendum = allReferendums[referendumId]
+                    return dispatch(checkEligibility({
+                        userId: voter.id,
+                        userName: voter.name,
+                        referendumId: referendumId,
+                        referendumTitle: referendum.title
+                    }))
+                })
+                Promise.all(eligibilityPromises).then((results) =>
+                {
+                    results.forEach((eligibilityAction: any, index) =>
+                    {
+                        if (eligibilityAction.payload)
+                        {
+                            setEligibilityMap(prevState => ({
+                                ...prevState,
+                                [`${voter.id}-${action.payload[index]}`]: eligibilityAction.payload.isEligible
+                            }))
+                        }
+                    })
+                    setIsLoading(false)
+                })
+            }
+        })
+    }, [dispatch, ownerId, voter.id, allReferendums])
 
     const handleInvite = (referendumId: string) =>
     {
-        dispatch(inviteUserToReferendum({userId: voter.id, referendumId}))
+        dispatch(addEligibility({
+            userId: voter.id,
+            userName: voter.name,
+            referendumId: referendumId,
+            referendumTitle: allReferendums[referendumId].title
+        }))
+        setInvitedReferendums([...invitedReferendums, referendumId])
+        setSuccessMessage(`${voter.name} has been successfully invited to ${allReferendums[referendumId].title}`)
+        setTimeout(() => setSuccessMessage(null), 3000)
     }
 
-    if (status === 'loading')
+    if (isLoading || eligibilityStatus === 'loading')
     {
         return (
             <View style={styles.loadingContainer}>
@@ -37,26 +81,48 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
         )
     }
 
-    if (error)
+    if (eligibilityError)
     {
-        return <Text style={styles.errorText}>{error}</Text>
+        return <Text style={styles.errorText}>{eligibilityError}</Text>
     }
+
+    const ownedReferendums = ownedReferendumIds.map(id => allReferendums[id])
 
     return (
         <View style={styles.container}>
             <Text style={styles.headerText}>Add {voter.name} to a Referendum</Text>
+            {successMessage && (
+                <View style={styles.successContainer}>
+                    <Text style={styles.successText}>{successMessage}</Text>
+                </View>
+            )}
             <FlatList
                 data={ownedReferendums}
                 keyExtractor={(item) => item.id}
-                renderItem={({item}) => (
-                    <TouchableOpacity style={styles.referendumContainer} onPress={() => handleInvite(item.id)}>
-                        <View style={styles.referendumInfo}>
-                            <Ionicons name="document-text-outline" size={24} color="#007AFF" />
-                            <Text style={styles.referendumText}>{item.title}</Text>
-                        </View>
-                        <Ionicons name="add-circle-outline" size={24} color="#007AFF" />
-                    </TouchableOpacity>
-                )}
+                renderItem={({item}) =>
+                {
+                    const isEligible = eligibilityMap[`${voter.id}-${item.id}`]
+                    return (
+                        <TouchableOpacity
+                            style={[
+                                styles.referendumContainer,
+                                (invitedReferendums.includes(item.id) || isEligible) && styles.invitedContainer
+                            ]}
+                            onPress={() => handleInvite(item.id)}
+                            disabled={invitedReferendums.includes(item.id) || isEligible}
+                        >
+                            <View style={styles.referendumInfo}>
+                                <Ionicons name="document-text-outline" size={24} color="#007AFF" />
+                                <Text style={styles.referendumText}>{item.title}</Text>
+                            </View>
+                            <Ionicons
+                                name={(invitedReferendums.includes(item.id) || isEligible) ? "checkmark-circle-outline" : "add-circle-outline"}
+                                size={24}
+                                color={(invitedReferendums.includes(item.id) || isEligible) ? "#4CAF50" : "#007AFF"}
+                            />
+                        </TouchableOpacity>
+                    )
+                }}
             />
         </View>
     )
@@ -89,6 +155,9 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 5,
     },
+    invitedContainer: {
+        backgroundColor: '#E0F7FA',
+    },
     referendumInfo: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -97,6 +166,17 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#1D1D1F',
         marginLeft: 10,
+    },
+    successContainer: {
+        backgroundColor: '#DFF2BF',
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 15,
+    },
+    successText: {
+        fontSize: 16,
+        color: '#4CAF50',
+        textAlign: 'center',
     },
     errorText: {
         color: 'red',
