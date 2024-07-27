@@ -21,14 +21,16 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 
     useEffect(() =>
     {
-        referendums.forEach(referendum =>
+        referendums.forEach((referendum) =>
         {
-            dispatch(checkEligibility({
-                userId: userId,
-                userName: 'currentUserName',
-                referendumId: referendum.id,
-                referendumTitle: referendum.title
-            }))
+            dispatch(
+                checkEligibility({
+                    userId: userId,
+                    userName: 'currentUserName',
+                    referendumId: referendum.id,
+                    referendumTitle: referendum.title,
+                })
+            )
         })
     }, [dispatch])
 
@@ -93,36 +95,36 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 
 const styles = StyleSheet.create({
     container: {
-        padding: 15,
-        backgroundColor: '#F0F2F5',
+        padding: 20,
+        backgroundColor: '#F5F5F7',
     },
     card: {
-        backgroundColor: '#F8F9FA',
-        borderRadius: 12,
+        backgroundColor: '##F5F5F7',
+        borderRadius: 14,
         padding: 20,
         marginBottom: 20,
         shadowColor: '#000',
         shadowOpacity: 0.1,
-        shadowOffset: {width: 0, height: 2},
-        shadowRadius: 6,
+        shadowOffset: {width: 0, height: 1},
+        shadowRadius: 4,
         elevation: 3,
     },
     image: {
         width: '100%',
-        height: 200,
-        borderRadius: 12,
+        height: 180,
+        borderRadius: 14,
         marginBottom: 15,
     },
     title: {
-        fontSize: 22,
-        fontWeight: '700',
-        color: '#1C1C1E',
-        marginBottom: 10,
+        fontSize: 24,
+        fontWeight: '600',
+        color: '#333333',
+        marginBottom: 8,
     },
     description: {
         fontSize: 16,
         fontWeight: '400',
-        color: '#3A3A3C',
+        color: '#666666',
         marginBottom: 20,
     },
     buttonContainer: {
@@ -132,9 +134,8 @@ const styles = StyleSheet.create({
     voteButton: {
         flex: 1,
         backgroundColor: '#007AFF',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 8,
+        paddingVertical: 14,
+        borderRadius: 10,
         marginRight: 5,
         shadowColor: '#007AFF',
         shadowOpacity: 0.3,
@@ -145,9 +146,8 @@ const styles = StyleSheet.create({
     requestButton: {
         flex: 1,
         backgroundColor: '#FF9500',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 8,
+        paddingVertical: 14,
+        borderRadius: 10,
         marginRight: 5,
         shadowColor: '#FF9500',
         shadowOpacity: 0.3,
@@ -157,12 +157,11 @@ const styles = StyleSheet.create({
     },
     learnButton: {
         flex: 1,
-        backgroundColor: '#8DB600',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 8,
+        backgroundColor: '#34C759',
+        paddingVertical: 14,
+        borderRadius: 10,
         marginLeft: 5,
-        shadowColor: '#8DB600',
+        shadowColor: '#34C759',
         shadowOpacity: 0.3,
         shadowOffset: {width: 0, height: 2},
         shadowRadius: 4,
