@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {AppDispatch, RootState} from '../Redux/Store'
@@ -6,13 +6,17 @@ import {fetchUsers} from '../Redux/UserSlice'
 import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {RootStackParamList} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
+import SearchBar from '../Components/SearchBar'
 
 const VotersScreen: React.FC = () =>
 {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useDispatch<AppDispatch>()
   const {users, status, error} = useSelector((state: RootState) => state.user)
-  const voters = users as {id: string; name: string}[]
+  const userId = useSelector((state: RootState) => state.user.id)
+  const voters = users.filter((user) => user.id !== userId) as {id: string; name: string}[]
+
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() =>
   {
@@ -23,6 +27,10 @@ const VotersScreen: React.FC = () =>
   {
     navigation.navigate('VoterDetail', {id: user.id, name: user.name})
   }
+
+  const filteredVoters = voters.filter((voter) =>
+    voter.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   if (status === 'loading')
   {
@@ -41,8 +49,9 @@ const VotersScreen: React.FC = () =>
 
   return (
     <View style={styles.container}>
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <FlatList
-        data={voters}
+        data={filteredVoters}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => (
           <TouchableOpacity style={styles.userContainer} onPress={() => onSelectUser(item)}>

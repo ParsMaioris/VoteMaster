@@ -7,7 +7,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {RootStackParamList} from '../Infra/Navigation'
 import VotersScreen from './VotersScreen'
 
-const InviteVoterScreen: React.FC = () =>
+const InviteParticipantScreen: React.FC = () =>
 {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
     const dispatch = useDispatch<AppDispatch>()
@@ -45,7 +45,7 @@ const InviteVoterScreen: React.FC = () =>
             <View style={styles.container}>
                 <View style={styles.messageContainer}>
                     <Text style={styles.messageText}>No Referendums Created</Text>
-                    <Text style={styles.subMessageText}>Create a referendum to invite voters.</Text>
+                    <Text style={styles.subMessageText}>Create a referendum to invite participants.</Text>
                 </View>
                 <TouchableOpacity style={styles.button} onPress={handleCreateReferendum}>
                     <Text style={styles.buttonText}>Create Referendum</Text>
@@ -56,7 +56,7 @@ const InviteVoterScreen: React.FC = () =>
 
     return (
         <View style={styles.container}>
-            <Text style={styles.headerText}>Invite Voters</Text>
+            <Text style={styles.headerText}>Invite Participants</Text>
             <VotersScreen />
         </View>
     )
@@ -116,9 +116,9 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#1D1D1F',
         marginTop: 20,
-        marginBottom: 10,
+        marginBottom: 3,
         textAlign: 'center',
     },
 })
 
-export default InviteVoterScreen
+export default InviteParticipantScreen
