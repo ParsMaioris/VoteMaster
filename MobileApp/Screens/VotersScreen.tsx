@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
+import {View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, Image} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {AppDispatch, RootState} from '../Redux/Store'
 import {fetchUsers} from '../Redux/UserSlice'
 import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {RootStackParamList} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
+import * as Animatable from 'react-native-animatable'
 import SearchBar from '../Components/SearchBar'
 
 const VotersScreen: React.FC = () =>
@@ -14,7 +15,7 @@ const VotersScreen: React.FC = () =>
   const dispatch = useDispatch<AppDispatch>()
   const {users, status, error} = useSelector((state: RootState) => state.user)
   const userId = useSelector((state: RootState) => state.user.id)
-  const voters = users.filter((user) => user.id !== userId) as {id: string; name: string}[]
+  const voters = users.filter((user) => user.id !== userId) as {id: string; name: string; avatar?: string}[]
 
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -64,13 +65,19 @@ const VotersScreen: React.FC = () =>
         data={filteredVoters}
         keyExtractor={(item) => item.id}
         renderItem={({item, index}) => (
-          <TouchableOpacity style={styles.userContainer} onPress={() => onSelectUser(item)}>
-            <View style={styles.userInfo}>
-              <Ionicons name="person-circle-outline" size={40} color={getColor(index)} />
-              <Text style={styles.userText}>{item.name}</Text>
-            </View>
-            <Ionicons name="arrow-forward-circle-outline" size={24} color="#007AFF" />
-          </TouchableOpacity>
+          <Animatable.View animation="fadeInUp" duration={800} delay={index * 100}>
+            <TouchableOpacity style={styles.userContainer} onPress={() => onSelectUser(item)}>
+              <View style={styles.userInfo}>
+                {item.avatar ? (
+                  <Image source={{uri: item.avatar}} style={styles.avatar} />
+                ) : (
+                  <Ionicons name="person-circle-outline" size={40} color={getColor(index)} />
+                )}
+                <Text style={styles.userText}>{item.name}</Text>
+              </View>
+              <Ionicons name="arrow-forward-circle-outline" size={24} color="#007AFF" />
+            </TouchableOpacity>
+          </Animatable.View>
         )}
       />
     </View>
@@ -107,6 +114,11 @@ const styles = StyleSheet.create({
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   userText: {
     fontSize: 18,
