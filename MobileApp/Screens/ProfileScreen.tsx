@@ -6,6 +6,7 @@ import {clearUserName} from '../Redux/UserSlice'
 import {fetchVotesByUserId} from '../Redux/VoteSlice'
 import {getReferendumById} from '../Redux/ReferendumSlice'
 import {Ionicons} from '@expo/vector-icons'
+import useReferendumHelper from '../Hooks/useReferendumHelper'
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
@@ -15,6 +16,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     const votes = useSelector((state: RootState) => state.vote.votes)
     const referendums = useSelector((state: RootState) => state.referendum.referendumMap)
     const [loading, setLoading] = useState(true)
+    const ownedReferendums = useReferendumHelper()
 
     useEffect(() =>
     {
@@ -55,6 +57,17 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
         })
     }
 
+    const renderUserReferendums = () =>
+    {
+        return ownedReferendums.map(ref => (
+            <View key={ref.id} style={styles.referendumItemContainer}>
+                <Text style={styles.referendumItem}>
+                    {ref.title}
+                </Text>
+            </View>
+        ))
+    }
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
@@ -70,6 +83,16 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                     <Text style={styles.label}>Name:</Text>
                     <Text style={styles.info}>{userName}</Text>
                 </View>
+            </View>
+            <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>User Referendums</Text>
+                {loading ? (
+                    <ActivityIndicator size="large" color="#007BFF" />
+                ) : renderUserReferendums().length > 0 ? (
+                    renderUserReferendums()
+                ) : (
+                    <Text style={styles.noActivity}>No referendums found</Text>
+                )}
             </View>
             <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Recent Activity</Text>
@@ -158,6 +181,13 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     activityItem: {
+        fontSize: 16,
+        color: '#555',
+    },
+    referendumItemContainer: {
+        marginBottom: 5,
+    },
+    referendumItem: {
         fontSize: 16,
         color: '#555',
     },
