@@ -44,7 +44,7 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 
     return (
         <View style={styles.container}>
-            <Text style={styles.headerText}>Invite {voter.name} to a Referendum</Text>
+            <Text style={styles.headerText}>Add {voter.name} to a Referendum</Text>
             <FlatList
                 data={ownedReferendums}
                 keyExtractor={(item) => item.id}

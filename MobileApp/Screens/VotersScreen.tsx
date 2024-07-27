@@ -28,9 +28,11 @@ const VotersScreen: React.FC = () =>
     navigation.navigate('VoterDetail', {id: user.id, name: user.name})
   }
 
-  const filteredVoters = voters.filter((voter) =>
-    voter.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredVoters = voters
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter((voter) =>
+      voter.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
 
   if (status === 'loading')
   {
