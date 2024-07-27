@@ -49,6 +49,7 @@ const VotersScreen: React.FC = () =>
 
   return (
     <View style={styles.container}>
+      <Text style={styles.headerText}>Add Participants</Text>
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <FlatList
         data={filteredVoters}
@@ -78,6 +79,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1D1D1F',
     marginBottom: 20,
+    textAlign: 'center',
   },
   userContainer: {
     flexDirection: 'row',

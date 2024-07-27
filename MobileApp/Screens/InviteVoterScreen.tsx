@@ -45,7 +45,7 @@ const InviteParticipantScreen: React.FC = () =>
             <View style={styles.container}>
                 <View style={styles.messageContainer}>
                     <Text style={styles.messageText}>No Referendums Created</Text>
-                    <Text style={styles.subMessageText}>Create a referendum to invite participants.</Text>
+                    <Text style={styles.subMessageText}>Create a referendum to add participants.</Text>
                 </View>
                 <TouchableOpacity style={styles.button} onPress={handleCreateReferendum}>
                     <Text style={styles.buttonText}>Create Referendum</Text>
@@ -55,10 +55,7 @@ const InviteParticipantScreen: React.FC = () =>
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.headerText}>Invite Participants</Text>
-            <VotersScreen />
-        </View>
+        <VotersScreen />
     )
 }
 
