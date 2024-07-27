@@ -34,6 +34,7 @@ builder.Services.AddScoped<ReferendumCommandService>();
 builder.Services.AddScoped<ReferendumQueryService>();
 builder.Services.AddScoped<VoteCommandService>();
 builder.Services.AddScoped<VoteQueryService>();
+builder.Services.AddScoped<OwnerService>();
 
 var app = builder.Build();
 

@@ -1,7 +1,5 @@
-// TODO: Temporary implementation for testing purposes
-// No application service injection, just testing functionality
 using Microsoft.AspNetCore.Mvc;
-using VoteMaster.Domain;
+using VoteMaster.Application;
 
 namespace VoteMaster.Api;
 
@@ -9,47 +7,38 @@ namespace VoteMaster.Api;
 [Route("api/[controller]")]
 public class OwnerController : ControllerBase
 {
-    private readonly IReferendumOwnerService _referendumOwnerService;
-    private readonly IEligibilityService _eligibilityService;
-    private readonly IVoteService _voteService;
+    private readonly OwnerService _ownerService;
 
-    public OwnerController(IReferendumOwnerService referendumOwnerService, IEligibilityService eligibilityService,
-        IVoteService voteService)
+    public OwnerController(OwnerService ownerService)
     {
-        _referendumOwnerService = referendumOwnerService;
-        _eligibilityService = eligibilityService;
-        _voteService = voteService;
+        _ownerService = ownerService;
     }
 
     [HttpPost("{id}/addReferendum")]
-    public IActionResult AddOwenerReferendum(Guid id, [FromBody] AddOwnerReferendumRequest request)
+    public async Task<IActionResult> AddOwnerReferendum(Guid id, [FromBody] AddOwnerReferendumRequest request)
     {
-        var owner = new Owner(id, "Owner Name", _eligibilityService, _voteService, _referendumOwnerService);
-        owner.AddReferendum(request.Id);
+        await _ownerService.AddReferendumAsync(id, request.Id);
         return Ok();
     }
 
     [HttpPost("{id}/removeReferendum")]
-    public IActionResult RemoveReferendum(Guid id, [FromBody] AddOwnerReferendumRequest request)
+    public async Task<IActionResult> RemoveReferendum(Guid id, [FromBody] AddOwnerReferendumRequest request)
     {
-        var owner = new Owner(id, "Owner Name", _eligibilityService, _voteService, _referendumOwnerService);
-        owner.RemoveReferendum(request.Id);
+        await _ownerService.RemoveReferendumAsync(id, request.Id);
         return Ok();
     }
 
     [HttpPost("{id}/ownsReferendum")]
-    public IActionResult OwnsReferendum(Guid id, [FromBody] AddOwnerReferendumRequest request)
+    public async Task<IActionResult> OwnsReferendum(Guid id, [FromBody] AddOwnerReferendumRequest request)
     {
-        var owner = new Owner(id, "Owner Name", _eligibilityService, _voteService, _referendumOwnerService);
-        var owns = owner.OwnsReferendum(request.Id);
+        var owns = await _ownerService.OwnsReferendumAsync(id, request.Id);
         return Ok(owns);
     }
 
     [HttpGet("{id}/getOwnedReferendums")]
-    public IActionResult GetOwnedReferendums(Guid id)
+    public async Task<IActionResult> GetOwnedReferendums(Guid id)
     {
-        var owner = new Owner(id, "Owner Name", _eligibilityService, _voteService, _referendumOwnerService);
-        var ownedReferendums = owner.GetOwnedReferendums();
+        var ownedReferendums = await _ownerService.GetOwnedReferendumsAsync(id);
         return Ok(ownedReferendums);
     }
 }
