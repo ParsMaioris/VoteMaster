@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useCallback} from 'react'
 import {View, TouchableOpacity, Text, StyleSheet, ActivityIndicator} from 'react-native'
 import {Ionicons} from '@expo/vector-icons'
-import {useNavigation, NavigationProp, useRoute, useFocusEffect} from '@react-navigation/native'
+import {useNavigation, useRoute, useFocusEffect} from '@react-navigation/native'
 import {LinearGradient} from 'expo-linear-gradient'
 import {RootStackParamList} from '../Infra/Navigation'
 
@@ -11,51 +11,52 @@ interface BottomNavigationProps
     selectedItem?: keyof RootStackParamList
 }
 
-const BottomNavigation: React.FC<BottomNavigationProps> = ({backgroundColor = '#F5F5F7', selectedItem = 'LandingPage'}) =>
+const BottomNavigation: React.FC<BottomNavigationProps> = ({
+    backgroundColor = '#F5F5F7',
+    selectedItem = 'LandingPage',
+}) =>
 {
     const [selected, setSelected] = useState<keyof RootStackParamList>(selectedItem)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+    const [isLoading, setIsLoading] = useState<keyof RootStackParamList | null>(null)
+    const navigation = useNavigation()
     const route = useRoute()
 
     useFocusEffect(
-        React.useCallback(() =>
+        useCallback(() =>
         {
             setSelected(route.name as keyof RootStackParamList)
-            setIsLoading(false)
+            setIsLoading(null)
         }, [route])
     )
 
     const handlePress = (name: keyof RootStackParamList) =>
     {
-        setSelected(name)
-        setIsLoading(true)
-        navigation.navigate(name)
+        if (name !== selected)
+        {
+            setSelected(name)
+            setIsLoading(name)
+            navigation.navigate(name)
+        }
     }
+
+    const navItems = [
+        {name: 'Home', icon: 'home-outline', routeName: 'LandingPage'},
+        {name: 'Referendums', icon: 'list-circle-outline', routeName: 'Referendums'},
+        {name: 'Profile', icon: 'person-circle-outline', routeName: 'Profile'},
+    ]
 
     return (
         <LinearGradient colors={['#007BFF', '#006FDD']} style={styles.container}>
-            <NavItem
-                name="Home"
-                icon="home-outline"
-                isSelected={selected === 'LandingPage'}
-                isLoading={isLoading && selected === 'LandingPage'}
-                onPress={() => handlePress('LandingPage')}
-            />
-            <NavItem
-                name="Referendums"
-                icon="list-circle-outline"
-                isSelected={selected === 'Referendums'}
-                isLoading={isLoading && selected === 'Referendums'}
-                onPress={() => handlePress('Referendums')}
-            />
-            <NavItem
-                name="Profile"
-                icon="person-circle-outline"
-                isSelected={selected === 'Profile'}
-                isLoading={isLoading && selected === 'Profile'}
-                onPress={() => handlePress('Profile')}
-            />
+            {navItems.map((item) => (
+                <NavItem
+                    key={item.routeName}
+                    name={item.name}
+                    icon={item.icon}
+                    isSelected={selected === item.routeName}
+                    isLoading={isLoading === item.routeName}
+                    onPress={() => handlePress(item.routeName)}
+                />
+            ))}
         </LinearGradient>
     )
 }
@@ -75,7 +76,7 @@ const NavItem: React.FC<NavItemProps> = ({name, icon, isSelected, isLoading, onP
             <ActivityIndicator size="small" color="#FFFFFF" />
         ) : (
             <>
-                <Ionicons name={icon} size={28} color="#FFFFFF" style={isSelected && styles.selectedIcon} />
+                <Ionicons name={icon} size={28} color={isSelected ? '#00FFFF' : '#FFFFFF'} style={isSelected && styles.selectedIcon} />
                 <Text style={[styles.label, isSelected && styles.selectedLabel]}>{name}</Text>
             </>
         )}
@@ -111,11 +112,11 @@ const styles = StyleSheet.create({
     },
     selectedLabel: {
         fontWeight: 'bold',
-        color: '#FFD700',
+        color: '#00FFFF',
     },
     selectedIcon: {
         fontWeight: 'bold',
-        color: '#FFD700',
+        color: '#00FFFF',
     },
 })
 
