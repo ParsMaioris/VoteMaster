@@ -46,7 +46,7 @@ const Navigation: React.FC = () =>
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRouteName}>
-                <Stack.Screen name="SignIn" component={SignInScreen} />
+                <Stack.Screen name="SignIn" component={SignInScreen} options={{title: '', headerShown: false}} />
                 <Stack.Screen name="LandingPage" component={LandingPage} options={{title: 'Home', headerShown: false}} />
                 <Stack.Screen name="Referendums" component={ReferendumsScreen} options={{title: 'Referendums', headerShown: false}} />
                 <Stack.Screen name="ReferendumDetail" component={ReferendumDetailScreen} options={{title: ''}} />

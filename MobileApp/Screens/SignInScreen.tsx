@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
-import {View, TextInput, Text, StyleSheet, Image, Linking, TouchableOpacity, ActivityIndicator} from 'react-native'
+import {View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {useAppDispatch, useAppSelector} from '../Redux/Hooks'
-import {fetchUserName, selectUserName} from '../Redux/UserSlice'
+import {fetchUserName} from '../Redux/UserSlice'
+import {LinearGradient} from 'expo-linear-gradient'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -61,7 +62,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
     }
 
     return (
-        <View style={styles.container}>
+        <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
             <Logo />
             <Title />
             <UserIdInput value={userId} onChange={setUserId} />
@@ -69,7 +70,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
             {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" />}
             {errorMessage && <ErrorMessage message={errorMessage} />}
             <Footer />
-        </View>
+        </LinearGradient>
     )
 }
 
@@ -130,7 +131,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
-        backgroundColor: '#F5F5F7',
     },
     logo: {
         width: 150,

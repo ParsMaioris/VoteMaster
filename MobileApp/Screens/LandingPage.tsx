@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: 20,
     },
     bottomNavigationWrapper: {
         paddingBottom: 20,
@@ -61,32 +62,33 @@ const styles = StyleSheet.create({
     logo: {
         width: 150,
         height: 150,
-        marginBottom: 30,
+        marginBottom: 25,
     },
     headerText: {
         fontSize: 36,
         fontWeight: '700',
         color: '#333333',
         textAlign: 'center',
-        marginBottom: 10,
+        marginBottom: 8,
     },
     contextText: {
         fontSize: 20,
         fontWeight: '400',
         color: '#666666',
         textAlign: 'center',
-        marginBottom: 40,
+        marginBottom: 30,
     },
     buttonContainer: {
         width: '100%',
         alignItems: 'center',
+        marginBottom: 20,
     },
     button: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 15,
-        marginVertical: 10,
+        marginVertical: 12,
         borderRadius: 30,
         width: '90%',
         shadowColor: '#000000',
@@ -94,12 +96,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 5,
-    },
-    profileButton: {
-        backgroundColor: '#007BFF',
-    },
-    referendumsButton: {
-        backgroundColor: '#007BFF',
     },
     proposeButton: {
         backgroundColor: '#007BFF',
@@ -118,7 +114,8 @@ const styles = StyleSheet.create({
         fontWeight: '300',
         color: '#0056b3',
         textAlign: 'center',
-        marginTop: 30,
+        position: 'absolute',
+        bottom: '15%', // This will place the tagline in the middle between the button and bottom navigation
     },
 })
 
