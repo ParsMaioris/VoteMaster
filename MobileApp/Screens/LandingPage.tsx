@@ -36,7 +36,9 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
                 </View>
                 <Text style={styles.tagline}>Designing the Future of Governance</Text>
             </View>
-            <BottomNavigation backgroundColor="#FFFAFA" />
+            <View style={styles.bottomNavigationWrapper}>
+                <BottomNavigation />
+            </View>
         </LinearGradient>
     )
 }
@@ -44,12 +46,17 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        justifyContent: 'space-between',
     },
     content: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    bottomNavigationWrapper: {
+        paddingBottom: 20,
+        paddingLeft: 10,
+        paddingRight: 10,
     },
     logo: {
         width: 150,

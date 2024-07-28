@@ -115,7 +115,9 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                     </ScrollView>
                 </Animatable.View>
             )}
-            <BottomNavigation selectedItem="Profile" />
+            <View style={styles.bottomNavigationWrapper}>
+                <BottomNavigation />
+            </View>
         </LinearGradient>
     )
 }
@@ -124,6 +126,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 50,
+    },
+    bottomNavigationWrapper: {
+        paddingBottom: 20,
+        paddingLeft: 10,
+        paddingRight: 10,
     },
     contentContainer: {
         flex: 1,

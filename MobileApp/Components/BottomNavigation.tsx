@@ -34,7 +34,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({backgroundColor = '#
     }
 
     return (
-        <LinearGradient colors={['#E0E0E0', '#F5F5F7']} style={styles.container}>
+        <LinearGradient colors={['#007BFF', '#006FDD']} style={styles.container}>
             <NavItem
                 name="Home"
                 icon="home-outline"
@@ -72,10 +72,10 @@ interface NavItemProps
 const NavItem: React.FC<NavItemProps> = ({name, icon, isSelected, isLoading, onPress}) => (
     <TouchableOpacity style={styles.iconContainer} onPress={onPress} disabled={isLoading}>
         {isLoading ? (
-            <ActivityIndicator size="small" color="#007AFF" />
+            <ActivityIndicator size="small" color="#FFFFFF" />
         ) : (
             <>
-                <Ionicons name={icon} size={28} color={isSelected ? "#0A84FF" : "#8E8E93"} />
+                <Ionicons name={icon} size={28} color="#FFFFFF" style={isSelected && styles.selectedIcon} />
                 <Text style={[styles.label, isSelected && styles.selectedLabel]}>{name}</Text>
             </>
         )}
@@ -87,15 +87,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         height: 70,
-        borderTopWidth: 0.5,
+        borderTopWidth: 1,
         borderTopColor: '#ccc',
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 5,
-        borderRadius: 15,
+        shadowOffset: {width: 0, height: 5},
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 10,
+        borderRadius: 20,
         margin: 10,
+        backgroundColor: '#007BFF',
     },
     iconContainer: {
         alignItems: 'center',
@@ -104,13 +105,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
     },
     label: {
-        color: '#8E8E93',
+        color: '#FFFFFF',
         fontSize: 12,
         marginTop: 4,
     },
     selectedLabel: {
-        color: '#0A84FF',
         fontWeight: 'bold',
+        color: '#FFD700',
+    },
+    selectedIcon: {
+        fontWeight: 'bold',
+        color: '#FFD700',
     },
 })
 

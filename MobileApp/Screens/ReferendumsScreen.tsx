@@ -155,7 +155,9 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                     </View>
                 </Modal>
             )}
-            <BottomNavigation selectedItem="Referendums" />
+            <View style={styles.bottomNavigationWrapper}>
+                <BottomNavigation />
+            </View>
         </LinearGradient>
     )
 }
@@ -164,6 +166,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 50,
+    },
+    bottomNavigationWrapper: {
+        paddingBottom: 20,
+        paddingLeft: 10,
+        paddingRight: 10,
     },
     contentContainer: {
         flex: 1,
