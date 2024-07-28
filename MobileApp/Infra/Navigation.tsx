@@ -15,7 +15,7 @@ import InviteVoterScreen from '../Screens/InviteVoterScreen'
 
 export type RootStackParamList = {
     SignIn: undefined
-    LandingPage: {userId: string; userName: string}
+    LandingPage: undefined
     Referendums: undefined
     ReferendumDetail: {referendumId: string},
     Profile: undefined,
@@ -48,9 +48,9 @@ const Navigation: React.FC = () =>
             <Stack.Navigator initialRouteName={initialRouteName}>
                 <Stack.Screen name="SignIn" component={SignInScreen} />
                 <Stack.Screen name="LandingPage" component={LandingPage} options={{title: 'Home', headerShown: false}} />
-                <Stack.Screen name="Referendums" component={ReferendumsScreen} />
+                <Stack.Screen name="Referendums" component={ReferendumsScreen} options={{title: 'Referendums', headerShown: false}} />
                 <Stack.Screen name="ReferendumDetail" component={ReferendumDetailScreen} options={{title: ''}} />
-                <Stack.Screen name="Profile" component={ProfileScreen} options={{title: ''}} />
+                <Stack.Screen name="Profile" component={ProfileScreen} options={{title: 'Profile', headerShown: false}} />
                 <Stack.Screen name="ReferendumPrompt" component={ReferendumPrompt} options={{title: ''}} />
                 <Stack.Screen name="VoterList" component={VotersScreen} options={{title: ''}} />
                 <Stack.Screen name="VoterDetail" component={VoterDetailScreen} options={{title: ''}} />

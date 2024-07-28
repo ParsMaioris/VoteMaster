@@ -9,6 +9,7 @@ import {Ionicons} from '@expo/vector-icons'
 import useReferendumHelper from '../Hooks/useReferendumHelper'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
+import BottomNavigation from '../Components/BottomNavigation' // Adjust the import path as needed
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
@@ -80,9 +81,6 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
             ) : (
                 <Animatable.View animation="fadeInDown" duration={1000} style={styles.contentContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                        <View style={styles.header}>
-                            <Text style={styles.headerText}>Profile</Text>
-                        </View>
                         <View style={styles.profileContainer}>
                             <Ionicons name="person-circle-outline" size={100} color="#007BFF" style={styles.profileIcon} />
                             <Text style={styles.userName}>{userName}</Text>
@@ -117,6 +115,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                     </ScrollView>
                 </Animatable.View>
             )}
+            <BottomNavigation selectedItem="Profile" />
         </LinearGradient>
     )
 }
@@ -124,6 +123,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: 50,
     },
     contentContainer: {
         flex: 1,
@@ -145,11 +145,11 @@ const styles = StyleSheet.create({
     },
     header: {
         backgroundColor: '#007BFF',
-        padding: 20, // Reduced padding
+        padding: 20,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
         alignItems: 'center',
-        marginBottom: 15, // Reduced margin
+        marginBottom: 15,
     },
     headerText: {
         fontSize: 26,
@@ -159,10 +159,10 @@ const styles = StyleSheet.create({
     },
     profileContainer: {
         alignItems: 'center',
-        marginVertical: 20, // Reduced margin
+        marginVertical: 20,
     },
     profileIcon: {
-        marginBottom: 5, // Reduced margin
+        marginBottom: 5,
     },
     userName: {
         fontSize: 22,
@@ -171,9 +171,9 @@ const styles = StyleSheet.create({
     },
     sectionContainer: {
         backgroundColor: '#ffffff',
-        padding: 15, // Reduced padding
+        padding: 15,
         marginHorizontal: 20,
-        marginBottom: 15, // Reduced margin
+        marginBottom: 15,
         borderRadius: 10,
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 2},
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#DC3545',
-        padding: 12, // Reduced padding
+        padding: 12,
         borderRadius: 10,
         marginHorizontal: 20,
         marginBottom: 20,

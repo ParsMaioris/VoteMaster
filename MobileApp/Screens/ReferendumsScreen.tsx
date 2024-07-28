@@ -9,6 +9,7 @@ import {Referendum} from '../DTOs/Referendums'
 import {referendums} from '../Mocks/MockReferendums'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
+import BottomNavigation from '../Components/BottomNavigation'
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Referendums'>
@@ -121,6 +122,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                     />
                 </Animatable.View>
             )}
+            <BottomNavigation selectedItem="Referendums" />
         </LinearGradient>
     )
 }
@@ -128,6 +130,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: 50,
     },
     contentContainer: {
         flex: 1,

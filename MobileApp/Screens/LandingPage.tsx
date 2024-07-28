@@ -3,19 +3,10 @@ import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native'
 import {LandingPageProps} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
 import {LinearGradient} from 'expo-linear-gradient'
+import BottomNavigation from '../Components/BottomNavigation'
 
 const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
-    const handleViewReferendums = () =>
-    {
-        navigation.navigate('Referendums')
-    }
-
-    const handleProfile = () =>
-    {
-        navigation.navigate('Profile')
-    }
-
     const handleProposeReferendum = () =>
     {
         // Navigate to propose referendum screen
@@ -29,38 +20,36 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 
     return (
         <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
-            < Image source={require('../assets/logo.png')} style={styles.logo} />
-            <Text style={styles.headerText}>VoteMaster</Text>
-            <Text style={styles.contextText}>Prototype for a Better Democracy</Text>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button, styles.profileButton]} onPress={handleProfile}>
-                    <Ionicons name="person-circle-outline" size={24} color="#fff" />
-                    <Text style={styles.buttonText}>Profile</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.referendumsButton]} onPress={handleViewReferendums}>
-                    <Ionicons name="document-text-outline" size={24} color="#fff" />
-                    <Text style={styles.buttonText}>View Referendums</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.proposeButton]} onPress={handleProposeReferendum}>
-                    <Ionicons name="create-outline" size={24} color="#fff" />
-                    <Text style={styles.buttonText}>Propose Referendum</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.inviteButton]} onPress={handleInviteVoter}>
-                    <Ionicons name="person-add-outline" size={24} color="#fff" />
-                    <Text style={styles.buttonText}>Invite Voter</Text>
-                </TouchableOpacity>
+            <View style={styles.content}>
+                <Image source={require('../assets/logo.png')} style={styles.logo} />
+                <Text style={styles.headerText}>VoteMaster</Text>
+                <Text style={styles.contextText}>Prototype for a Better Democracy</Text>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={[styles.button, styles.proposeButton]} onPress={handleProposeReferendum}>
+                        <Ionicons name="create-outline" size={24} color="#fff" />
+                        <Text style={styles.buttonText}>Propose Referendum</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, styles.inviteButton]} onPress={handleInviteVoter}>
+                        <Ionicons name="person-add-outline" size={24} color="#fff" />
+                        <Text style={styles.buttonText}>Add Participant</Text>
+                    </TouchableOpacity>
+                </View>
+                <Text style={styles.tagline}>Designing the Future of Governance</Text>
             </View>
-            <Text style={styles.tagline}>Designing the Future of Governance</Text>
-        </LinearGradient >
+            <BottomNavigation backgroundColor="#FFFAFA" />
+        </LinearGradient>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        padding: 20,
+    },
+    content: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
     },
     logo: {
         width: 150,
