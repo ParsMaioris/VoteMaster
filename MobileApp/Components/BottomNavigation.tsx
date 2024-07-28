@@ -34,7 +34,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({backgroundColor = '#
     }
 
     return (
-        <LinearGradient colors={['#E8E8E8', '#F5F5F7']} style={styles.container}>
+        <LinearGradient colors={['#E0E0E0', '#F5F5F7']} style={styles.container}>
             <NavItem
                 name="Home"
                 icon="home-outline"
@@ -75,7 +75,7 @@ const NavItem: React.FC<NavItemProps> = ({name, icon, isSelected, isLoading, onP
             <ActivityIndicator size="small" color="#007AFF" />
         ) : (
             <>
-                <Ionicons name={icon} size={28} color={isSelected ? "#FF9500" : "#007AFF"} />
+                <Ionicons name={icon} size={28} color={isSelected ? "#0A84FF" : "#8E8E93"} />
                 <Text style={[styles.label, isSelected && styles.selectedLabel]}>{name}</Text>
             </>
         )}
@@ -104,12 +104,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
     },
     label: {
-        color: '#007AFF',
+        color: '#8E8E93',
         fontSize: 12,
         marginTop: 4,
     },
     selectedLabel: {
-        color: '#FF9500',
+        color: '#0A84FF',
         fontWeight: 'bold',
     },
 })
