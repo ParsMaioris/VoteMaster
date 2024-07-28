@@ -7,6 +7,8 @@ import {fetchVotesByUserId} from '../Redux/VoteSlice'
 import {getReferendumById} from '../Redux/ReferendumSlice'
 import {Ionicons} from '@expo/vector-icons'
 import useReferendumHelper from '../Hooks/useReferendumHelper'
+import {LinearGradient} from 'expo-linear-gradient'
+import * as Animatable from 'react-native-animatable'
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
@@ -48,83 +50,106 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
         {
             const referendum = referendums[vote.referendumId]
             return (
-                <View key={vote.id} style={styles.activityItemContainer}>
+                <Animatable.View animation="fadeInUp" duration={800} delay={300} key={vote.id} style={styles.activityItemContainer}>
                     <Text style={styles.activityItem}>
                         Voted on {referendum ? referendum.title : 'Unknown Referendum'}
                     </Text>
-                </View>
+                </Animatable.View>
             )
         })
     }
 
     const renderUserReferendums = () =>
     {
-        return ownedReferendums.map(ref => (
-            <View key={ref.id} style={styles.referendumItemContainer}>
+        return ownedReferendums.map((ref, index) => (
+            <Animatable.View animation="fadeInUp" duration={800} delay={index * 100 + 400} key={ref.id} style={styles.referendumItemContainer}>
                 <Text style={styles.referendumItem}>
                     {ref.title}
                 </Text>
-            </View>
+            </Animatable.View>
         ))
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerText}>Profile</Text>
-            </View>
-            <View style={styles.profileContainer}>
-                <Ionicons name="person-circle-outline" size={100} color="#007BFF" style={styles.profileIcon} />
-                <Text style={styles.userName}>{userName}</Text>
-            </View>
-            <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>User Information</Text>
-                <View style={styles.infoContainer}>
-                    <Text style={styles.label}>Name:</Text>
-                    <Text style={styles.info}>{userName}</Text>
+        <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
+            {loading ? (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#007BFF" />
+                    <Text style={styles.loadingText}>Loading...</Text>
                 </View>
-            </View>
-            <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>User Referendums</Text>
-                {loading ? (
-                    <ActivityIndicator size="large" color="#007BFF" />
-                ) : renderUserReferendums().length > 0 ? (
-                    renderUserReferendums()
-                ) : (
-                    <Text style={styles.noActivity}>No referendums found</Text>
-                )}
-            </View>
-            <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Recent Activity</Text>
-                {loading ? (
-                    <ActivityIndicator size="large" color="#007BFF" />
-                ) : votes.length > 0 ? (
-                    renderVoteActivity()
-                ) : (
-                    <Text style={styles.noActivity}>No recent activity</Text>
-                )}
-            </View>
-            <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-                <Ionicons name="log-out-outline" size={20} color="#fff" />
-                <Text style={styles.signOutButtonText}>Sign Out</Text>
-            </TouchableOpacity>
-        </ScrollView>
+            ) : (
+                <Animatable.View animation="fadeInDown" duration={1000} style={styles.contentContainer}>
+                    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+                        <View style={styles.header}>
+                            <Text style={styles.headerText}>Profile</Text>
+                        </View>
+                        <View style={styles.profileContainer}>
+                            <Ionicons name="person-circle-outline" size={100} color="#007BFF" style={styles.profileIcon} />
+                            <Text style={styles.userName}>{userName}</Text>
+                        </View>
+                        <View style={styles.sectionContainer}>
+                            <Text style={styles.sectionTitle}>User Information</Text>
+                            <View style={styles.infoContainer}>
+                                <Text style={styles.label}>Name:</Text>
+                                <Text style={styles.info}>{userName}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.sectionContainer}>
+                            <Text style={styles.sectionTitle}>User Referendums</Text>
+                            {renderUserReferendums().length > 0 ? (
+                                renderUserReferendums()
+                            ) : (
+                                <Text style={styles.noActivity}>No referendums found</Text>
+                            )}
+                        </View>
+                        <View style={styles.sectionContainer}>
+                            <Text style={styles.sectionTitle}>Recent Activity</Text>
+                            {votes.length > 0 ? (
+                                renderVoteActivity()
+                            ) : (
+                                <Text style={styles.noActivity}>No recent activity</Text>
+                            )}
+                        </View>
+                        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+                            <Ionicons name="log-out-outline" size={20} color="#fff" />
+                            <Text style={styles.signOutButtonText}>Sign Out</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
+                </Animatable.View>
+            )}
+        </LinearGradient>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        backgroundColor: '#F5F5F7',
+        flex: 1,
+    },
+    contentContainer: {
+        flex: 1,
         paddingBottom: 20,
+    },
+    scrollViewContainer: {
+        flexGrow: 1,
+        paddingBottom: 20,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 18,
+        color: '#1D1D1F',
     },
     header: {
         backgroundColor: '#007BFF',
-        padding: 30,
+        padding: 20, // Reduced padding
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 15, // Reduced margin
     },
     headerText: {
         fontSize: 26,
@@ -134,10 +159,10 @@ const styles = StyleSheet.create({
     },
     profileContainer: {
         alignItems: 'center',
-        marginVertical: 30,
+        marginVertical: 20, // Reduced margin
     },
     profileIcon: {
-        marginBottom: 10,
+        marginBottom: 5, // Reduced margin
     },
     userName: {
         fontSize: 22,
@@ -146,9 +171,9 @@ const styles = StyleSheet.create({
     },
     sectionContainer: {
         backgroundColor: '#ffffff',
-        padding: 20,
+        padding: 15, // Reduced padding
         marginHorizontal: 20,
-        marginBottom: 20,
+        marginBottom: 15, // Reduced margin
         borderRadius: 10,
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 2},
@@ -202,7 +227,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#DC3545',
-        padding: 15,
+        padding: 12, // Reduced padding
         borderRadius: 10,
         marginHorizontal: 20,
         marginBottom: 20,

@@ -6,6 +6,7 @@ import {getOwnedReferendums} from '../Redux/OwnerSlice'
 import {VoterDetailRouteProp} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
 import {addEligibility, checkEligibility, selectEligibility, selectEligibilityError, selectEligibilityStatus} from '../Redux/EligibilitySlice'
+import * as Animatable from 'react-native-animatable'
 
 const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 {
@@ -90,40 +91,44 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 
     return (
         <View style={styles.container}>
-            <Text style={styles.headerText}>Add {voter.name} to a Referendum</Text>
-            {successMessage && (
-                <View style={styles.successContainer}>
-                    <Text style={styles.successText}>{successMessage}</Text>
-                </View>
-            )}
-            <FlatList
-                data={ownedReferendums}
-                keyExtractor={(item) => item.id}
-                renderItem={({item}) =>
-                {
-                    const isEligible = eligibilityMap[`${voter.id}-${item.id}`]
-                    return (
-                        <TouchableOpacity
-                            style={[
-                                styles.referendumContainer,
-                                (invitedReferendums.includes(item.id) || isEligible) && styles.invitedContainer
-                            ]}
-                            onPress={() => handleInvite(item.id)}
-                            disabled={invitedReferendums.includes(item.id) || isEligible}
-                        >
-                            <View style={styles.referendumInfo}>
-                                <Ionicons name="document-text-outline" size={24} color="#007AFF" />
-                                <Text style={styles.referendumText}>{item.title}</Text>
-                            </View>
-                            <Ionicons
-                                name={(invitedReferendums.includes(item.id) || isEligible) ? "checkmark-circle-outline" : "add-circle-outline"}
-                                size={24}
-                                color={(invitedReferendums.includes(item.id) || isEligible) ? "#4CAF50" : "#007AFF"}
-                            />
-                        </TouchableOpacity>
-                    )
-                }}
-            />
+            <Animatable.View animation="fadeInDown" duration={1000} style={styles.contentContainer}>
+                <Text style={styles.headerText}>Add {voter.name} to a Referendum</Text>
+                {successMessage && (
+                    <Animatable.View animation="fadeIn" duration={600} style={styles.successContainer}>
+                        <Text style={styles.successText}>{successMessage}</Text>
+                    </Animatable.View>
+                )}
+                <FlatList
+                    data={ownedReferendums}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({item, index}) =>
+                    {
+                        const isEligible = eligibilityMap[`${voter.id}-${item.id}`]
+                        return (
+                            <Animatable.View animation="fadeInUp" duration={800} delay={index * 100} style={styles.referendumContainer}>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.referendumButton,
+                                        (invitedReferendums.includes(item.id) || isEligible) && styles.invitedContainer
+                                    ]}
+                                    onPress={() => handleInvite(item.id)}
+                                    disabled={invitedReferendums.includes(item.id) || isEligible}
+                                >
+                                    <View style={styles.referendumInfo}>
+                                        <Ionicons name="document-text-outline" size={24} color="#007AFF" />
+                                        <Text style={styles.referendumText}>{item.title}</Text>
+                                    </View>
+                                    <Ionicons
+                                        name={(invitedReferendums.includes(item.id) || isEligible) ? "checkmark-circle-outline" : "add-circle-outline"}
+                                        size={24}
+                                        color={(invitedReferendums.includes(item.id) || isEligible) ? "#4CAF50" : "#007AFF"}
+                                    />
+                                </TouchableOpacity>
+                            </Animatable.View>
+                        )
+                    }}
+                />
+            </Animatable.View>
         </View>
     )
 }
@@ -134,6 +139,10 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#F9F9F9',
     },
+    contentContainer: {
+        flex: 1,
+        padding: 20,
+    },
     headerText: {
         fontSize: 28,
         fontWeight: '700',
@@ -141,12 +150,25 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         textAlign: 'center',
     },
+    successContainer: {
+        backgroundColor: '#DFF2BF',
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 15,
+    },
+    successText: {
+        fontSize: 16,
+        color: '#4CAF50',
+        textAlign: 'center',
+    },
     referendumContainer: {
+        marginBottom: 15,
+    },
+    referendumButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: 20,
-        marginBottom: 15,
+        padding: 15,
         backgroundColor: '#FFFFFF',
         borderRadius: 12,
         shadowColor: '#000',
@@ -166,17 +188,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#1D1D1F',
         marginLeft: 10,
-    },
-    successContainer: {
-        backgroundColor: '#DFF2BF',
-        padding: 10,
-        borderRadius: 8,
-        marginBottom: 15,
-    },
-    successText: {
-        fontSize: 16,
-        color: '#4CAF50',
-        textAlign: 'center',
     },
     errorText: {
         color: 'red',
