@@ -24,20 +24,24 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
     const [loading, setLoading] = useState(true)
     const [modalVisible, setModalVisible] = useState(false)
     const [selectedReferendum, setSelectedReferendum] = useState<Referendum | null>(null)
+    const [isEligibleForAny, setIsEligibleForAny] = useState(false)
 
     useEffect(() =>
     {
         const fetchEligibility = async () =>
         {
+            let eligible = false
             for (const referendum of referendums)
             {
-                await dispatch(checkEligibility({
+                const result = await dispatch(checkEligibility({
                     userId: userId,
                     userName: 'currentUserName',
                     referendumId: referendum.id,
                     referendumTitle: referendum.title,
                 }))
+                if (result.payload.isEligible) eligible = true
             }
+            setIsEligibleForAny(eligible)
             setLoading(false)
         }
         fetchEligibility()
@@ -126,15 +130,21 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                     <Text style={styles.loadingText}>Loading...</Text>
                 </View>
             ) : (
-                <Animatable.View animation="fadeInDown" duration={1000} style={styles.contentContainer}>
-                    <FlatList
-                        data={referendums}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
-                        contentContainerStyle={styles.listContainer}
-                        numColumns={2}  // This sets the grid layout with 2 columns
-                    />
-                </Animatable.View>
+                isEligibleForAny ? (
+                    <Animatable.View animation="fadeInDown" duration={1000} style={styles.contentContainer}>
+                        <FlatList
+                            data={referendums}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id}
+                            contentContainerStyle={styles.listContainer}
+                            numColumns={2}
+                        />
+                    </Animatable.View>
+                ) : (
+                    <View style={styles.notEligibleContainer}>
+                        <Text style={styles.notEligibleText}>It looks like there are no referendums available for you right now. Enjoy a well-deserved break and check back soon!</Text>
+                    </View>
+                )
             )}
             {selectedReferendum && (
                 <Modal
@@ -175,7 +185,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flex: 1,
-        padding: 10,  // Reduced padding
+        padding: 10,
     },
     listContainer: {
         paddingBottom: 20,
@@ -193,9 +203,9 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: '#FFFFFF',
         borderRadius: 20,
-        padding: 10,  // Reduced padding
+        padding: 10,
         marginBottom: 20,
-        marginHorizontal: 5,  // Reduced padding
+        marginHorizontal: 5,
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowOffset: {width: 0, height: 2},
@@ -303,7 +313,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     closeButton: {
-        backgroundColor: '#FF3B30',  // Updated color for the close button
+        backgroundColor: '#FF3B30',
         paddingVertical: 12,
         paddingHorizontal: 30,
         borderRadius: 12,
@@ -313,6 +323,27 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         textAlign: 'center',
+    },
+    notEligibleContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        backgroundColor: 'rgba(237, 244, 255, 0.9)',
+        borderRadius: 10,
+        margin: 20,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    notEligibleText: {
+        fontSize: 18,
+        color: '#333',
+        textAlign: 'center',
+        paddingVertical: 20,
+        fontWeight: 'bold',
     },
 })
 

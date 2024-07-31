@@ -21,7 +21,7 @@ const InviteParticipantScreen: React.FC = () =>
 
     const handleCreateReferendum = () =>
     {
-        navigation.navigate('Referendums')
+        navigation.navigate('ProposeReferendumForm')
     }
 
     if (status === 'loading')
@@ -48,7 +48,7 @@ const InviteParticipantScreen: React.FC = () =>
                     <Text style={styles.subMessageText}>Create a referendum to add participants.</Text>
                 </View>
                 <TouchableOpacity style={styles.button} onPress={handleCreateReferendum}>
-                    <Text style={styles.buttonText}>Create Referendum</Text>
+                    <Text style={styles.buttonText}>Propose Referendum</Text>
                 </TouchableOpacity>
             </View>
         )
