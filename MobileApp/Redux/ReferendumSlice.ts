@@ -2,6 +2,7 @@ import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
 import axios from 'axios'
 import Constants from 'expo-constants'
 import {RootState} from './Store'
+import {referendums} from '../Mocks/MockReferendums'
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl
 
@@ -109,7 +110,7 @@ const referendumSlice = createSlice({
 export const selectReferendums = (state: RootState) => state.referendum.referendums
 export const selectReferendumStatus = (state: RootState) => state.referendum.status
 export const selectReferendumError = (state: RootState) => state.referendum.error
-export const selectReferendumById = (state: RootState, id: string) => state.referendum.referendumMap[id]
+export const selectReferendumById = (state: RootState, id: string) => referendums.find(referendum => referendum.id === id)
 export const resetReferendumState = referendumSlice.actions.resetReferendumState
 
 export default referendumSlice.reducer

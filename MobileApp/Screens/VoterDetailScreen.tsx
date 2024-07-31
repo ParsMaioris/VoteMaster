@@ -7,6 +7,9 @@ import {VoterDetailRouteProp} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
 import {addEligibility, checkEligibility, selectEligibility, selectEligibilityError, selectEligibilityStatus} from '../Redux/EligibilitySlice'
 import * as Animatable from 'react-native-animatable'
+import useReferendumHelper from '../Hooks/useReferendumHelper'
+import {referendums} from '../Mocks/MockReferendums'
+import {ref} from 'yup'
 
 const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 {
@@ -14,50 +17,29 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
     const voter = {id, name}
     const dispatch = useDispatch<AppDispatch>()
     const ownerId = useSelector((state: RootState) => state.user.id)
-    const allReferendums = useSelector((state: RootState) => state.referendum.referendumMap)
+    const allReferendumMap = referendums
 
     const [invitedReferendums, setInvitedReferendums] = useState<string[]>([])
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
     const [eligibilityMap, setEligibilityMap] = useState<{[key: string]: boolean}>({})
     const eligibilityStatus = useSelector((state: RootState) => state.eligibility.status)
     const eligibilityError = useSelector((state: RootState) => state.eligibility.error)
-    const ownedReferendumIds = useSelector((state: RootState) => state.owner.ownedReferendumIds)
+    const ownedReferendums = useReferendumHelper()
 
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() =>
     {
-        dispatch(getOwnedReferendums(ownerId)).then((action: any) =>
+        const fetchOwnedReferendums = async () =>
         {
-            if (action.payload)
-            {
-                const eligibilityPromises = action.payload.map((referendumId: string) =>
-                {
-                    const referendum = allReferendums[referendumId]
-                    return dispatch(checkEligibility({
-                        userId: voter.id,
-                        userName: voter.name,
-                        referendumId: referendumId,
-                        referendumTitle: referendum.title
-                    }))
-                })
-                Promise.all(eligibilityPromises).then((results) =>
-                {
-                    results.forEach((eligibilityAction: any, index) =>
-                    {
-                        if (eligibilityAction.payload)
-                        {
-                            setEligibilityMap(prevState => ({
-                                ...prevState,
-                                [`${voter.id}-${action.payload[index]}`]: eligibilityAction.payload.isEligible
-                            }))
-                        }
-                    })
-                    setIsLoading(false)
-                })
-            }
-        })
-    }, [dispatch, ownerId, voter.id, allReferendums])
+            setIsLoading(true)
+            await dispatch(getOwnedReferendums(ownerId))
+
+            setIsLoading(false)
+        }
+
+        fetchOwnedReferendums()
+    }, [dispatch, ownerId, voter.id])
 
     const handleInvite = (referendumId: string) =>
     {
@@ -65,10 +47,10 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
             userId: voter.id,
             userName: voter.name,
             referendumId: referendumId,
-            referendumTitle: allReferendums[referendumId].title
+            referendumTitle: referendums.find(referendum => referendum.id === referendumId)?.title || '',
         }))
         setInvitedReferendums([...invitedReferendums, referendumId])
-        setSuccessMessage(`${voter.name} has been successfully invited to ${allReferendums[referendumId].title}`)
+        setSuccessMessage(`${voter.name} has been successfully invited to ${referendums.find(referendum => referendum.id === referendumId)?.title}`)
         setTimeout(() => setSuccessMessage(null), 3000)
     }
 
@@ -87,7 +69,6 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
         return <Text style={styles.errorText}>{eligibilityError}</Text>
     }
 
-    const ownedReferendums = ownedReferendumIds.map(id => allReferendums[id])
 
     return (
         <View style={styles.container}>
