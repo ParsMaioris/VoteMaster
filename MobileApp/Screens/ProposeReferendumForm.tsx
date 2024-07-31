@@ -151,11 +151,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     pitchText: {
-        fontSize: 18,
-        fontWeight: '300',
-        color: '#0056b3',
+        fontSize: 20,
+        fontWeight: '400',
+        color: '#007AFF',
         textAlign: 'center',
         marginBottom: 30,
+        lineHeight: 24,
     },
     formContainer: {
         width: '100%',
@@ -165,6 +166,12 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width * 0.9,
         marginBottom: 10,
         backgroundColor: '#fff',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        borderWidth: 0,
     },
     errorInput: {
         borderColor: 'red',
