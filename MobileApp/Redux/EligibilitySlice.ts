@@ -122,7 +122,16 @@ export const checkEligibility = createAsyncThunk(
 const eligibilitySlice = createSlice({
     name: 'eligibility',
     initialState,
-    reducers: {},
+    reducers: {
+        resetEligibility: (state) =>
+        {
+            state.userReferendums = {}
+            state.eligibilityMap = {}
+            state.userRequests = {}
+            state.status = 'idle'
+            state.error = null
+        }
+    },
     extraReducers: (builder) =>
     {
         builder
@@ -171,3 +180,4 @@ export const selectUserRequests = (state: RootState, userId: string) => state.el
 export const selectEligibilityStatus = (state: RootState) => state.eligibility.status
 export const selectEligibilityError = (state: RootState) => state.eligibility.error
 export const selectEligibility = (state: RootState) => state.eligibility.eligibilityMap
+export const resetEligibility = eligibilitySlice.actions.resetEligibility

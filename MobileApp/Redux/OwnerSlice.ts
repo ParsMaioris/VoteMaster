@@ -89,7 +89,7 @@ const ownerSlice = createSlice({
     name: 'owner',
     initialState,
     reducers: {
-        clearOwnerState(state)
+        resetOwenrState(state)
         {
             state.id = ''
             state.name = ''
@@ -97,7 +97,6 @@ const ownerSlice = createSlice({
             state.error = null
             state.ownedReferendumIds = []
             state.ownsReferendumResult = null
-            AsyncStorage.removeItem('owner')
         },
         setOwner(state, action: PayloadAction<{id: string; name: string}>)
         {
@@ -171,7 +170,7 @@ const ownerSlice = createSlice({
     },
 })
 
-export const {clearOwnerState, setOwner} = ownerSlice.actions
+export const {resetOwenrState, setOwner} = ownerSlice.actions
 
 export const selectOwnerId = (state: RootState) => state.owner.id
 export const selectOwnerName = (state: RootState) => state.owner.name

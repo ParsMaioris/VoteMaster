@@ -98,7 +98,14 @@ export const fetchVotesByUserId = createAsyncThunk(
 const voteSlice = createSlice({
     name: 'vote',
     initialState,
-    reducers: {},
+    reducers: {
+        resetVoteState(state)
+        {
+            state.votes = []
+            state.status = 'idle'
+            state.error = null
+        }
+    },
     extraReducers: (builder) =>
     {
         builder
@@ -137,5 +144,6 @@ const voteSlice = createSlice({
 export const selectVoteStatus = (state: RootState) => state.vote.status
 export const selectVoteError = (state: RootState) => state.vote.error
 export const selectVotesByUserId = (state: RootState) => state.vote.votes
+export const resetVoteState = voteSlice.actions.resetVoteState
 
 export default voteSlice.reducer

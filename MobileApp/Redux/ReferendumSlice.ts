@@ -76,7 +76,15 @@ export const getReferendumById = createAsyncThunk(
 const referendumSlice = createSlice({
     name: 'referendum',
     initialState,
-    reducers: {},
+    reducers: {
+        resetReferendumState(state)
+        {
+            state.referendums = []
+            state.referendumMap = {}
+            state.status = 'idle'
+            state.error = null
+        }
+    },
     extraReducers: (builder) =>
     {
         builder
@@ -102,5 +110,6 @@ export const selectReferendums = (state: RootState) => state.referendum.referend
 export const selectReferendumStatus = (state: RootState) => state.referendum.status
 export const selectReferendumError = (state: RootState) => state.referendum.error
 export const selectReferendumById = (state: RootState, id: string) => state.referendum.referendumMap[id]
+export const resetReferendumState = referendumSlice.actions.resetReferendumState
 
 export default referendumSlice.reducer

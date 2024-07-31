@@ -2,14 +2,16 @@ import React, {useEffect, useState} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
 import {AppDispatch, RootState} from '../Redux/Store'
-import {clearUserName} from '../Redux/UserSlice'
-import {fetchVotesByUserId} from '../Redux/VoteSlice'
-import {getReferendumById} from '../Redux/ReferendumSlice'
+import {resetUserState} from '../Redux/UserSlice'
+import {fetchVotesByUserId, resetVoteState} from '../Redux/VoteSlice'
+import {getReferendumById, resetReferendumState} from '../Redux/ReferendumSlice'
 import {Ionicons} from '@expo/vector-icons'
 import useReferendumHelper from '../Hooks/useReferendumHelper'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation' // Adjust the import path as needed
+import {resetEligibility} from '../Redux/EligibilitySlice'
+import {resetOwenrState} from '../Redux/OwnerSlice'
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
@@ -34,11 +36,16 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
             }
         }
         fetchData()
-    }, [dispatch, userId, votes])
+    }, [])
 
     const handleSignOut = () =>
     {
-        dispatch(clearUserName())
+        dispatch(resetUserState())
+        dispatch(resetEligibility())
+        dispatch(resetOwenrState())
+        dispatch(resetReferendumState())
+        dispatch(resetVoteState())
+
         navigation.reset({
             index: 0,
             routes: [{name: 'SignIn'}],

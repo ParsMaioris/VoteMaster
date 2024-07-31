@@ -100,11 +100,12 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        clearUserName(state)
+        resetUserState(state)
         {
-            state.name = ''
             state.id = ''
-            AsyncStorage.removeItem('user')
+            state.name = ''
+            state.status = 'idle'
+            state.error = null
         },
         setUser(state, action: PayloadAction<{id: string, name: string}>)
         {
@@ -162,7 +163,7 @@ const userSlice = createSlice({
     },
 })
 
-export const {clearUserName, setUser} = userSlice.actions
+export const {resetUserState, setUser} = userSlice.actions
 
 export const selectUserName = (state: RootState) => state.user.name
 export const selectUserId = (state: RootState) => state.user.id
