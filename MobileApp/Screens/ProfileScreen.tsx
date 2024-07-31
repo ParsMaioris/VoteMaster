@@ -93,19 +93,19 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                             </View>
                         </View>
                         <View style={styles.sectionContainer}>
-                            <Text style={styles.sectionTitle}>User Referendums</Text>
-                            {renderUserReferendums().length > 0 ? (
-                                renderUserReferendums()
-                            ) : (
-                                <Text style={styles.noActivity}>No referendums found</Text>
-                            )}
-                        </View>
-                        <View style={styles.sectionContainer}>
                             <Text style={styles.sectionTitle}>Recent Activity</Text>
                             {votes.length > 0 ? (
                                 renderVoteActivity()
                             ) : (
                                 <Text style={styles.noActivity}>No recent activity</Text>
+                            )}
+                        </View>
+                        <View style={styles.sectionContainer}>
+                            <Text style={styles.sectionTitle}>User Referendums</Text>
+                            {renderUserReferendums().length > 0 ? (
+                                renderUserReferendums()
+                            ) : (
+                                <Text style={styles.noActivity}>No referendums found</Text>
                             )}
                         </View>
                         <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>

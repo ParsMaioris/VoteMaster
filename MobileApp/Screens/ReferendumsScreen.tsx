@@ -123,7 +123,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
     }
 
     return (
-        <LinearGradient colors={['#edf4ff', '#f7f9fc']} style={styles.container}>
+        <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
             {loading ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#007AFF" />
@@ -141,9 +141,9 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                         />
                     </Animatable.View>
                 ) : (
-                    <View style={styles.notEligibleContainer}>
+                    <Animatable.View animation="fadeInDown" duration={1000} style={styles.notEligibleContainer}>
                         <Text style={styles.notEligibleText}>It looks like there are no referendums available for you right now. Enjoy a well-deserved break and check back soon!</Text>
-                    </View>
+                    </Animatable.View>
                 )
             )}
             {selectedReferendum && (
@@ -329,18 +329,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 20,
-        backgroundColor: 'rgba(237, 244, 255, 0.9)',
-        borderRadius: 10,
-        margin: 20,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 5,
     },
     notEligibleText: {
-        fontSize: 18,
-        color: '#333',
+        fontSize: 21,
+        color: '#444',
         textAlign: 'center',
         paddingVertical: 20,
         fontWeight: 'bold',
