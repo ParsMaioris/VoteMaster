@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
 import {AppDispatch, RootState} from '../Redux/Store'
@@ -11,7 +11,8 @@ import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation' // Adjust the import path as needed
 import {resetEligibility} from '../Redux/EligibilitySlice'
-import {resetOwenrState} from '../Redux/OwnerSlice'
+import {getOwnedReferendums, resetOwenrState} from '../Redux/OwnerSlice'
+import {useFocusEffect} from '@react-navigation/native'
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
@@ -23,20 +24,29 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     const [loading, setLoading] = useState(true)
     const ownedReferendums = useReferendumHelper()
 
-    useEffect(() =>
-    {
-        const fetchData = async () =>
+    useFocusEffect(
+        useCallback(() =>
         {
-            if (userId)
+            const fetchData = async () =>
             {
-                await dispatch(fetchVotesByUserId(userId))
-                const votePromises = votes.map(vote => dispatch(getReferendumById(vote.referendumId)))
-                await Promise.all(votePromises)
-                setLoading(false)
+                if (userId)
+                {
+                    setLoading(true)
+                    await dispatch(fetchVotesByUserId(userId))
+                    const votes = await dispatch(fetchVotesByUserId(userId)).unwrap()
+                    const votePromises = votes.map((vote) => 
+                    {
+                        return dispatch(getReferendumById(vote.referendumId))
+                    })
+                    await Promise.all(votePromises)
+                    setLoading(false)
+                }
             }
-        }
-        fetchData()
-    }, [])
+
+            dispatch(getOwnedReferendums(userId))
+            fetchData()
+        }, [userId, dispatch])
+    )
 
     const handleSignOut = () =>
     {

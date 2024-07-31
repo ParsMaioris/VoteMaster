@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import {View, Text, Image, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, Modal, Dimensions} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
@@ -10,6 +10,7 @@ import {referendums} from '../Mocks/MockReferendums'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation'
+import {useFocusEffect} from '@react-navigation/native'
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Referendums'>
@@ -26,26 +27,28 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
     const [selectedReferendum, setSelectedReferendum] = useState<Referendum | null>(null)
     const [isEligibleForAny, setIsEligibleForAny] = useState(false)
 
-    useEffect(() =>
-    {
-        const fetchEligibility = async () =>
+    useFocusEffect(
+        useCallback(() =>
         {
-            let eligible = false
-            for (const referendum of referendums)
+            const fetchEligibility = async () =>
             {
-                const result = await dispatch(checkEligibility({
-                    userId: userId,
-                    userName: 'currentUserName',
-                    referendumId: referendum.id,
-                    referendumTitle: referendum.title,
-                }))
-                if (result.payload.isEligible) eligible = true
+                let eligible = false
+                for (const referendum of referendums)
+                {
+                    const result = await dispatch(checkEligibility({
+                        userId: userId,
+                        userName: 'currentUserName',
+                        referendumId: referendum.id,
+                        referendumTitle: referendum.title,
+                    }))
+                    if (result.payload.isEligible) eligible = true
+                }
+                setIsEligibleForAny(eligible)
+                setLoading(false)
             }
-            setIsEligibleForAny(eligible)
-            setLoading(false)
-        }
-        fetchEligibility()
-    }, [dispatch, userId])
+            fetchEligibility()
+        }, [dispatch, userId, referendums])
+    )
 
     const handleOpenModal = (referendum: Referendum) =>
     {
