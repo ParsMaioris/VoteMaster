@@ -28,29 +28,29 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
     const [selectedReferendum, setSelectedReferendum] = useState<Referendum | null>(null)
     const [isEligibleForAny, setIsEligibleForAny] = useState(false)
 
-    useFocusEffect(
-        useCallback(() =>
+
+    useEffect(() =>
+    {
+        setLoading(true)
+        const fetchEligibility = async () =>
         {
-            setLoading(true)
-            const fetchEligibility = async () =>
+            let eligible = false
+            for (const referendum of referendums)
             {
-                let eligible = false
-                for (const referendum of referendums)
-                {
-                    const result = await dispatch(checkEligibility({
-                        userId: userId,
-                        userName: 'currentUserName',
-                        referendumId: referendum.id,
-                        referendumTitle: referendum.title,
-                    }))
-                    if (result.payload.isEligible) eligible = true
-                }
-                setIsEligibleForAny(eligible)
-                setLoading(false)
+                const result = await dispatch(checkEligibility({
+                    userId: userId,
+                    userName: 'currentUserName',
+                    referendumId: referendum.id,
+                    referendumTitle: referendum.title,
+                }))
+                if (result.payload.isEligible) eligible = true
             }
-            fetchEligibility()
-        }, [dispatch, userId, referendums])
-    )
+            setIsEligibleForAny(eligible)
+            setLoading(false)
+        }
+        fetchEligibility()
+    }, [])
+
 
     const handleOpenModal = (referendum: Referendum) =>
     {
@@ -68,6 +68,11 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
     {
         const eligibilityKey = `${userId}-${item.id}`
         const isEligible = eligibilityMap[eligibilityKey]
+
+        if (!isEligible)
+        {
+            return null
+        }
 
         return (
             <Animatable.View animation="fadeInUp" duration={800} delay={index * 100} style={styles.card}>

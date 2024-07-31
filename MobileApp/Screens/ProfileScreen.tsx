@@ -83,7 +83,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
         {
             console.log("vote: ", vote)
 
-            const referendum = referendums[vote.referendumId]
+            const referendum = referendums.find((ref) => ref.id === vote.referendumId)
             return (
                 <Animatable.View animation="fadeInUp" duration={800} delay={300} key={vote.id} style={styles.activityItemContainer}>
                     <Text style={styles.activityItem}>
