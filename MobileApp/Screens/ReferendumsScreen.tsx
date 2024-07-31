@@ -11,6 +11,7 @@ import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation'
 import {useFocusEffect} from '@react-navigation/native'
+import {set} from 'date-fns'
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Referendums'>
@@ -30,6 +31,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
     useFocusEffect(
         useCallback(() =>
         {
+            setLoading(true)
             const fetchEligibility = async () =>
             {
                 let eligible = false
@@ -334,7 +336,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     notEligibleText: {
-        fontSize: 21,
+        fontSize: 18,
         color: '#444',
         textAlign: 'center',
         paddingVertical: 20,
