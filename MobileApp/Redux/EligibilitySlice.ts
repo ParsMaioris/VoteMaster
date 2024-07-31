@@ -39,8 +39,6 @@ export const addEligibility = createAsyncThunk(
     'eligibility/addEligibility',
     async (payload: EligibilityPayload, {rejectWithValue}) =>
     {
-        console.log('addEligibility', payload)
-
         try
         {
             const response = await axios.post(`${apiUrl}/eligibility/add`, payload)
