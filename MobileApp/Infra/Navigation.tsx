@@ -12,6 +12,7 @@ import useInitialRoute from './useInitialRoute'
 import VotersScreen from '../Screens/VotersScreen'
 import VoterDetailScreen from '../Screens/VoterDetailScreen'
 import InviteVoterScreen from '../Screens/InviteVoterScreen'
+import ProposeReferendumForm from '../Screens/ProposeReferendumForm'
 
 export type RootStackParamList = {
     SignIn: undefined
@@ -23,6 +24,7 @@ export type RootStackParamList = {
     InviteVoter: undefined,
     VoterList: undefined
     VoterDetail: {id: string, name: string}
+    ProposeReferendumForm: undefined
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -55,6 +57,7 @@ const Navigation: React.FC = () =>
                 <Stack.Screen name="VoterList" component={VotersScreen} options={{title: ''}} />
                 <Stack.Screen name="VoterDetail" component={VoterDetailScreen} options={{title: ''}} />
                 <Stack.Screen name="InviteVoter" component={InviteVoterScreen} options={{title: ''}} />
+                <Stack.Screen name="ProposeReferendumForm" component={ProposeReferendumForm} options={{title: ''}} />
             </Stack.Navigator>
         </NavigationContainer>
     )

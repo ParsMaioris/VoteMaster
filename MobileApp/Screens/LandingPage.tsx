@@ -9,8 +9,7 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
     const handleProposeReferendum = () =>
     {
-        // Navigate to propose referendum screen
-        // navigation.navigate('ProposeReferendum');
+        navigation.navigate('ProposeReferendumForm')
     }
 
     const handleInviteVoter = () =>
