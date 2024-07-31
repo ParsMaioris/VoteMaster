@@ -10,9 +10,10 @@ import useReferendumHelper from '../Hooks/useReferendumHelper'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation' // Adjust the import path as needed
-import {resetEligibility} from '../Redux/EligibilitySlice'
-import {getOwnedReferendums, resetOwenrState} from '../Redux/OwnerSlice'
+import {checkEligibility, resetEligibility} from '../Redux/EligibilitySlice'
+import {getOwnedReferendums, resetOwenrState as resetOwnerState} from '../Redux/OwnerSlice'
 import {useFocusEffect} from '@react-navigation/native'
+import {referendums} from '../Mocks/MockReferendums'
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
@@ -20,21 +21,34 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     const userName = useSelector((state: RootState) => state.user.name)
     const userId = useSelector((state: RootState) => state.user.id)
     const votes = useSelector((state: RootState) => state.vote.votes)
-    const referendums = useSelector((state: RootState) => state.referendum.referendumMap)
     const [loading, setLoading] = useState(true)
     const ownedReferendums = useReferendumHelper()
 
     useFocusEffect(
         useCallback(() =>
         {
-            const fetchData = async () =>
+            const fetchEligibility = async () =>
+            {
+                for (const referendum of referendums)
+                {
+                    await dispatch(checkEligibility({
+                        userId: userId,
+                        userName: 'currentUserName',
+                        referendumId: referendum.id,
+                        referendumTitle: referendum.title,
+                    }))
+                }
+                setLoading(false)
+            }
+
+            const fetchVotes = async () =>
             {
                 if (userId)
                 {
                     setLoading(true)
                     await dispatch(fetchVotesByUserId(userId))
                     const votes = await dispatch(fetchVotesByUserId(userId)).unwrap()
-                    const votePromises = votes.map((vote) => 
+                    const votePromises = votes.map((vote) =>
                     {
                         return dispatch(getReferendumById(vote.referendumId))
                     })
@@ -43,8 +57,9 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                 }
             }
 
+            fetchEligibility()
             dispatch(getOwnedReferendums(userId))
-            fetchData()
+            fetchVotes()
         }, [userId, dispatch])
     )
 
@@ -52,7 +67,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     {
         dispatch(resetUserState())
         dispatch(resetEligibility())
-        dispatch(resetOwenrState())
+        dispatch(resetOwnerState())
         dispatch(resetReferendumState())
         dispatch(resetVoteState())
 
@@ -66,6 +81,8 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     {
         return votes.map((vote) =>
         {
+            console.log("vote: ", vote)
+
             const referendum = referendums[vote.referendumId]
             return (
                 <Animatable.View animation="fadeInUp" duration={800} delay={300} key={vote.id} style={styles.activityItemContainer}>
@@ -86,6 +103,67 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                 </Text>
             </Animatable.View>
         ))
+    }
+
+    const renderSections = () =>
+    {
+        if (votes.length > 0 && ownedReferendums.length > 0)
+        {
+            return (
+                <>
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>Recent Activity</Text>
+                        {renderVoteActivity()}
+                    </View>
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>User Referendums</Text>
+                        {renderUserReferendums()}
+                    </View>
+                </>
+            )
+        } else if (votes.length > 0)
+        {
+            return (
+                <>
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>Recent Activity</Text>
+                        {renderVoteActivity()}
+                    </View>
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>User Referendums</Text>
+                        <Text style={styles.noActivity}>No referendums found</Text>
+                    </View>
+                </>
+            )
+        } else if (ownedReferendums.length > 0)
+        {
+            return (
+                <>
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>User Referendums</Text>
+                        {renderUserReferendums()}
+                    </View>
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>Recent Activity</Text>
+                        <Text style={styles.noActivity}>No recent activity</Text>
+                    </View>
+                </>
+            )
+        } else
+        {
+            return (
+                <>
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>Recent Activity</Text>
+                        <Text style={styles.noActivity}>No recent activity</Text>
+                    </View>
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>User Referendums</Text>
+                        <Text style={styles.noActivity}>No referendums found</Text>
+                    </View>
+                </>
+            )
+        }
     }
 
     return (
@@ -109,22 +187,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                                 <Text style={styles.info}>{userName}</Text>
                             </View>
                         </View>
-                        <View style={styles.sectionContainer}>
-                            <Text style={styles.sectionTitle}>Recent Activity</Text>
-                            {votes.length > 0 ? (
-                                renderVoteActivity()
-                            ) : (
-                                <Text style={styles.noActivity}>No recent activity</Text>
-                            )}
-                        </View>
-                        <View style={styles.sectionContainer}>
-                            <Text style={styles.sectionTitle}>User Referendums</Text>
-                            {renderUserReferendums().length > 0 ? (
-                                renderUserReferendums()
-                            ) : (
-                                <Text style={styles.noActivity}>No referendums found</Text>
-                            )}
-                        </View>
+                        {renderSections()}
                         <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
                             <Ionicons name="log-out-outline" size={20} color="#fff" />
                             <Text style={styles.signOutButtonText}>Sign Out</Text>
