@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VoteMaster.Application;
 
@@ -5,6 +6,7 @@ namespace VoteMaster.Api;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class OwnerController : ControllerBase
 {
     private readonly OwnerService _ownerService;

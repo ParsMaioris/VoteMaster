@@ -1,155 +1,156 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VoteMaster.Application;
 using VoteMaster.Infrastructure;
 
-namespace VoteMaster.Api
+namespace VoteMaster.Api;
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class VoteController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class VoteController : ControllerBase
+    private readonly VoteCommandService _commandService;
+    private readonly VoteQueryService _queryService;
+    private readonly ILogger<VoteController> _logger;
+
+    public VoteController(VoteCommandService commandService, VoteQueryService queryService, ILogger<VoteController> logger)
     {
-        private readonly VoteCommandService _commandService;
-        private readonly VoteQueryService _queryService;
-        private readonly ILogger<VoteController> _logger;
+        _commandService = commandService;
+        _queryService = queryService;
+        _logger = logger;
+    }
 
-        public VoteController(VoteCommandService commandService, VoteQueryService queryService, ILogger<VoteController> logger)
+    [HttpPost("add")]
+    public async Task<IActionResult> AddVote([FromBody] VoteRequest request)
+    {
+        try
         {
-            _commandService = commandService;
-            _queryService = queryService;
-            _logger = logger;
+            await _commandService.AddVote(request.UserId, request.UserName, request.ReferendumId, request.ReferendumTitle, request.VoteChoice);
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Vote added successfully.",
+                Data = null
+            });
         }
-
-        [HttpPost("add")]
-        public async Task<IActionResult> AddVote([FromBody] VoteRequest request)
+        catch (Exception ex)
         {
-            try
-            {
-                await _commandService.AddVote(request.UserId, request.UserName, request.ReferendumId, request.ReferendumTitle, request.VoteChoice);
-                return Ok(new ApiResponse<string>
-                {
-                    Success = true,
-                    Message = "Vote added successfully.",
-                    Data = null
-                });
-            }
-            catch (Exception ex)
-            {
-                return ExceptionHandlerUtility.HandleException(ex, _logger);
-            }
+            return ExceptionHandlerUtility.HandleException(ex, _logger);
         }
+    }
 
-        [HttpGet("referendum/{referendumId}")]
-        public async Task<IActionResult> GetVotesByReferendum(Guid referendumId, int pageNumber = 1, int pageSize = 10)
+    [HttpGet("referendum/{referendumId}")]
+    public async Task<IActionResult> GetVotesByReferendum(Guid referendumId, int pageNumber = 1, int pageSize = 10)
+    {
+        try
         {
-            try
+            var votes = await _queryService.GetVotesByReferendum(referendumId, pageNumber, pageSize);
+            return Ok(new ApiResponse<object>
             {
-                var votes = await _queryService.GetVotesByReferendum(referendumId, pageNumber, pageSize);
-                return Ok(new ApiResponse<object>
-                {
-                    Success = true,
-                    Message = "Votes retrieved successfully.",
-                    Data = votes
-                });
-            }
-            catch (Exception ex)
-            {
-                return ExceptionHandlerUtility.HandleException(ex, _logger);
-            }
+                Success = true,
+                Message = "Votes retrieved successfully.",
+                Data = votes
+            });
         }
-
-        [HttpGet("referendum/{referendumId}/recent")]
-        public async Task<IActionResult> GetRecentVotesByReferendum(Guid referendumId, int count = 5)
+        catch (Exception ex)
         {
-            try
-            {
-                var votes = await _queryService.GetRecentVotesByReferendum(referendumId, count);
-                return Ok(new ApiResponse<object>
-                {
-                    Success = true,
-                    Message = "Recent votes retrieved successfully.",
-                    Data = votes
-                });
-            }
-            catch (Exception ex)
-            {
-                return ExceptionHandlerUtility.HandleException(ex, _logger);
-            }
+            return ExceptionHandlerUtility.HandleException(ex, _logger);
         }
+    }
 
-        [HttpGet("referendum/{referendumId}/total")]
-        public async Task<IActionResult> GetTotalVotes(Guid referendumId)
+    [HttpGet("referendum/{referendumId}/recent")]
+    public async Task<IActionResult> GetRecentVotesByReferendum(Guid referendumId, int count = 5)
+    {
+        try
         {
-            try
+            var votes = await _queryService.GetRecentVotesByReferendum(referendumId, count);
+            return Ok(new ApiResponse<object>
             {
-                var totalVotes = await _queryService.GetTotalVotes(referendumId);
-                return Ok(new ApiResponse<int>
-                {
-                    Success = true,
-                    Message = "Total votes retrieved successfully.",
-                    Data = totalVotes
-                });
-            }
-            catch (Exception ex)
-            {
-                return ExceptionHandlerUtility.HandleException(ex, _logger);
-            }
+                Success = true,
+                Message = "Recent votes retrieved successfully.",
+                Data = votes
+            });
         }
-
-        [HttpGet("referendum/{referendumId}/yes")]
-        public async Task<IActionResult> GetYesVotes(Guid referendumId)
+        catch (Exception ex)
         {
-            try
-            {
-                var yesVotes = await _queryService.GetYesVotes(referendumId);
-                return Ok(new ApiResponse<int>
-                {
-                    Success = true,
-                    Message = "Yes votes retrieved successfully.",
-                    Data = yesVotes
-                });
-            }
-            catch (Exception ex)
-            {
-                return ExceptionHandlerUtility.HandleException(ex, _logger);
-            }
+            return ExceptionHandlerUtility.HandleException(ex, _logger);
         }
+    }
 
-        [HttpGet("referendum/{referendumId}/no")]
-        public async Task<IActionResult> GetNoVotes(Guid referendumId)
+    [HttpGet("referendum/{referendumId}/total")]
+    public async Task<IActionResult> GetTotalVotes(Guid referendumId)
+    {
+        try
         {
-            try
+            var totalVotes = await _queryService.GetTotalVotes(referendumId);
+            return Ok(new ApiResponse<int>
             {
-                var noVotes = await _queryService.GetNoVotes(referendumId);
-                return Ok(new ApiResponse<int>
-                {
-                    Success = true,
-                    Message = "No votes retrieved successfully.",
-                    Data = noVotes
-                });
-            }
-            catch (Exception ex)
-            {
-                return ExceptionHandlerUtility.HandleException(ex, _logger);
-            }
+                Success = true,
+                Message = "Total votes retrieved successfully.",
+                Data = totalVotes
+            });
         }
-
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetVotesByUserId(Guid userId)
+        catch (Exception ex)
         {
-            try
+            return ExceptionHandlerUtility.HandleException(ex, _logger);
+        }
+    }
+
+    [HttpGet("referendum/{referendumId}/yes")]
+    public async Task<IActionResult> GetYesVotes(Guid referendumId)
+    {
+        try
+        {
+            var yesVotes = await _queryService.GetYesVotes(referendumId);
+            return Ok(new ApiResponse<int>
             {
-                var votes = await _queryService.GetVotesByUserId(userId);
-                return Ok(new ApiResponse<object>
-                {
-                    Success = true,
-                    Message = "User votes retrieved successfully.",
-                    Data = votes
-                });
-            }
-            catch (Exception ex)
+                Success = true,
+                Message = "Yes votes retrieved successfully.",
+                Data = yesVotes
+            });
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandlerUtility.HandleException(ex, _logger);
+        }
+    }
+
+    [HttpGet("referendum/{referendumId}/no")]
+    public async Task<IActionResult> GetNoVotes(Guid referendumId)
+    {
+        try
+        {
+            var noVotes = await _queryService.GetNoVotes(referendumId);
+            return Ok(new ApiResponse<int>
             {
-                return ExceptionHandlerUtility.HandleException(ex, _logger);
-            }
+                Success = true,
+                Message = "No votes retrieved successfully.",
+                Data = noVotes
+            });
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandlerUtility.HandleException(ex, _logger);
+        }
+    }
+
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetVotesByUserId(Guid userId)
+    {
+        try
+        {
+            var votes = await _queryService.GetVotesByUserId(userId);
+            return Ok(new ApiResponse<object>
+            {
+                Success = true,
+                Message = "User votes retrieved successfully.",
+                Data = votes
+            });
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandlerUtility.HandleException(ex, _logger);
         }
     }
 }
