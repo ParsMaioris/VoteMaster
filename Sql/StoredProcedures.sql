@@ -143,3 +143,68 @@ BEGIN
     FROM Users
 END
 GO
+
+CREATE OR ALTER PROCEDURE GetAllFromReferendumRequests
+AS
+BEGIN
+    SELECT * FROM ReferendumRequests;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE AddToReferendumRequests
+    @Id UNIQUEIDENTIFIER,
+    @UserId UNIQUEIDENTIFIER,
+    @Question NVARCHAR(500),
+    @Details NVARCHAR(MAX),
+    @ReferendumDate DATETIME
+AS
+BEGIN
+    INSERT INTO ReferendumRequests (Id, UserId, Question, Details, ReferendumDate)
+    VALUES (@Id, @UserId, @Question, @Details, @ReferendumDate);
+END;
+GO
+
+CREATE OR ALTER PROCEDURE UpdateReferendumRequests
+    @Id UNIQUEIDENTIFIER,
+    @UserId UNIQUEIDENTIFIER,
+    @Question NVARCHAR(500),
+    @Details NVARCHAR(MAX),
+    @ReferendumDate DATETIME
+AS
+BEGIN
+    UPDATE ReferendumRequests
+    SET UserId = @UserId, 
+        Question = @Question, 
+        Details = @Details, 
+        ReferendumDate = @ReferendumDate
+    WHERE Id = @Id;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE GetReferendumRequestsByUserId
+    @UserId UNIQUEIDENTIFIER
+AS
+BEGIN
+    SELECT * FROM ReferendumRequests
+    WHERE UserId = @UserId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE GetReferendumRequestsById
+    @Id UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        Id,
+        UserId,
+        Question,
+        Details,
+        ReferendumDate
+    FROM 
+        ReferendumRequests
+    WHERE 
+        Id = @Id;
+END;
+GO

@@ -26,6 +26,9 @@ builder.Services.AddScoped<EligibilityCommandService>();
 builder.Services.AddScoped<EligibilityQueryService>();
 builder.Services.AddScoped<IReferendumOwnerService, ReferendumOwnerService>();
 builder.Services.AddScoped<IReferendumOwnerRepository, AdoNetReferendumOwnerRepository>();
+builder.Services.AddScoped<IReferendumRequestService, VoteMaster.Domain.ReferendumRequestService>();
+builder.Services.AddScoped<IReferendumRequestRepository, AdoNetReferendumRequestRepository>();
+builder.Services.AddScoped<ReferendumRequestManager>();
 
 // Register application services
 builder.Services.AddScoped<UserCommandService>();
@@ -35,6 +38,7 @@ builder.Services.AddScoped<ReferendumQueryService>();
 builder.Services.AddScoped<VoteCommandService>();
 builder.Services.AddScoped<VoteQueryService>();
 builder.Services.AddScoped<OwnerService>();
+builder.Services.AddScoped<VoteMaster.Application.ReferendumRequestService>();
 
 var app = builder.Build();
 
