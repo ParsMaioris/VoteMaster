@@ -4,6 +4,7 @@ import Constants from 'expo-constants'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {RootState} from './Store'
 import api from './Api'
+import {set} from 'date-fns'
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl
 
@@ -112,10 +113,6 @@ const userSlice = createSlice({
         {
             state.id = action.payload.id
             state.name = action.payload.name
-        },
-        setUserName(state, action: PayloadAction<string>)
-        {
-            state.name = action.payload
         }
     },
     extraReducers: (builder) =>
@@ -168,7 +165,7 @@ const userSlice = createSlice({
     },
 })
 
-export const {resetUserState, setUser, setUserName} = userSlice.actions
+export const {resetUserState, setUser} = userSlice.actions
 
 export const selectUserName = (state: RootState) => state.user.name
 export const selectUserId = (state: RootState) => state.user.id

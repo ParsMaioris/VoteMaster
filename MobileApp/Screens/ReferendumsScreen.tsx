@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {AppDispatch, RootState} from '../Redux/Store'
-import {checkEligibility, selectEligibility, selectEligibilityError, selectEligibilityStatus} from '../Redux/EligibilitySlice'
+import {checkEligibility, selectEligibility, selectEligibilityStatus} from '../Redux/EligibilitySlice'
 import {Referendum} from '../DTOs/Referendums'
 import {referendums} from '../Mocks/MockReferendums'
 import {LinearGradient} from 'expo-linear-gradient'
@@ -79,7 +79,6 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
             </View>
         </View>
     }
-
 
     const handleOpenModal = (referendum: Referendum) =>
     {

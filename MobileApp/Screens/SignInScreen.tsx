@@ -3,7 +3,7 @@ import {View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndi
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {useAppDispatch, useAppSelector} from '../Redux/Hooks'
-import {fetchUserName, fetchUsers, setUserName} from '../Redux/UserSlice'
+import {fetchUserName, fetchUsers, setUser} from '../Redux/UserSlice'
 import {LinearGradient} from 'expo-linear-gradient'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -48,14 +48,16 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
             saveUserToStorage(currentUser.id, currentUser.name)
         }
 
-        dispatch(setUserName(currentUser.name))
+        dispatch(setUser(currentUser))
+
 
         if (fetchUserName.fulfilled.match(resultAction) && isFetchUserNameFulfilled(resultAction))
         {
             const {id, name} = resultAction.payload
             setErrorMessage('')
             navigateToLandingPage({id, name})
-        } else
+        }
+        else
         {
             setErrorMessage(resultAction.payload as string)
         }
