@@ -5,7 +5,7 @@ import {AppDispatch, RootState} from '../Redux/Store'
 import {getOwnedReferendums} from '../Redux/OwnerSlice'
 import {VoterDetailRouteProp} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
-import {addEligibility, selectEligibilityError, selectEligibilityStatus} from '../Redux/EligibilitySlice'
+import {addEligibility, checkEligibility} from '../Redux/EligibilitySlice'
 import * as Animatable from 'react-native-animatable'
 import useReferendumHelper from '../Hooks/useReferendumHelper'
 import {referendums} from '../Mocks/MockReferendums'
@@ -20,10 +20,10 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 
     const [invitedReferendums, setInvitedReferendums] = useState<string[]>([])
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
-    const [eligibilityMap, setEligibilityMap] = useState<{[key: string]: boolean}>({})
     const eligibilityStatus = useSelector((state: RootState) => state.eligibility.status)
     const eligibilityError = useSelector((state: RootState) => state.eligibility.error)
     const ownedReferendums = useReferendumHelper()
+    const eligibilityMap = useSelector((state: RootState) => state.eligibility.eligibilityMap)
 
     const [isLoading, setIsLoading] = useState(true)
     const [fetchError, setFetchError] = useState<string | null>(null)
@@ -46,7 +46,12 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
         }
 
         fetchOwnedReferendums()
-    }, [dispatch, ownerId, voter.id])
+
+        referendums.forEach(referendum =>
+        {
+            dispatch(checkEligibility({userId: voter.id, referendumId: referendum.id, userName: voter.name, referendumTitle: referendum.title, referendumTitle: referendum.title}))
+        })
+    }, [dispatch, ownerId, voter.id, referendums])
 
     const handleInvite = (referendumId: string) =>
     {
