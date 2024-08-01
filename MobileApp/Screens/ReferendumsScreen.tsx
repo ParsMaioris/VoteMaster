@@ -1,17 +1,15 @@
-import React, {useCallback, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {View, Text, Image, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, Modal, Dimensions} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {AppDispatch, RootState} from '../Redux/Store'
-import {checkEligibility, selectEligibility, selectEligibilityStatus} from '../Redux/EligibilitySlice'
+import {checkEligibility, selectEligibility, selectEligibilityError, selectEligibilityStatus} from '../Redux/EligibilitySlice'
 import {Referendum} from '../DTOs/Referendums'
 import {referendums} from '../Mocks/MockReferendums'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation'
-import {useFocusEffect} from '@react-navigation/native'
-import {set} from 'date-fns'
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Referendums'>
@@ -21,13 +19,13 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 {
     const dispatch = useDispatch<AppDispatch>()
     const eligibilityMap = useSelector(selectEligibility)
-    const status = useSelector(selectEligibilityStatus)
+    const status = useSelector(selectEligibilityStatus) as 'idle' | 'loading' | 'succeeded' | 'failed'
     const userId = useSelector((state: RootState) => state.user.id)
     const [loading, setLoading] = useState(true)
     const [modalVisible, setModalVisible] = useState(false)
     const [selectedReferendum, setSelectedReferendum] = useState<Referendum | null>(null)
     const [isEligibleForAny, setIsEligibleForAny] = useState(false)
-
+    const [fetchError, setFetchError] = useState<string | null>(null)
 
     useEffect(() =>
     {
@@ -35,21 +33,52 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
         const fetchEligibility = async () =>
         {
             let eligible = false
-            for (const referendum of referendums)
+            try
             {
-                const result = await dispatch(checkEligibility({
-                    userId: userId,
-                    userName: 'currentUserName',
-                    referendumId: referendum.id,
-                    referendumTitle: referendum.title,
-                }))
-                if (result.payload.isEligible) eligible = true
+                for (const referendum of referendums)
+                {
+                    const result = await dispatch(checkEligibility({
+                        userId: userId,
+                        userName: 'currentUserName',
+                        referendumId: referendum.id,
+                        referendumTitle: referendum.title,
+                    })).unwrap()
+                    if (result.isEligible) eligible = true
+                }
+                setIsEligibleForAny(eligible)
+            } catch (err: any)
+            {
+                setFetchError(err)
             }
-            setIsEligibleForAny(eligible)
             setLoading(false)
         }
         fetchEligibility()
-    }, [])
+    }, [dispatch, userId])
+
+    if (loading || status === 'loading')
+    {
+        return (
+            <View style={styles.loadingContainer}>
+                <View style={styles.loadingContent}>
+                    <ActivityIndicator size="large" color="#007AFF" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+                <View style={styles.bottomNavigationWrapper}>
+                    <BottomNavigation />
+                </View>
+            </View>
+        )
+    }
+
+    if (fetchError)
+    {
+        return <View style={[styles.container, {flex: 1}]}>
+            <Text style={[styles.errorText, {flexGrow: 1}]}>{fetchError}</Text>
+            <View style={styles.bottomNavigationWrapper}>
+                <BottomNavigation />
+            </View>
+        </View>
+    }
 
 
     const handleOpenModal = (referendum: Referendum) =>
@@ -138,6 +167,9 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#007AFF" />
                     <Text style={styles.loadingText}>Loading...</Text>
+                    <View style={styles.bottomNavigationWrapper}>
+                        <BottomNavigation />
+                    </View>
                 </View>
             ) : (
                 isEligibleForAny ? (
@@ -203,7 +235,6 @@ const styles = StyleSheet.create({
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
     },
     loadingText: {
         marginTop: 10,
@@ -346,6 +377,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         paddingVertical: 20,
         fontWeight: 'bold',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 16,
+        textAlign: 'center',
+        paddingTop: 40
+    },
+    loadingContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 })
 

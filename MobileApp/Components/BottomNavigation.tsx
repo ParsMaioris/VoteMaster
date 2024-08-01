@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from 'react'
 import {View, TouchableOpacity, Text, StyleSheet, ActivityIndicator} from 'react-native'
 import {Ionicons} from '@expo/vector-icons'
-import {useNavigation, useRoute, useFocusEffect} from '@react-navigation/native'
+import {useNavigation, useRoute, useFocusEffect, CommonActions} from '@react-navigation/native'
 import {LinearGradient} from 'expo-linear-gradient'
 import {RootStackParamList} from '../Infra/Navigation'
 
@@ -35,7 +35,12 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         {
             setSelected(name)
             setIsLoading(name)
-            navigation.navigate(name)
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{name}],
+                })
+            )
         }
     }
 

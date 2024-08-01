@@ -101,18 +101,30 @@ export const checkEligibility = createAsyncThunk(
                 params: payload
             })
             return {...payload, isEligible: response.data.data}
-        } catch (error: any)
+        }
+        catch (error: any)
         {
-            if (axios.isAxiosError(error) && error.response)
+            let errorMessage = 'An unexpected error occurred.'
+            if (error.response)
             {
-                return rejectWithValue(error.response.data.detail || 'Failed to check eligibility')
-            } else if (axios.isAxiosError(error) && error.request)
+                if (error.response.status === 404)
+                {
+                    errorMessage = 'Eligibility check failed.'
+                } else if (error.response.status === 500)
+                {
+                    errorMessage = 'Internal server error.'
+                } else
+                {
+                    errorMessage = `Error: ${error.response.status}`
+                }
+            } else if (error.request)
             {
-                return rejectWithValue('No response from server')
+                errorMessage = 'Network error. Please try again.'
             } else
             {
-                return rejectWithValue('Failed to check eligibility')
+                errorMessage = 'Error in setting up the request.'
             }
+            return rejectWithValue(errorMessage)
         }
     }
 )

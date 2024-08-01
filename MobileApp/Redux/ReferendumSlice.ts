@@ -58,18 +58,30 @@ export const getReferendumById = createAsyncThunk(
             {
                 return rejectWithValue(response.statusText)
             }
-        } catch (error: any)
+        }
+        catch (error: any)
         {
-            if (axios.isAxiosError(error) && error.response)
+            let errorMessage = 'An unexpected error occurred.'
+            if (error.response)
             {
-                return rejectWithValue(error.response.data.detail || 'Failed to fetch referendum')
-            } else if (axios.isAxiosError(error) && error.request)
+                if (error.response.status === 404)
+                {
+                    errorMessage = 'Referendum not found.'
+                } else if (error.response.status === 500)
+                {
+                    errorMessage = 'Internal server error.'
+                } else
+                {
+                    errorMessage = `Error: ${error.response.status}`
+                }
+            } else if (error.request)
             {
-                return rejectWithValue('No response from server')
+                errorMessage = 'Network error. Please try again.'
             } else
             {
-                return rejectWithValue('Failed to fetch referendum')
+                errorMessage = 'Error in setting up the request.'
             }
+            return rejectWithValue(errorMessage)
         }
     }
 )

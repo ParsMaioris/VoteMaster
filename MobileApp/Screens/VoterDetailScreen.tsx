@@ -5,11 +5,10 @@ import {AppDispatch, RootState} from '../Redux/Store'
 import {getOwnedReferendums} from '../Redux/OwnerSlice'
 import {VoterDetailRouteProp} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
-import {addEligibility, checkEligibility, selectEligibility, selectEligibilityError, selectEligibilityStatus} from '../Redux/EligibilitySlice'
+import {addEligibility, selectEligibilityError, selectEligibilityStatus} from '../Redux/EligibilitySlice'
 import * as Animatable from 'react-native-animatable'
 import useReferendumHelper from '../Hooks/useReferendumHelper'
 import {referendums} from '../Mocks/MockReferendums'
-import {ref} from 'yup'
 
 const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 {
@@ -27,14 +26,22 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
     const ownedReferendums = useReferendumHelper()
 
     const [isLoading, setIsLoading] = useState(true)
+    const [fetchError, setFetchError] = useState<string | null>(null)
 
     useEffect(() =>
     {
         const fetchOwnedReferendums = async () =>
         {
             setIsLoading(true)
-            await dispatch(getOwnedReferendums(ownerId))
+            try
+            {
+                await dispatch(getOwnedReferendums(ownerId)).unwrap()
+            } catch (err: any)
+            {
+                console.error('Failed to fetch owned referendums:', err)
 
+                setFetchError(err)
+            }
             setIsLoading(false)
         }
 
@@ -64,11 +71,15 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
         )
     }
 
+    if (fetchError)
+    {
+        return <Text style={styles.errorText}>{fetchError}</Text>
+    }
+
     if (eligibilityError)
     {
         return <Text style={styles.errorText}>{eligibilityError}</Text>
     }
-
 
     return (
         <View style={styles.container}>

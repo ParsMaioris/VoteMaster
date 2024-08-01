@@ -21,7 +21,17 @@ const VotersScreen: React.FC = () =>
 
   useEffect(() =>
   {
-    dispatch(fetchUsers())
+    const fetchData = async () =>
+    {
+      try
+      {
+        await dispatch(fetchUsers()).unwrap()
+      } catch (err)
+      {
+        console.error('Failed to fetch users:', err)
+      }
+    }
+    fetchData()
   }, [dispatch])
 
   const onSelectUser = (user: any) =>
@@ -52,7 +62,7 @@ const VotersScreen: React.FC = () =>
     )
   }
 
-  if (error)
+  if (status === 'failed' && error)
   {
     return <Text style={styles.errorText}>{error}</Text>
   }

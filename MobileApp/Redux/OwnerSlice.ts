@@ -63,9 +63,30 @@ export const ownsReferendum = createAsyncThunk(
         {
             const response = await axios.post(`${apiUrl}/Owner/${id}/ownsReferendum`, {id: referendumId})
             return response.data
-        } catch (error: any)
+        }
+        catch (error: any)
         {
-            return rejectWithValue(error.response?.data || error.message)
+            let errorMessage = 'An unexpected error occurred.'
+            if (error.response)
+            {
+                if (error.response.status === 404)
+                {
+                    errorMessage = 'No referendums found.'
+                } else if (error.response.status === 500)
+                {
+                    errorMessage = 'Internal server error.'
+                } else
+                {
+                    errorMessage = `Error: ${error.response.status}`
+                }
+            } else if (error.request)
+            {
+                errorMessage = 'Network error. Please try again.'
+            } else
+            {
+                errorMessage = 'Error in setting up the request.'
+            }
+            return rejectWithValue(errorMessage)
         }
     }
 )
@@ -78,9 +99,30 @@ export const getOwnedReferendums = createAsyncThunk(
         {
             const response = await axios.get(`${apiUrl}/Owner/${id}/getOwnedReferendums`)
             return response.data
-        } catch (error: any)
+        }
+        catch (error: any)
         {
-            return rejectWithValue(error.response?.data || error.message)
+            let errorMessage = 'An unexpected error occurred.'
+            if (error.response)
+            {
+                if (error.response.status === 404)
+                {
+                    errorMessage = 'No referendums found.'
+                } else if (error.response.status === 500)
+                {
+                    errorMessage = 'Internal server error.'
+                } else
+                {
+                    errorMessage = `Error: ${error.response.status}`
+                }
+            } else if (error.request)
+            {
+                errorMessage = 'Network error. Please try again.'
+            } else
+            {
+                errorMessage = 'Error in setting up the request.'
+            }
+            return rejectWithValue(errorMessage)
         }
     }
 )

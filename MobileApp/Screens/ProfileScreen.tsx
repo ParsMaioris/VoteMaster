@@ -23,43 +23,66 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     const votes = useSelector((state: RootState) => state.vote.votes)
     const [loading, setLoading] = useState(true)
     const ownedReferendums = useReferendumHelper()
+    const [fetchError, setFetchError] = useState<string | null>(null)
 
     useFocusEffect(
         useCallback(() =>
         {
             const fetchEligibility = async () =>
             {
-                for (const referendum of referendums)
+                try
                 {
-                    await dispatch(checkEligibility({
-                        userId: userId,
-                        userName: 'currentUserName',
-                        referendumId: referendum.id,
-                        referendumTitle: referendum.title,
-                    }))
+                    for (const referendum of referendums)
+                    {
+                        await dispatch(checkEligibility({
+                            userId: userId,
+                            userName: 'currentUserName',
+                            referendumId: referendum.id,
+                            referendumTitle: referendum.title,
+                        })).unwrap()
+                    }
+                } catch (err: any)
+                {
+                    setFetchError(err)
                 }
-                setLoading(false)
             }
 
             const fetchVotes = async () =>
             {
-                if (userId)
+                try
                 {
-                    setLoading(true)
-                    await dispatch(fetchVotesByUserId(userId))
-                    const votes = await dispatch(fetchVotesByUserId(userId)).unwrap()
-                    const votePromises = votes.map((vote) =>
+                    if (userId)
                     {
-                        return dispatch(getReferendumById(vote.referendumId))
-                    })
-                    await Promise.all(votePromises)
-                    setLoading(false)
+                        await dispatch(fetchVotesByUserId(userId)).unwrap()
+                        const votes = await dispatch(fetchVotesByUserId(userId)).unwrap()
+                        const votePromises = votes.map((vote) =>
+                            dispatch(getReferendumById(vote.referendumId)).unwrap()
+                        )
+                        await Promise.all(votePromises)
+                    }
+                } catch (err: any)
+                {
+                    setFetchError(err)
                 }
             }
 
-            fetchEligibility()
-            dispatch(getOwnedReferendums(userId))
-            fetchVotes()
+            const fetchData = async () =>
+            {
+                setLoading(true)
+                setFetchError(null)
+                try
+                {
+                    await fetchEligibility()
+                    await dispatch(getOwnedReferendums(userId)).unwrap()
+                    await fetchVotes()
+                } catch (err: any)
+                {
+                    setFetchError(err.message)
+                }
+                setLoading(false)
+            }
+
+            fetchData()
         }, [userId, dispatch])
     )
 
@@ -162,6 +185,11 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                 </>
             )
         }
+    }
+
+    if (fetchError)
+    {
+        return <Text style={styles.errorText}>{fetchError}</Text>
     }
 
     return (
@@ -322,6 +350,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff',
         fontWeight: '600',
+    },
+    errorText: {
+        color: 'red',
+        marginTop: 20,
+        fontSize: 16,
+        textAlign: 'center',
     },
 })
 
