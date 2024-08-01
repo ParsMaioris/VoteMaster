@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a proof-of-concept prototype for a referendum application developed using React Native Expo. The primary objective is to explore the capabilities, performance, and development experience of React Native Expo. Unlike a pre-existing full-scale application, this prototype does not incorporate blockchain technology and relies on SQL for the backend. This exploration aims to provide insights into how React Native Expo can be utilized effectively in the development process and to understand its strengths and limitations for future projects.
+This project is a proof-of-concept prototype for a referendum application developed using React Native Expo. The primary objective is to explore the capabilities, performance, and development experience of React Native Expo. Unlike a pre-existing full-scale application, this prototype does not incorporate blockchain technology and relies on SQL for the backend. This exploration aims to provide insights into how React Native Expo can be utilized effectively in the development process and to understand its strengths and limitations for future projects. This Expo app will very roughly mimic the actual app. It will implement partial functionality to enable exhaustive testing. These metrics include startup time, memory usage, CPU usage, battery consumption, network performance, frame rate, app size, and render time. The goal is to gain insights into how React Native Expo can be used effectively in the development process. This will help us understand its strengths and limitations for future projects.
 
 ## Features
 
