@@ -3,6 +3,7 @@ import axios from 'axios'
 import Constants from 'expo-constants'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {RootState} from './Store'
+import api from './Api'
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl
 
@@ -23,14 +24,14 @@ const initialState: UserState = {
     error: null,
 }
 
-const saveUserToStorage = async (id: string, name: string) =>
+const saveTokenToStorage = async (token: string) =>
 {
     try
     {
-        await AsyncStorage.setItem('user', JSON.stringify({id, name}))
+        await AsyncStorage.setItem('token', token)
     } catch (e)
     {
-        console.error('Failed to save user to storage', e)
+        console.error('Failed to save token to storage', e)
     }
 }
 
@@ -44,7 +45,7 @@ export const fetchUserName = createAsyncThunk(
             if (response.status === 200)
             {
                 const data = response.data.data
-                saveUserToStorage(data.id, data.name)
+                saveTokenToStorage(data)
                 return {id: data.id, name: data.name, status: response.status}
             } else
             {
@@ -72,32 +73,11 @@ export const fetchUsers = createAsyncThunk(
     {
         try
         {
-            const response = await axios.get(`${apiUrl}/user`)
+            const response = await api.get('/user')
             return response.data.data
-        }
-        catch (error: any)
+        } catch (error)
         {
-            let errorMessage = 'An unexpected error occurred.'
-            if (error.response)
-            {
-                if (error.response.status === 404)
-                {
-                    errorMessage = 'Users not found.'
-                } else if (error.response.status === 500)
-                {
-                    errorMessage = 'Internal server error.'
-                } else
-                {
-                    errorMessage = `Error: ${error.response.status}`
-                }
-            } else if (error.request)
-            {
-                errorMessage = 'Network error. Please try again.'
-            } else
-            {
-                errorMessage = 'Error in setting up the request.'
-            }
-            return rejectWithValue(errorMessage)
+            return rejectWithValue(error)
         }
     }
 )
@@ -132,6 +112,10 @@ const userSlice = createSlice({
         {
             state.id = action.payload.id
             state.name = action.payload.name
+        },
+        setUserName(state, action: PayloadAction<string>)
+        {
+            state.name = action.payload
         }
     },
     extraReducers: (builder) =>
@@ -184,7 +168,7 @@ const userSlice = createSlice({
     },
 })
 
-export const {resetUserState, setUser} = userSlice.actions
+export const {resetUserState, setUser, setUserName} = userSlice.actions
 
 export const selectUserName = (state: RootState) => state.user.name
 export const selectUserId = (state: RootState) => state.user.id

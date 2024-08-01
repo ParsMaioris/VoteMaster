@@ -3,8 +3,9 @@ import {View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndi
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {useAppDispatch, useAppSelector} from '../Redux/Hooks'
-import {fetchUserName} from '../Redux/UserSlice'
+import {fetchUserName, fetchUsers, setUserName} from '../Redux/UserSlice'
 import {LinearGradient} from 'expo-linear-gradient'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -19,6 +20,17 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
     const dispatch = useAppDispatch()
     const {status} = useAppSelector((state) => state.user)
 
+    const saveUserToStorage = async (id: string, name: string) =>
+    {
+        try
+        {
+            await AsyncStorage.setItem('user', JSON.stringify({id, name}))
+        } catch (e)
+        {
+            console.error('Failed to save user to storage', e)
+        }
+    }
+
     const handleSignIn = async () =>
     {
         if (!isUserIdValid(userId))
@@ -28,6 +40,15 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
         }
 
         const resultAction = await dispatch(fetchUserName(userId))
+        const allUsers = await dispatch(fetchUsers())
+        const currentUser = allUsers.payload.find((user) => user.id === userId)
+
+        if (currentUser)
+        {
+            saveUserToStorage(currentUser.id, currentUser.name)
+        }
+
+        dispatch(setUserName(currentUser.name))
 
         if (fetchUserName.fulfilled.match(resultAction) && isFetchUserNameFulfilled(resultAction))
         {

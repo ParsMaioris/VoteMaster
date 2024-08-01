@@ -1,7 +1,7 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
-import axios, {AxiosError} from 'axios'
 import Constants from 'expo-constants'
 import {RootState} from './Store'
+import api from './Api'
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl
 
@@ -41,69 +41,26 @@ export const submitReferendumRequest = createAsyncThunk(
     {
         try
         {
-            const response = await axios.post(`${apiUrl}/ReferendumRequest/create`, payload)
-            if (response.status === 200)
-            {
-                return response.data
-            } else
-            {
-                return rejectWithValue(response.statusText)
-            }
-        } catch (error: AxiosError | any)
+            const response = await api.post('/ReferendumRequest/create', payload)
+            return response.data
+        } catch (error)
         {
-            console.log(error)
-
-            if (axios.isAxiosError(error) && error.response)
-            {
-                return rejectWithValue(error.response.data.detail || 'Failed to submit referendum request')
-            } else if (axios.isAxiosError(error) && error.request)
-            {
-                return rejectWithValue('No response from server')
-            } else
-            {
-                return rejectWithValue('Failed to submit referendum request')
-            }
+            return rejectWithValue(error)
         }
     }
 )
 
 export const fetchReferendumRequestsByUserId = createAsyncThunk(
     'referendumRequest/fetchReferendumRequestsByUserId',
-    async (userId: string, {rejectWithValue}) =>
+    async (userId, {rejectWithValue}) =>
     {
         try
         {
-            const response = await axios.get(`${apiUrl}/ReferendumRequest/user/${userId}`)
-            if (response.status === 200)
-            {
-                return response.data.data
-            } else
-            {
-                return rejectWithValue(response.statusText)
-            }
-        } catch (error: AxiosError | any)
+            const response = await api.get(`/ReferendumRequest/user/${userId}`)
+            return response.data.data
+        } catch (error)
         {
-            let errorMessage = 'An unexpected error occurred.'
-            if (axios.isAxiosError(error) && error.response)
-            {
-                if (error.response.status === 404)
-                {
-                    errorMessage = 'Referendum requests not found.'
-                } else if (error.response.status === 500)
-                {
-                    errorMessage = 'Internal server error.'
-                } else
-                {
-                    errorMessage = `Error: ${error.response.status}`
-                }
-            } else if (axios.isAxiosError(error) && error.request)
-            {
-                errorMessage = 'Network error. Please try again.'
-            } else
-            {
-                errorMessage = 'Error in setting up the request.'
-            }
-            return rejectWithValue(errorMessage)
+            return rejectWithValue(error)
         }
     }
 )

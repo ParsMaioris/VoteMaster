@@ -1,10 +1,8 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
-import axios from 'axios'
 import Constants from 'expo-constants'
 import {RootState} from './Store'
 import {referendums} from '../Mocks/MockReferendums'
-
-const apiUrl = Constants.expoConfig?.extra?.apiUrl
+import api from './Api'
 
 interface Referendum
 {
@@ -46,42 +44,15 @@ const initialState: ReferendumState = {
 
 export const getReferendumById = createAsyncThunk(
     'referendum/getReferendumById',
-    async (id: string, {rejectWithValue}) =>
+    async (id, {rejectWithValue}) =>
     {
         try
         {
-            const response = await axios.get(`${apiUrl}/Referendum/${id}`)
-            if (response.status === 200)
-            {
-                return response.data
-            } else
-            {
-                return rejectWithValue(response.statusText)
-            }
-        }
-        catch (error: any)
+            const response = await api.get(`/Referendum/${id}`)
+            return response.data
+        } catch (error)
         {
-            let errorMessage = 'An unexpected error occurred.'
-            if (error.response)
-            {
-                if (error.response.status === 404)
-                {
-                    errorMessage = 'Referendum not found.'
-                } else if (error.response.status === 500)
-                {
-                    errorMessage = 'Internal server error.'
-                } else
-                {
-                    errorMessage = `Error: ${error.response.status}`
-                }
-            } else if (error.request)
-            {
-                errorMessage = 'Network error. Please try again.'
-            } else
-            {
-                errorMessage = 'Error in setting up the request.'
-            }
-            return rejectWithValue(errorMessage)
+            return rejectWithValue(error)
         }
     }
 )

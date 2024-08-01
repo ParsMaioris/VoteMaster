@@ -1,9 +1,6 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
-import axios from 'axios'
 import {RootState} from './Store'
-import Constants from 'expo-constants'
-
-const apiUrl = Constants.expoConfig?.extra?.apiUrl
+import api from './Api'
 
 interface EligibilityState
 {
@@ -37,48 +34,30 @@ interface EligibilityPayload
 
 export const addEligibility = createAsyncThunk(
     'eligibility/addEligibility',
-    async (payload: EligibilityPayload, {rejectWithValue}) =>
+    async (payload, {rejectWithValue}) =>
     {
         try
         {
-            const response = await axios.post(`${apiUrl}/eligibility/add`, payload)
+            const response = await api.post('/eligibility/add', payload)
             return response.data
-        } catch (error: any)
+        } catch (error)
         {
-            if (axios.isAxiosError(error) && error.response)
-            {
-                return rejectWithValue(error.response.data.detail || 'Failed to add eligibility')
-            } else if (axios.isAxiosError(error) && error.request)
-            {
-                return rejectWithValue('No response from server')
-            } else
-            {
-                return rejectWithValue('Failed to add eligibility')
-            }
+            return rejectWithValue(error)
         }
     }
 )
 
 export const removeEligibility = createAsyncThunk(
     'eligibility/removeEligibility',
-    async (payload: EligibilityPayload, {rejectWithValue}) =>
+    async (payload, {rejectWithValue}) =>
     {
         try
         {
-            const response = await axios.post(`${apiUrl}/eligibility/remove`, payload)
+            const response = await api.post('/eligibility/remove', payload)
             return response.data
-        } catch (error: any)
+        } catch (error)
         {
-            if (axios.isAxiosError(error) && error.response)
-            {
-                return rejectWithValue(error.response.data.detail || 'Failed to remove eligibility')
-            } else if (axios.isAxiosError(error) && error.request)
-            {
-                return rejectWithValue('No response from server')
-            } else
-            {
-                return rejectWithValue('Failed to remove eligibility')
-            }
+            return rejectWithValue(error)
         }
     }
 )
@@ -97,34 +76,13 @@ export const checkEligibility = createAsyncThunk(
     {
         try
         {
-            const response = await axios.get(`${apiUrl}/eligibility/check`, {
-                params: payload
+            const response = await api.get('/eligibility/check', {
+                params: payload,
             })
             return {...payload, isEligible: response.data.data}
-        }
-        catch (error: any)
+        } catch (error)
         {
-            let errorMessage = 'An unexpected error occurred.'
-            if (error.response)
-            {
-                if (error.response.status === 404)
-                {
-                    errorMessage = 'Eligibility check failed.'
-                } else if (error.response.status === 500)
-                {
-                    errorMessage = 'Internal server error.'
-                } else
-                {
-                    errorMessage = `Error: ${error.response.status}`
-                }
-            } else if (error.request)
-            {
-                errorMessage = 'Network error. Please try again.'
-            } else
-            {
-                errorMessage = 'Error in setting up the request.'
-            }
-            return rejectWithValue(errorMessage)
+            return rejectWithValue(error)
         }
     }
 )

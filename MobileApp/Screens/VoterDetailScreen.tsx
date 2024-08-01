@@ -38,8 +38,6 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
                 await dispatch(getOwnedReferendums(ownerId)).unwrap()
             } catch (err: any)
             {
-                console.error('Failed to fetch owned referendums:', err)
-
                 setFetchError(err)
             }
             setIsLoading(false)

@@ -1,9 +1,6 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
-import axios from 'axios'
-import Constants from 'expo-constants'
 import {RootState} from './Store'
-
-const apiUrl = Constants.expoConfig?.extra?.apiUrl
+import api from './Api'
 
 interface Vote
 {
@@ -41,68 +38,26 @@ export const submitVote = createAsyncThunk(
     {
         try
         {
-            const response = await axios.post(`${apiUrl}/Vote/add`, payload)
-            if (response.status === 200)
-            {
-                return response.data
-            } else
-            {
-                return rejectWithValue(response.statusText)
-            }
-        } catch (error: any)
+            const response = await api.post('/Vote/add', payload)
+            return response.data
+        } catch (error)
         {
-            if (axios.isAxiosError(error) && error.response)
-            {
-                return rejectWithValue(error.response.data.detail || 'Failed to submit vote')
-            } else if (axios.isAxiosError(error) && error.request)
-            {
-                return rejectWithValue('No response from server')
-            } else
-            {
-                return rejectWithValue('Failed to submit vote')
-            }
+            return rejectWithValue(error)
         }
     }
 )
 
 export const fetchVotesByUserId = createAsyncThunk(
     'vote/fetchVotesByUserId',
-    async (userId: string, {rejectWithValue}) =>
+    async (userId, {rejectWithValue}) =>
     {
         try
         {
-            const response = await axios.get(`${apiUrl}/Vote/user/${userId}`)
-            if (response.status === 200)
-            {
-                return response.data.data
-            } else
-            {
-                return rejectWithValue(response.statusText)
-            }
-        }
-        catch (error: any)
+            const response = await api.get(`/Vote/user/${userId}`)
+            return response.data.data
+        } catch (error)
         {
-            let errorMessage = 'An unexpected error occurred.'
-            if (error.response)
-            {
-                if (error.response.status === 404)
-                {
-                    errorMessage = 'Votes not found.'
-                } else if (error.response.status === 500)
-                {
-                    errorMessage = 'Internal server error.'
-                } else
-                {
-                    errorMessage = `Error: ${error.response.status}`
-                }
-            } else if (error.request)
-            {
-                errorMessage = 'Network error. Please try again.'
-            } else
-            {
-                errorMessage = 'Error in setting up the request.'
-            }
-            return rejectWithValue(errorMessage)
+            return rejectWithValue(error)
         }
     }
 )

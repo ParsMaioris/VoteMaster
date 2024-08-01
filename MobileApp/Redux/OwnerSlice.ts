@@ -1,10 +1,6 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
-import axios from 'axios'
-import Constants from 'expo-constants'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import {RootState} from './Store'
-
-const apiUrl = Constants.expoConfig?.extra?.apiUrl
+import api from './Api'
 
 interface Owner
 {
@@ -31,11 +27,11 @@ export const addOwnerReferendum = createAsyncThunk(
     {
         try
         {
-            const response = await axios.post(`${apiUrl}/Owner/${id}/addReferendum`, {id: referendumId})
+            const response = await api.post(`/Owner/${id}/addReferendum`, {id: referendumId})
             return response.data
-        } catch (error: any)
+        } catch (error)
         {
-            return rejectWithValue(error.response?.data || error.message)
+            return rejectWithValue(error)
         }
     }
 )
@@ -46,11 +42,11 @@ export const removeReferendum = createAsyncThunk(
     {
         try
         {
-            const response = await axios.post(`${apiUrl}/Owner/${id}/removeReferendum`, {id: referendumId})
+            const response = await api.post(`/Owner/${id}/removeReferendum`, {id: referendumId})
             return response.data
-        } catch (error: any)
+        } catch (error)
         {
-            return rejectWithValue(error.response?.data || error.message)
+            return rejectWithValue(error)
         }
     }
 )
@@ -61,68 +57,26 @@ export const ownsReferendum = createAsyncThunk(
     {
         try
         {
-            const response = await axios.post(`${apiUrl}/Owner/${id}/ownsReferendum`, {id: referendumId})
+            const response = await api.post(`/Owner/${id}/ownsReferendum`, {id: referendumId})
             return response.data
-        }
-        catch (error: any)
+        } catch (error)
         {
-            let errorMessage = 'An unexpected error occurred.'
-            if (error.response)
-            {
-                if (error.response.status === 404)
-                {
-                    errorMessage = 'No referendums found.'
-                } else if (error.response.status === 500)
-                {
-                    errorMessage = 'Internal server error.'
-                } else
-                {
-                    errorMessage = `Error: ${error.response.status}`
-                }
-            } else if (error.request)
-            {
-                errorMessage = 'Network error. Please try again.'
-            } else
-            {
-                errorMessage = 'Error in setting up the request.'
-            }
-            return rejectWithValue(errorMessage)
+            return rejectWithValue(error)
         }
     }
 )
 
 export const getOwnedReferendums = createAsyncThunk(
     'owner/getOwnedReferendums',
-    async (id: string, {rejectWithValue}) =>
+    async (id, {rejectWithValue}) =>
     {
         try
         {
-            const response = await axios.get(`${apiUrl}/Owner/${id}/getOwnedReferendums`)
+            const response = await api.get(`/Owner/${id}/getOwnedReferendums`)
             return response.data
-        }
-        catch (error: any)
+        } catch (error)
         {
-            let errorMessage = 'An unexpected error occurred.'
-            if (error.response)
-            {
-                if (error.response.status === 404)
-                {
-                    errorMessage = 'No referendums found.'
-                } else if (error.response.status === 500)
-                {
-                    errorMessage = 'Internal server error.'
-                } else
-                {
-                    errorMessage = `Error: ${error.response.status}`
-                }
-            } else if (error.request)
-            {
-                errorMessage = 'Network error. Please try again.'
-            } else
-            {
-                errorMessage = 'Error in setting up the request.'
-            }
-            return rejectWithValue(errorMessage)
+            return rejectWithValue(error)
         }
     }
 )
