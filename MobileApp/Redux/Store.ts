@@ -4,6 +4,7 @@ import voteSlice from './VoteSlice'
 import referendumSlice from './ReferendumSlice'
 import ownerSlice from './OwnerSlice'
 import EligibilitySlice from './EligibilitySlice'
+import referendumRequestSlice from './ReferendumRequestSlice'
 
 const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
         referendum: referendumSlice,
         owner: ownerSlice,
         eligibility: EligibilitySlice,
+        referendumRequest: referendumRequestSlice,
     },
 })
 

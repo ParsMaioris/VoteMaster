@@ -12,6 +12,10 @@ import {Ionicons} from '@expo/vector-icons'
 import * as Animatable from 'react-native-animatable'
 
 import {registerTranslation, en} from 'react-native-paper-dates'
+import {useDispatch} from 'react-redux'
+import {AppDispatch, RootState} from '../Redux/Store'
+import {submitReferendumRequest} from '../Redux/ReferendumRequestSlice'
+import {useSelector} from 'react-redux'
 registerTranslation('en', en)
 
 const validationSchema = Yup.object().shape({
@@ -25,14 +29,12 @@ const ProposeReferendumForm: React.FC = () =>
     const theme = useTheme()
     const [open, setOpen] = React.useState(false)
     const [date, setDate] = React.useState<Date | undefined>(undefined)
+    const dispatch = useDispatch<AppDispatch>()
+    const userId = useSelector((state: RootState) => state.user.id)
 
     const handleSubmit = (values: any) =>
     {
-        Alert.alert(
-            'Under Development',
-            'This feature is under development. Please come back later. You are about to shape your future with confidence and clarity.',
-            [{text: 'OK'}]
-        )
+        dispatch(submitReferendumRequest({userId, question: values.question, details: values.details, referendumDate: values.date}))
     }
 
     const onDismiss = () =>
