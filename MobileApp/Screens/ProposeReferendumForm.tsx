@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet, View, Text, TouchableOpacity, Dimensions, Alert} from 'react-native'
-import {TextInput, useTheme} from 'react-native-paper'
+import {ScrollView, StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native'
+import {TextInput, useTheme, Snackbar} from 'react-native-paper'
 import {Formik} from 'formik'
 import * as Yup from 'yup'
 import {DatePickerModal} from 'react-native-paper-dates'
@@ -12,10 +12,12 @@ import {Ionicons} from '@expo/vector-icons'
 import * as Animatable from 'react-native-animatable'
 
 import {registerTranslation, en} from 'react-native-paper-dates'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {AppDispatch, RootState} from '../Redux/Store'
 import {submitReferendumRequest} from '../Redux/ReferendumRequestSlice'
-import {useSelector} from 'react-redux'
+import {RootStackParamList} from '../Infra/Navigation'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
+
 registerTranslation('en', en)
 
 const validationSchema = Yup.object().shape({
@@ -29,12 +31,36 @@ const ProposeReferendumForm: React.FC = () =>
     const theme = useTheme()
     const [open, setOpen] = React.useState(false)
     const [date, setDate] = React.useState<Date | undefined>(undefined)
+    const [snackbarVisible, setSnackbarVisible] = React.useState(false)
+    const [snackbarMessage, setSnackbarMessage] = React.useState('')
     const dispatch = useDispatch<AppDispatch>()
     const userId = useSelector((state: RootState) => state.user.id)
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
-    const handleSubmit = (values: any) =>
+    const handleSubmit = async (values: any) =>
     {
-        dispatch(submitReferendumRequest({userId, question: values.question, details: values.details, referendumDate: values.date}))
+        const resultAction = await dispatch(submitReferendumRequest({
+            userId,
+            question: values.question,
+            details: values.details,
+            referendumDate: values.date,
+        }))
+
+        if (submitReferendumRequest.fulfilled.match(resultAction))
+        {
+            setSnackbarMessage('Referendum request submitted successfully!')
+            setSnackbarVisible(true)
+
+            setTimeout(() =>
+            {
+                setSnackbarVisible(false)
+                navigation.navigate('LandingPage')
+            }, 2000)
+        } else
+        {
+            setSnackbarMessage('Failed to submit referendum request.')
+            setSnackbarVisible(true)
+        }
     }
 
     const onDismiss = () =>
@@ -96,7 +122,7 @@ const ProposeReferendumForm: React.FC = () =>
                                         error={touched.details && errors.details ? true : false}
                                         theme={{
                                             colors: {
-                                                primary: '#007AFF', // Apple blue color
+                                                primary: '#007AFF',
                                                 underlineColor: 'transparent',
                                             },
                                         }}
@@ -130,6 +156,14 @@ const ProposeReferendumForm: React.FC = () =>
                         )}
                     </Formik>
                 </ScrollView>
+                <Snackbar
+                    visible={snackbarVisible}
+                    onDismiss={() => setSnackbarVisible(false)}
+                    duration={3000}
+                    style={styles.snackbar}
+                >
+                    {snackbarMessage}
+                </Snackbar>
             </LinearGradient>
         </PaperProvider>
     )
@@ -210,6 +244,9 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         textAlign: 'center',
         width: '100%',
+    },
+    snackbar: {
+        backgroundColor: '#333333',
     },
 })
 

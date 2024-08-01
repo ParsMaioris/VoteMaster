@@ -1,5 +1,5 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
-import axios from 'axios'
+import axios, {AxiosError} from 'axios'
 import Constants from 'expo-constants'
 import {RootState} from './Store'
 
@@ -41,13 +41,7 @@ export const submitReferendumRequest = createAsyncThunk(
     {
         try
         {
-            console.log('payload', payload)
-
             const response = await axios.post(`${apiUrl}/ReferendumRequest/create`, payload)
-
-            console.log('response', response)
-
-
             if (response.status === 200)
             {
                 return response.data
@@ -55,7 +49,7 @@ export const submitReferendumRequest = createAsyncThunk(
             {
                 return rejectWithValue(response.statusText)
             }
-        } catch (error: any)
+        } catch (error: AxiosError | any)
         {
             console.log(error)
 
@@ -79,7 +73,7 @@ export const fetchReferendumRequestsByUserId = createAsyncThunk(
     {
         try
         {
-            const response = await axios.get(`${apiUrl}/referendum-request/user/${userId}`)
+            const response = await axios.get(`${apiUrl}/ReferendumRequest/user/${userId}`)
             if (response.status === 200)
             {
                 return response.data.data
@@ -87,10 +81,10 @@ export const fetchReferendumRequestsByUserId = createAsyncThunk(
             {
                 return rejectWithValue(response.statusText)
             }
-        } catch (error: any)
+        } catch (error: AxiosError | any)
         {
             let errorMessage = 'An unexpected error occurred.'
-            if (error.response)
+            if (axios.isAxiosError(error) && error.response)
             {
                 if (error.response.status === 404)
                 {
@@ -102,7 +96,7 @@ export const fetchReferendumRequestsByUserId = createAsyncThunk(
                 {
                     errorMessage = `Error: ${error.response.status}`
                 }
-            } else if (error.request)
+            } else if (axios.isAxiosError(error) && error.request)
             {
                 errorMessage = 'Network error. Please try again.'
             } else
@@ -163,6 +157,6 @@ const referendumRequestSlice = createSlice({
 export const selectReferendumRequestStatus = (state: RootState) => state.referendumRequest.status
 export const selectReferendumRequestError = (state: RootState) => state.referendumRequest.error
 export const selectReferendumRequestsByUserId = (state: RootState) => state.referendumRequest.requests
-export const resetReferendumRequestState = referendumRequestSlice.actions.resetReferendumRequestState
+export const {resetReferendumRequestState} = referendumRequestSlice.actions
 
 export default referendumRequestSlice.reducer
