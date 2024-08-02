@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {View, Text, Image, StyleSheet, FlatList, ActivityIndicator, Modal, Dimensions, TouchableOpacity} from 'react-native'
+import {View, Text, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
 import {useSelector} from 'react-redux'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
@@ -11,6 +11,7 @@ import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation'
 import useEligibilityCheck from '../Hooks/useEligibilityCheck'
 import ReferendumCard from '../Components/ReferendumCard'
+import ReferendumModal from '../Components/ReferendumModal'
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Referendums'>
@@ -40,12 +41,14 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 
     if (fetchError)
     {
-        return <View style={[styles.container, {flex: 1}]}>
-            <Text style={[styles.errorText, {flexGrow: 1}]}>{fetchError}</Text>
-            <View style={styles.bottomNavigationWrapper}>
-                <BottomNavigation />
+        return (
+            <View style={[styles.container, {flex: 1}]}>
+                <Text style={[styles.errorText, {flexGrow: 1}]}>{fetchError}</Text>
+                <View style={styles.bottomNavigationWrapper}>
+                    <BottomNavigation />
+                </View>
             </View>
-        </View>
+        )
     }
 
     const handleOpenModal = (referendum: Referendum) =>
@@ -127,23 +130,11 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                 )
             )}
             {selectedReferendum && (
-                <Modal
-                    animationType="slide"
-                    transparent={true}
+                <ReferendumModal
                     visible={modalVisible}
-                    onRequestClose={handleCloseModal}
-                >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <Text style={styles.modalTitle}>{selectedReferendum.title}</Text>
-                            <Image source={{uri: selectedReferendum.image}} style={styles.modalImage} />
-                            <Text style={styles.modalDescription}>{selectedReferendum.description}</Text>
-                            <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
-                                <Text style={styles.closeButtonText}>Close</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
+                    onClose={handleCloseModal}
+                    referendum={selectedReferendum}
+                />
             )}
             <View style={styles.bottomNavigationWrapper}>
                 <BottomNavigation />
@@ -151,6 +142,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
         </LinearGradient>
     )
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -204,56 +196,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#FFFFFF',
         fontSize: 15,
-        fontWeight: '600',
-        textAlign: 'center',
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-    },
-    modalContent: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 20,
-        padding: 20,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowOffset: {width: 0, height: 2},
-        shadowRadius: 4,
-        elevation: 3,
-        width: Dimensions.get('window').width * 0.8,
-    },
-    modalTitle: {
-        fontSize: 24,
-        fontWeight: '700',
-        color: '#333333',
-        marginBottom: 15,
-        textAlign: 'center',
-    },
-    modalImage: {
-        width: '100%',
-        height: 200,
-        borderRadius: 15,
-        marginBottom: 15,
-    },
-    modalDescription: {
-        fontSize: 16,
-        fontWeight: '400',
-        color: '#666666',
-        marginBottom: 20,
-        textAlign: 'center',
-    },
-    closeButton: {
-        backgroundColor: '#FF3B30',
-        paddingVertical: 12,
-        paddingHorizontal: 30,
-        borderRadius: 12,
-    },
-    closeButtonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
         fontWeight: '600',
         textAlign: 'center',
     },
