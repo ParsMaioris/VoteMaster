@@ -29,31 +29,49 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 
     useEffect(() =>
     {
-        setLoading(true)
         const fetchEligibility = async () =>
         {
             let eligible = false
+
             try
             {
+                setLoading(true)
+
                 for (const referendum of referendums)
                 {
-                    const result = await dispatch(checkEligibility({
-                        userId: userId,
-                        userName: 'currentUserName',
-                        referendumId: referendum.id,
-                        referendumTitle: referendum.title,
-                    })).unwrap()
-                    if (result.isEligible) eligible = true
+                    const eligibilityKey = `${userId}-${referendum.id}`
+
+                    if (!eligibilityMap[eligibilityKey])
+                    {
+                        const eligibilityCheckResult = await dispatch(checkEligibility({
+                            userId,
+                            userName: 'currentUserName',
+                            referendumId: referendum.id,
+                            referendumTitle: referendum.title,
+                        })).unwrap()
+
+                        if (eligibilityCheckResult.isEligible)
+                        {
+                            eligible = true
+                        }
+                    } else if (eligibilityMap[eligibilityKey])
+                    {
+                        eligible = true
+                    }
                 }
+
                 setIsEligibleForAny(eligible)
-            } catch (err: any)
+            } catch (error: any)
             {
-                setFetchError(err)
+                setFetchError(error.message)
+            } finally
+            {
+                setLoading(false)
             }
-            setLoading(false)
         }
+
         fetchEligibility()
-    }, [dispatch, userId])
+    }, [dispatch, userId, referendums, eligibilityMap])
 
     if (loading || status === 'loading')
     {
