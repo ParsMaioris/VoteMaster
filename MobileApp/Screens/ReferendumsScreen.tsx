@@ -1,15 +1,16 @@
-import React, {useEffect, useState} from 'react'
-import {View, Text, Image, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, Modal, Dimensions} from 'react-native'
-import {useDispatch, useSelector} from 'react-redux'
+import React, {useState} from 'react'
+import {View, Text, Image, StyleSheet, FlatList, ActivityIndicator, Modal, Dimensions, TouchableOpacity} from 'react-native'
+import {useSelector} from 'react-redux'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
-import {AppDispatch, RootState} from '../Redux/Store'
-import {checkEligibility, selectEligibility, selectEligibilityStatus} from '../Redux/EligibilitySlice'
+import {RootState} from '../Redux/Store'
 import {Referendum} from '../DTOs/Referendums'
 import {referendums} from '../Mocks/MockReferendums'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation'
+import useEligibilityCheck from '../Hooks/useEligibilityCheck'
+import ReferendumCard from '../Components/ReferendumCard'
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Referendums'>
@@ -17,61 +18,10 @@ type Props = {
 
 const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 {
-    const dispatch = useDispatch<AppDispatch>()
-    const eligibilityMap = useSelector(selectEligibility)
-    const status = useSelector(selectEligibilityStatus) as 'idle' | 'loading' | 'succeeded' | 'failed'
     const userId = useSelector((state: RootState) => state.user.id)
-    const [loading, setLoading] = useState(true)
+    const {isEligibleForAny, loading, fetchError, status, eligibilityMap} = useEligibilityCheck(userId)
     const [modalVisible, setModalVisible] = useState(false)
     const [selectedReferendum, setSelectedReferendum] = useState<Referendum | null>(null)
-    const [isEligibleForAny, setIsEligibleForAny] = useState(false)
-    const [fetchError, setFetchError] = useState<string | null>(null)
-
-    useEffect(() =>
-    {
-        const fetchEligibility = async () =>
-        {
-            let eligible = false
-
-            try
-            {
-                setLoading(true)
-
-                for (const referendum of referendums)
-                {
-                    const eligibilityKey = `${userId}-${referendum.id}`
-
-                    if (eligibilityMap[eligibilityKey] == undefined)
-                    {
-                        const eligibilityCheckResult = await dispatch(checkEligibility({
-                            userId,
-                            userName: 'currentUserName',
-                            referendumId: referendum.id,
-                            referendumTitle: referendum.title,
-                        })).unwrap()
-
-                        if (eligibilityCheckResult.isEligible)
-                        {
-                            eligible = true
-                        }
-                    } else if (eligibilityMap[eligibilityKey])
-                    {
-                        eligible = true
-                    }
-                }
-
-                setIsEligibleForAny(eligible)
-            } catch (error: any)
-            {
-                setFetchError(error.message)
-            } finally
-            {
-                setLoading(false)
-            }
-        }
-
-        fetchEligibility()
-    }, [dispatch, userId, referendums, eligibilityMap])
 
     if (loading || status === 'loading')
     {
@@ -121,45 +71,16 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
         }
 
         return (
-            <Animatable.View animation="fadeInUp" duration={800} delay={index * 100} style={styles.card}>
-                <TouchableOpacity onPress={() => handleOpenModal(item)} style={styles.cardContent}>
-                    <Animatable.Image
-                        animation="fadeIn"
-                        delay={index * 200}
-                        source={{uri: item.image}}
-                        style={styles.image}
-                    />
-                    <Animatable.Text animation="fadeIn" delay={index * 300} style={styles.title}>
-                        {item.title}
-                    </Animatable.Text>
-                </TouchableOpacity>
-                <View style={styles.buttonContainer}>
-                    {status === 'loading' ? (
-                        <ActivityIndicator size="small" color="#007AFF" />
-                    ) : (
-                        <>
-                            {isEligible ? (
-                                <Animatable.View animation="fadeIn" delay={index * 500} style={styles.buttonWrapper}>
-                                    <TouchableOpacity style={styles.voteButton} onPress={() => handleVote(item.id)}>
-                                        <Text style={styles.buttonText}>Vote</Text>
-                                    </TouchableOpacity>
-                                </Animatable.View>
-                            ) : (
-                                <Animatable.View animation="fadeIn" delay={index * 500} style={styles.buttonWrapper}>
-                                    <TouchableOpacity style={styles.requestButton} onPress={() => handleRequestToVote(item.id)}>
-                                        <Text style={styles.buttonText}>Request</Text>
-                                    </TouchableOpacity>
-                                </Animatable.View>
-                            )}
-                            <Animatable.View animation="fadeIn" delay={index * 600} style={styles.buttonWrapper}>
-                                <TouchableOpacity style={styles.learnButton} onPress={() => handleLearnMore(item.id)}>
-                                    <Text style={styles.buttonText}>Info</Text>
-                                </TouchableOpacity>
-                            </Animatable.View>
-                        </>
-                    )}
-                </View>
-            </Animatable.View>
+            <ReferendumCard
+                item={item}
+                index={index}
+                isEligible={isEligible}
+                status={status}
+                handleOpenModal={handleOpenModal}
+                handleVote={handleVote}
+                handleLearnMore={handleLearnMore}
+                handleRequestToVote={handleRequestToVote}
+            />
         )
     }
 
