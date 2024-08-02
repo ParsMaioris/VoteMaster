@@ -10,7 +10,7 @@ import useReferendumHelper from '../Hooks/useReferendumHelper'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation' // Adjust the import path as needed
-import {checkEligibility, resetEligibility} from '../Redux/EligibilitySlice'
+import {checkEligibility, resetEligibility, selectEligibility} from '../Redux/EligibilitySlice'
 import {getOwnedReferendums, resetOwenrState as resetOwnerState} from '../Redux/OwnerSlice'
 import {useFocusEffect} from '@react-navigation/native'
 import {referendums} from '../Mocks/MockReferendums'
@@ -24,6 +24,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     const [loading, setLoading] = useState(true)
     const ownedReferendums = useReferendumHelper()
     const [fetchError, setFetchError] = useState<string | null>(null)
+    const eligibilityMap = useSelector(selectEligibility)
 
     useFocusEffect(
         useCallback(() =>
@@ -34,12 +35,18 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                 {
                     for (const referendum of referendums)
                     {
-                        await dispatch(checkEligibility({
-                            userId: userId,
-                            userName: 'currentUserName',
-                            referendumId: referendum.id,
-                            referendumTitle: referendum.title,
-                        })).unwrap()
+                        const eligibilityKey = `${userId}-${referendum.id}`
+
+                        if (!eligibilityMap[eligibilityKey])
+                        {
+
+                            await dispatch(checkEligibility({
+                                userId: userId,
+                                userName: 'currentUserName',
+                                referendumId: referendum.id,
+                                referendumTitle: referendum.title,
+                            })).unwrap()
+                        }
                     }
                 } catch (err: any)
                 {
@@ -54,11 +61,6 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                     if (userId)
                     {
                         await dispatch(fetchVotesByUserId(userId)).unwrap()
-                        const votes = await dispatch(fetchVotesByUserId(userId)).unwrap()
-                        const votePromises = votes.map((vote) =>
-                            dispatch(getReferendumById(vote.referendumId)).unwrap()
-                        )
-                        await Promise.all(votePromises)
                     }
                 } catch (err: any)
                 {
