@@ -39,9 +39,14 @@ const VotersScreen: React.FC = () =>
     navigation.navigate('VoterDetail', {id: user.id, name: user.name})
   }
 
+  const getLast12Digits = (guid: string) => guid.slice(-12)
+
   const filteredVoters = voters
     .sort((a, b) => a.name.localeCompare(b.name))
-    .filter((voter) => voter.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((voter) =>
+      voter.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      getLast12Digits(voter.id).includes(searchQuery)
+    )
 
   const colors = [
     '#007AFF', '#34C759', '#FF9500', '#AF52DE', '#FF3B30',
@@ -70,7 +75,10 @@ const VotersScreen: React.FC = () =>
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Add Participants</Text>
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <SearchBar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
       <FlatList
         data={filteredVoters}
         keyExtractor={(item) => item.id}
@@ -83,9 +91,12 @@ const VotersScreen: React.FC = () =>
                 ) : (
                   <Ionicons name="person-circle-outline" size={40} color={getColor(index)} />
                 )}
-                <Text style={styles.userText}>{item.name}</Text>
+                <View style={styles.userDetails}>
+                  <Text style={styles.userText}>{item.name}</Text>
+                  <Text style={styles.userIdText}>{getLast12Digits(item.id)}</Text>
+                </View>
               </View>
-              <Ionicons name="arrow-forward-circle-outline" size={24} color="#007AFF" />
+              <Ionicons name="chevron-forward" size={24} color="#C7C7CC" />
             </TouchableOpacity>
           </Animatable.View>
         )}
@@ -98,12 +109,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: '#F2F2F7',
   },
   headerText: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: '#1D1D1F',
+    fontSize: 28,
+    fontWeight: '600',
+    color: '#000',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -113,12 +124,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 15,
     marginBottom: 10,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    backgroundColor: '#FFF',
+    borderRadius: 14,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowRadius: 4,
     elevation: 3,
   },
   userInfo: {
@@ -130,10 +141,17 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
   },
+  userDetails: {
+    marginLeft: 12,
+  },
   userText: {
     fontSize: 18,
-    color: '#1D1D1F',
-    marginLeft: 10,
+    fontWeight: '500',
+    color: '#000',
+  },
+  userIdText: {
+    fontSize: 14,
+    color: '#8E8E93',
   },
   errorText: {
     color: 'red',
@@ -149,7 +167,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 18,
-    color: '#1D1D1F',
+    color: '#8E8E93',
   },
 })
 

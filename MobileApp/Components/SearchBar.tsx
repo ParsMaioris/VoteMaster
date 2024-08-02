@@ -15,7 +15,7 @@ const SearchBar: React.FC<SearchBarProps> = ({searchQuery, setSearchQuery}) =>
             <MaterialIcons name="search" size={20} color="#9E9E9E" style={styles.searchIcon} />
             <TextInput
                 style={styles.searchInput}
-                placeholder="Search by name"
+                placeholder="Search by Name or ID"
                 placeholderTextColor="#9E9E9E"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
