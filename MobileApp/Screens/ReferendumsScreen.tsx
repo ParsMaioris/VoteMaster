@@ -1,17 +1,16 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {View, Text, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
 import {useSelector} from 'react-redux'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {RootState} from '../Redux/Store'
-import {Referendum} from '../DTOs/Referendums'
 import {referendums} from '../Mocks/MockReferendums'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation'
 import useEligibilityCheck from '../Hooks/useEligibilityCheck'
-import ReferendumCard from '../Components/ReferendumCard'
 import ReferendumModal from '../Components/ReferendumModal'
+import useReferendumHandlers from '../Hooks/useReferendumHandlers'
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Referendums'>
@@ -21,8 +20,14 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 {
     const userId = useSelector((state: RootState) => state.user.id)
     const {isEligibleForAny, loading, fetchError, status, eligibilityMap} = useEligibilityCheck(userId)
-    const [modalVisible, setModalVisible] = useState(false)
-    const [selectedReferendum, setSelectedReferendum] = useState<Referendum | null>(null)
+
+    const {
+        modalVisible,
+        selectedReferendum,
+        handleOpenModal,
+        handleCloseModal,
+        renderItem
+    } = useReferendumHandlers(userId, eligibilityMap, status, navigation)
 
     if (loading || status === 'loading')
     {
@@ -49,51 +54,6 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                 </View>
             </View>
         )
-    }
-
-    const handleOpenModal = (referendum: Referendum) =>
-    {
-        setSelectedReferendum(referendum)
-        setModalVisible(true)
-    }
-
-    const handleCloseModal = () =>
-    {
-        setModalVisible(false)
-        setSelectedReferendum(null)
-    }
-
-    const renderItem = ({item, index}: {item: Referendum; index: number}) =>
-    {
-        const eligibilityKey = `${userId}-${item.id}`
-        const isEligible = eligibilityMap[eligibilityKey]
-
-        if (!isEligible)
-        {
-            return null
-        }
-
-        return (
-            <ReferendumCard
-                item={item}
-                index={index}
-                isEligible={isEligible}
-                status={status}
-                handleOpenModal={handleOpenModal}
-                handleVote={handleVote}
-                handleLearnMore={handleLearnMore}
-            />
-        )
-    }
-
-    const handleVote = (id: string) =>
-    {
-        navigation.navigate('ReferendumPrompt', {referendumId: id})
-    }
-
-    const handleLearnMore = (id: string) =>
-    {
-        navigation.navigate('ReferendumDetail', {referendumId: id})
     }
 
     return (
@@ -136,7 +96,6 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
         </LinearGradient>
     )
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -182,7 +141,7 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 16,
         textAlign: 'center',
-        paddingTop: 40
+        paddingTop: 40,
     },
     loadingContent: {
         flex: 1,
