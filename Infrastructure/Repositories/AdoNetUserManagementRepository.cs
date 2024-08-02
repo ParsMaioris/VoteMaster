@@ -24,28 +24,35 @@ public class UserManagementRepository : IUserManagementRepository
 
     public void AddUser(string name, string passwordHash, string email, out Guid newUserId)
     {
-        using (var connection = new SqlConnection(_connectionString))
+        try
         {
-            var command = new SqlCommand("sp_AddUser", connection)
+            using (var connection = new SqlConnection(_connectionString))
             {
-                CommandType = CommandType.StoredProcedure
-            };
+                var command = new SqlCommand("sp_AddUser", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
-            command.Parameters.AddWithValue("@Name", name);
-            command.Parameters.AddWithValue("@PasswordHash", passwordHash);
-            command.Parameters.AddWithValue("@Email", email);
+                command.Parameters.AddWithValue("@Name", name);
+                command.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                command.Parameters.AddWithValue("@Email", email);
 
-            var outputParam = new SqlParameter("@NewUserId", SqlDbType.UniqueIdentifier)
-            {
-                Direction = ParameterDirection.Output
-            };
+                var outputParam = new SqlParameter("@NewUserId", SqlDbType.UniqueIdentifier)
+                {
+                    Direction = ParameterDirection.Output
+                };
 
-            command.Parameters.Add(outputParam);
+                command.Parameters.Add(outputParam);
 
-            connection.Open();
-            command.ExecuteNonQuery();
+                connection.Open();
+                command.ExecuteNonQuery();
 
-            newUserId = (Guid)outputParam.Value;
+                newUserId = (Guid)outputParam.Value;
+            }
+        }
+        catch (SqlException ex) when (ex.Number == 50001)
+        {
+            throw new InvalidOperationException("Email already associated with an account.");
         }
     }
 

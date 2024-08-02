@@ -221,6 +221,11 @@ BEGIN
     DECLARE @UserId UNIQUEIDENTIFIER;
     SET @UserId = NEWID();
     
+    IF EXISTS (SELECT 1 FROM UserDetails WHERE Email = @Email)
+    BEGIN
+        THROW 50001, 'Email already associated with an account.', 1;
+    END
+    
     BEGIN TRY
         BEGIN TRANSACTION;
         

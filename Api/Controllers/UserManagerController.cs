@@ -32,6 +32,16 @@ public class UserManagerController : ControllerBase
                 Data = newUserId
             });
         }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Attempt to register with an existing email: {Email}", request.Email);
+            return BadRequest(new ApiResponse<string>
+            {
+                Success = false,
+                Message = "Email already associated with an account.",
+                Data = null
+            });
+        }
         catch (Exception ex)
         {
             return ExceptionHandlerUtility.HandleException(ex, _logger);

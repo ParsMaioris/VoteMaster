@@ -39,7 +39,8 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
             navigation.navigate('SignIn')
         } else
         {
-            setErrorMessage(resultAction.payload as string)
+            const payload = resultAction.payload as {message: string}
+            setErrorMessage(payload.message)
         }
     }
 
