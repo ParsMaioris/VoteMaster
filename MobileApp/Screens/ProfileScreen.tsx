@@ -214,6 +214,10 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                                 <Text style={styles.label}>Name:</Text>
                                 <Text style={styles.info}>{userName}</Text>
                             </View>
+                            <View style={styles.infoContainer}>
+                                <Text style={styles.label}>Unique ID:</Text>
+                                <Text style={styles.info}>{userId.slice(-12)}</Text>
+                            </View>
                         </View>
                         {renderSections()}
                         <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>

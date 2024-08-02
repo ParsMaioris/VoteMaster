@@ -88,7 +88,7 @@ const ProposeReferendumForm: React.FC = () =>
                     <Animatable.Text animation="fadeInDown" style={styles.headerText}>Propose a New Referendum</Animatable.Text>
                     <Animatable.Text animation="fadeInDown" delay={200} style={styles.pitchText}>Voice Your Vision</Animatable.Text>
                     <Text style={styles.infoText}>
-                        Note: Please allow 5 days for review. You will be notified of approval by email, after which you can invite users to participate.
+                        Please allow up to five days for the review. Once approved, you will be notified by email, after which you may invite users to participate.
                     </Text>
                     <Formik
                         initialValues={{question: '', details: '', date: ''}}
