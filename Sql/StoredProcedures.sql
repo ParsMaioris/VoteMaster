@@ -208,3 +208,122 @@ BEGIN
         Id = @Id;
 END;
 GO
+
+CREATE OR ALTER PROCEDURE sp_AddUser
+    @Name NVARCHAR(100),
+    @PasswordHash NVARCHAR(255),
+    @Email NVARCHAR(255),
+    @NewUserId UNIQUEIDENTIFIER OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @UserId UNIQUEIDENTIFIER;
+    SET @UserId = NEWID();
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        INSERT INTO Users (Id, Name)
+        VALUES (@UserId, @Name);
+        
+        INSERT INTO UserDetails (UserId, PasswordHash, Email)
+        VALUES (@UserId, @PasswordHash, @Email);
+        
+        COMMIT TRANSACTION;
+        
+        -- Set the output parameter to the new UserId
+        SET @NewUserId = @UserId;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_DeleteUser
+    @UserId UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        DELETE FROM UserDetails
+        WHERE UserId = @UserId;
+        
+        DELETE FROM Users
+        WHERE Id = @UserId;
+        
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpdatePassword
+    @UserId UNIQUEIDENTIFIER,
+    @NewPasswordHash NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    UPDATE UserDetails
+    SET PasswordHash = @NewPasswordHash
+    WHERE UserId = @UserId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpdateEmail
+    @UserId UNIQUEIDENTIFIER,
+    @NewEmail NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    UPDATE UserDetails
+    SET Email = @NewEmail
+    WHERE UserId = @UserId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpdateUserName
+    @UserId UNIQUEIDENTIFIER,
+    @NewName NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    UPDATE Users
+    SET Name = @NewName
+    WHERE Id = @UserId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_SignInUser
+    @Email NVARCHAR(255),
+    @PasswordHash NVARCHAR(255),
+    @IsSuccessful BIT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (
+        SELECT 1 
+        FROM UserDetails 
+        WHERE Email = @Email AND PasswordHash = @PasswordHash
+    )
+    BEGIN
+        SET @IsSuccessful = 1;
+    END
+    ELSE
+    BEGIN
+        SET @IsSuccessful = 0;
+    END
+END
+GO

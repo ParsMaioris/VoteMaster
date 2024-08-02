@@ -62,6 +62,7 @@ builder.Services.AddScoped<IReferendumOwnerRepository, AdoNetReferendumOwnerRepo
 builder.Services.AddScoped<IReferendumRequestService, VoteMaster.Domain.ReferendumRequestService>();
 builder.Services.AddScoped<IReferendumRequestRepository, AdoNetReferendumRequestRepository>();
 builder.Services.AddScoped<ReferendumRequestManager>();
+builder.Services.AddScoped<IUserManagementRepository, UserManagementRepository>();
 
 // Register application services
 builder.Services.AddScoped<UserCommandService>();

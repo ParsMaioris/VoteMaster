@@ -46,7 +46,6 @@ CREATE TABLE UserDetails (
     UserId UNIQUEIDENTIFIER PRIMARY KEY,
     PasswordHash NVARCHAR(255) NULL,
     Email NVARCHAR(255) NULL,
-    PhoneNumber NVARCHAR(20) NULL,
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
 
