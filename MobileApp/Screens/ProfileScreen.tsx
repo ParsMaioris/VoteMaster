@@ -37,7 +37,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                     {
                         const eligibilityKey = `${userId}-${referendum.id}`
 
-                        if (!eligibilityMap[eligibilityKey])
+                        if (eligibilityMap[eligibilityKey] == undefined)
                         {
 
                             await dispatch(checkEligibility({

@@ -52,7 +52,7 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
             <EmailInput value={email} onChange={setEmail} />
             <PasswordInput value={password} onChange={setPassword} />
             <RegisterButton onPress={handleRegister} />
-            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" />}
+            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" style={{marginBottom: 10}} />}
             {errorMessage && <ErrorMessage message={errorMessage} />}
             <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
                 <Text style={styles.link}>Already have an account? Sign In</Text>

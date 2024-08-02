@@ -82,7 +82,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
             <EmailInput value={email} onChange={setEmail} />
             <PasswordInput value={password} onChange={setPassword} />
             <SignInButton onPress={handleSignIn} />
-            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" />}
+            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" style={{marginBottom: 10}} />}
             {errorMessage && <ErrorMessage message={errorMessage} />}
             <TouchableOpacity onPress={() =>
             {
