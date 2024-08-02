@@ -21,7 +21,8 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     const userName = useSelector((state: RootState) => state.user.name)
     const userId = useSelector((state: RootState) => state.user.id)
     const votes = useSelector((state: RootState) => state.vote.votes)
-    const [loading, setLoading] = useState(true)
+    const [loadingActivity, setLoadingActivity] = useState(true)
+    const [loadingReferendums, setLoadingReferendums] = useState(true)
     const ownedReferendums = useReferendumHelper()
     const [fetchError, setFetchError] = useState<string | null>(null)
     const eligibilityMap = useSelector(selectEligibility)
@@ -39,7 +40,6 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 
                         if (eligibilityMap[eligibilityKey] == undefined)
                         {
-
                             await dispatch(checkEligibility({
                                 userId: userId,
                                 userName: 'currentUserName',
@@ -70,18 +70,23 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 
             const fetchData = async () =>
             {
-                setLoading(true)
                 setFetchError(null)
                 try
                 {
-                    await fetchEligibility()
-                    await dispatch(getOwnedReferendums(userId)).unwrap()
+                    setLoadingActivity(true)
                     await fetchVotes()
+                    setLoadingActivity(false)
+
+                    setLoadingReferendums(true)
+                    await dispatch(getOwnedReferendums(userId)).unwrap()
+                    await fetchEligibility()
+                    setLoadingReferendums(false)
                 } catch (err: any)
                 {
                     setFetchError(err.message)
+                    setLoadingActivity(false)
+                    setLoadingReferendums(false)
                 }
-                setLoading(false)
             }
 
             fetchData()
@@ -104,6 +109,21 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 
     const renderVoteActivity = () =>
     {
+        if (loadingActivity)
+        {
+            return (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#007BFF" />
+                    {/* <Text style={styles.loadingText}>Loading Recent Activity...</Text> */}
+                </View>
+            )
+        }
+        if (votes.length === 0)
+        {
+            return (
+                <Text style={styles.noActivity}>No recent activity</Text>
+            )
+        }
         return votes.map((vote) =>
         {
             const referendum = referendums.find((ref) => ref.id === vote.referendumId)
@@ -119,6 +139,21 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 
     const renderUserReferendums = () =>
     {
+        if (loadingReferendums)
+        {
+            return (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#007BFF" />
+                    {/* <Text style={styles.loadingText}>Loading User Referendums...</Text> */}
+                </View>
+            )
+        }
+        if (ownedReferendums.length === 0)
+        {
+            return (
+                <Text style={styles.noActivity}>No referendums found</Text>
+            )
+        }
         return ownedReferendums.map((ref, index) => (
             <Animatable.View animation="fadeInUp" duration={800} delay={index * 100 + 400} key={ref.id} style={styles.referendumItemContainer}>
                 <Text style={styles.referendumItem}>
@@ -130,63 +165,18 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 
     const renderSections = () =>
     {
-        if (votes.length > 0 && ownedReferendums.length > 0)
-        {
-            return (
-                <>
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>Recent Activity</Text>
-                        {renderVoteActivity()}
-                    </View>
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>User Referendums</Text>
-                        {renderUserReferendums()}
-                    </View>
-                </>
-            )
-        } else if (votes.length > 0)
-        {
-            return (
-                <>
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>Recent Activity</Text>
-                        {renderVoteActivity()}
-                    </View>
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>User Referendums</Text>
-                        <Text style={styles.noActivity}>No referendums found</Text>
-                    </View>
-                </>
-            )
-        } else if (ownedReferendums.length > 0)
-        {
-            return (
-                <>
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>User Referendums</Text>
-                        {renderUserReferendums()}
-                    </View>
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>Recent Activity</Text>
-                        <Text style={styles.noActivity}>No recent activity</Text>
-                    </View>
-                </>
-            )
-        } else
-        {
-            return (
-                <>
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>Recent Activity</Text>
-                        <Text style={styles.noActivity}>No recent activity</Text>
-                    </View>
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>User Referendums</Text>
-                        <Text style={styles.noActivity}>No referendums found</Text>
-                    </View>
-                </>
-            )
-        }
+        return (
+            <>
+                <View style={styles.sectionContainer}>
+                    <Text style={styles.sectionTitle}>Recent Activity</Text>
+                    {renderVoteActivity()}
+                </View>
+                <View style={styles.sectionContainer}>
+                    <Text style={styles.sectionTitle}>User Referendums</Text>
+                    {renderUserReferendums()}
+                </View>
+            </>
+        )
     }
 
     if (fetchError)
@@ -196,37 +186,30 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 
     return (
         <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
-            {loading ? (
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007BFF" />
-                    <Text style={styles.loadingText}>Loading...</Text>
-                </View>
-            ) : (
-                <Animatable.View animation="fadeInDown" duration={1000} style={styles.contentContainer}>
-                    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                        <View style={styles.profileContainer}>
-                            <Ionicons name="person-circle-outline" size={100} color="#007BFF" style={styles.profileIcon} />
-                            <Text style={styles.userName}>{userName}</Text>
+            <Animatable.View animation="fadeInDown" duration={1000} style={styles.contentContainer}>
+                <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+                    <View style={styles.profileContainer}>
+                        <Ionicons name="person-circle-outline" size={100} color="#007BFF" style={styles.profileIcon} />
+                        <Text style={styles.userName}>{userName}</Text>
+                    </View>
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>User Information</Text>
+                        <View style={styles.infoContainer}>
+                            <Text style={styles.label}>Name:</Text>
+                            <Text style={styles.info}>{userName}</Text>
                         </View>
-                        <View style={styles.sectionContainer}>
-                            <Text style={styles.sectionTitle}>User Information</Text>
-                            <View style={styles.infoContainer}>
-                                <Text style={styles.label}>Name:</Text>
-                                <Text style={styles.info}>{userName}</Text>
-                            </View>
-                            <View style={styles.infoContainer}>
-                                <Text style={styles.label}>Unique ID:</Text>
-                                <Text style={styles.info}>{userId.slice(-12)}</Text>
-                            </View>
+                        <View style={styles.infoContainer}>
+                            <Text style={styles.label}>Unique ID:</Text>
+                            <Text style={styles.info}>{userId.slice(-12)}</Text>
                         </View>
-                        {renderSections()}
-                        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-                            <Ionicons name="log-out-outline" size={20} color="#fff" />
-                            <Text style={styles.signOutButtonText}>Sign Out</Text>
-                        </TouchableOpacity>
-                    </ScrollView>
-                </Animatable.View>
-            )}
+                    </View>
+                    {renderSections()}
+                    <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+                        <Ionicons name="log-out-outline" size={20} color="#fff" />
+                        <Text style={styles.signOutButtonText}>Sign Out</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </Animatable.View>
             <View style={styles.bottomNavigationWrapper}>
                 <BottomNavigation />
             </View>
@@ -253,9 +236,10 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        padding: 10,
     },
     loadingText: {
         marginTop: 10,
