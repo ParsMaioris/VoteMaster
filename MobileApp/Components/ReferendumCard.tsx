@@ -15,6 +15,8 @@ type Props = {
 
 const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handleOpenModal, handleVote, handleLearnMore}) =>
 {
+    const isExpired = new Date(item.endTime!) < new Date()
+
     return (
         <Animatable.View animation="fadeInUp" duration={800} delay={index * 100} style={styles.card}>
             <TouchableOpacity onPress={() => handleOpenModal(item)} style={styles.cardContent}>
@@ -33,10 +35,17 @@ const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handl
                     <ActivityIndicator size="small" color="#007AFF" />
                 ) : (
                     <>
-                        {isEligible && (
+                        {!isExpired && isEligible && (
                             <Animatable.View animation="fadeIn" delay={index * 500} style={styles.buttonWrapper}>
                                 <TouchableOpacity style={styles.voteButton} onPress={() => handleVote(item.id)}>
                                     <Text style={styles.buttonText}>Vote</Text>
+                                </TouchableOpacity>
+                            </Animatable.View>
+                        )}
+                        {isExpired && (
+                            <Animatable.View animation="fadeIn" delay={index * 500} style={styles.buttonWrapper}>
+                                <TouchableOpacity style={styles.promptButton} onPress={() => handleVote(item.id)}>
+                                    <Text style={styles.buttonText}>Prompt</Text>
                                 </TouchableOpacity>
                             </Animatable.View>
                         )}
@@ -92,6 +101,16 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     voteButton: {
+        backgroundColor: '#004AAD',
+        paddingVertical: 12,
+        borderRadius: 12,
+        shadowColor: '#004AAD',
+        shadowOpacity: 0.3,
+        shadowOffset: {width: 0, height: 2},
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    promptButton: {
         backgroundColor: '#004AAD',
         paddingVertical: 12,
         borderRadius: 12,
