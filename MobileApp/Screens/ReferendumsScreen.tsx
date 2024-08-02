@@ -82,7 +82,6 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                 handleOpenModal={handleOpenModal}
                 handleVote={handleVote}
                 handleLearnMore={handleLearnMore}
-                handleRequestToVote={handleRequestToVote}
             />
         )
     }
@@ -95,11 +94,6 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
     const handleLearnMore = (id: string) =>
     {
         navigation.navigate('ReferendumDetail', {referendumId: id})
-    }
-
-    const handleRequestToVote = (id: string) =>
-    {
-        // handle the request to vote action
     }
 
     return (

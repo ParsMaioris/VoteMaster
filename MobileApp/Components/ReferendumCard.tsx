@@ -11,10 +11,9 @@ type Props = {
     handleOpenModal: (referendum: Referendum) => void
     handleVote: (id: string) => void
     handleLearnMore: (id: string) => void
-    handleRequestToVote: (id: string) => void
 }
 
-const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handleOpenModal, handleVote, handleLearnMore, handleRequestToVote}) =>
+const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handleOpenModal, handleVote, handleLearnMore}) =>
 {
     return (
         <Animatable.View animation="fadeInUp" duration={800} delay={index * 100} style={styles.card}>
@@ -34,16 +33,10 @@ const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handl
                     <ActivityIndicator size="small" color="#007AFF" />
                 ) : (
                     <>
-                        {isEligible ? (
+                        {isEligible && (
                             <Animatable.View animation="fadeIn" delay={index * 500} style={styles.buttonWrapper}>
                                 <TouchableOpacity style={styles.voteButton} onPress={() => handleVote(item.id)}>
                                     <Text style={styles.buttonText}>Vote</Text>
-                                </TouchableOpacity>
-                            </Animatable.View>
-                        ) : (
-                            <Animatable.View animation="fadeIn" delay={index * 500} style={styles.buttonWrapper}>
-                                <TouchableOpacity style={styles.requestButton} onPress={() => handleRequestToVote(item.id)}>
-                                    <Text style={styles.buttonText}>Request</Text>
                                 </TouchableOpacity>
                             </Animatable.View>
                         )}
@@ -103,16 +96,6 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         borderRadius: 12,
         shadowColor: '#004AAD',
-        shadowOpacity: 0.3,
-        shadowOffset: {width: 0, height: 2},
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    requestButton: {
-        backgroundColor: '#FFA000',
-        paddingVertical: 12,
-        borderRadius: 12,
-        shadowColor: '#FFA000',
         shadowOpacity: 0.3,
         shadowOffset: {width: 0, height: 2},
         shadowRadius: 4,
