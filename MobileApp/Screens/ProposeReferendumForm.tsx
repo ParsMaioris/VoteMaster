@@ -3,15 +3,14 @@ import {ScrollView, StyleSheet, View, Text, TouchableOpacity, Dimensions} from '
 import {TextInput, useTheme, Snackbar} from 'react-native-paper'
 import {Formik} from 'formik'
 import * as Yup from 'yup'
-import {DatePickerModal} from 'react-native-paper-dates'
+import {DatePickerModal, en, registerTranslation} from 'react-native-paper-dates'
 import {Provider as PaperProvider} from 'react-native-paper'
-import {format} from 'date-fns'
+import {format, addDays, isBefore} from 'date-fns'
 import {enUS} from 'date-fns/locale'
 import {LinearGradient} from 'expo-linear-gradient'
 import {Ionicons} from '@expo/vector-icons'
 import * as Animatable from 'react-native-animatable'
 
-import {registerTranslation, en} from 'react-native-paper-dates'
 import {useDispatch, useSelector} from 'react-redux'
 import {AppDispatch, RootState} from '../Redux/Store'
 import {submitReferendumRequest} from '../Redux/ReferendumRequestSlice'
@@ -23,7 +22,7 @@ registerTranslation('en', en)
 const validationSchema = Yup.object().shape({
     question: Yup.string().required('Referendum question is required'),
     details: Yup.string().required('Details are required'),
-    date: Yup.string().required('Date is required'),
+    date: Yup.string().required('Date is required')
 })
 
 const ProposeReferendumForm: React.FC = () =>
@@ -75,12 +74,22 @@ const ProposeReferendumForm: React.FC = () =>
         setFieldValue('date', format(params.date, 'yyyy-MM-dd'))
     }
 
+    const filterDate = (date: Date) =>
+    {
+        const today = new Date()
+        const minDate = addDays(today, 7)
+        return !isBefore(date, minDate)
+    }
+
     return (
         <PaperProvider>
             <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.content}>
                     <Animatable.Text animation="fadeInDown" style={styles.headerText}>Propose a New Referendum</Animatable.Text>
                     <Animatable.Text animation="fadeInDown" delay={200} style={styles.pitchText}>Voice Your Vision</Animatable.Text>
+                    <Text style={styles.infoText}>
+                        Note: Please allow 5 days for review. You will be notified of approval by email, after which you can invite users to participate.
+                    </Text>
                     <Formik
                         initialValues={{question: '', details: '', date: ''}}
                         validationSchema={validationSchema}
@@ -142,6 +151,7 @@ const ProposeReferendumForm: React.FC = () =>
                                         date={date}
                                         locale={'en'}
                                         onConfirm={(params) => onConfirm(params, setFieldValue)}
+                                        validRange={{startDate: addDays(new Date(), 7)}}  // Setting the valid range for date selection
                                     />
                                     {touched.date && errors.date && <Text style={styles.error}>{errors.date}</Text>}
                                 </Animatable.View>
@@ -193,6 +203,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 30,
         lineHeight: 24,
+    },
+    infoText: {
+        fontSize: 14,
+        fontWeight: '300',
+        color: '#666666',
+        textAlign: 'center',
+        marginBottom: 20,
     },
     formContainer: {
         width: '100%',
@@ -249,5 +266,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#333333',
     },
 })
+
 
 export default ProposeReferendumForm

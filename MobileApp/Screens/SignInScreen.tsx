@@ -22,11 +22,11 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
     const dispatch = useAppDispatch()
     const {status} = useAppSelector((state) => state.user)
 
-    const saveUserToStorage = async (id: string, name: string, token: string) =>
+    const saveUserToStorage = async (id: string, name: string, token: string, passwordHash: string, email: string) =>
     {
         try
         {
-            await AsyncStorage.setItem('user', JSON.stringify({id, name, token}))
+            await AsyncStorage.setItem('user', JSON.stringify({id, name, token, passwordHash, email}))
         } catch (e)
         {
             console.error('Failed to save user to storage', e)
@@ -53,7 +53,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
 
             if (currentUser)
             {
-                saveUserToStorage(currentUser.id, currentUser.name, token)
+                saveUserToStorage(currentUser.id, currentUser.name, token, passwordHash, email)
                 dispatch(setUser(currentUser))
                 setErrorMessage('')
                 navigateToLandingPage(currentUser)

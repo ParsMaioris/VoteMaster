@@ -45,7 +45,9 @@ const InviteParticipantScreen: React.FC = () =>
             <View style={styles.container}>
                 <View style={styles.messageContainer}>
                     <Text style={styles.messageText}>No Referendums Created</Text>
-                    <Text style={styles.subMessageText}>Create a referendum to add participants.</Text>
+                    <Text style={styles.subMessageText}>
+                        Propose a referendum. Once approved, you can invite users to vote on it.
+                    </Text>
                 </View>
                 <TouchableOpacity style={styles.button} onPress={handleCreateReferendum}>
                     <Text style={styles.buttonText}>Propose Referendum</Text>
@@ -90,6 +92,8 @@ const styles = StyleSheet.create({
         color: '#1D1D1F',
         textAlign: 'center',
         marginBottom: 20,
+        marginLeft: 20,
+        marginRight: 20,
     },
     button: {
         backgroundColor: '#007AFF',
