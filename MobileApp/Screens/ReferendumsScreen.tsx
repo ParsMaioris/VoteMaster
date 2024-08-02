@@ -165,34 +165,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#1D1D1F',
     },
-    image: {
-        width: '100%',
-        height: 120,
-        borderRadius: 15,
-        marginBottom: 15,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#333333',
-        marginBottom: 10,
-        textAlign: 'center',
-        overflow: 'hidden',
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    buttonWrapper: {
-        flex: 1,
-        marginHorizontal: 5,
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontSize: 15,
-        fontWeight: '600',
-        textAlign: 'center',
-    },
     notEligibleContainer: {
         flex: 1,
         justifyContent: 'center',
