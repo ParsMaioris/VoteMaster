@@ -3,7 +3,7 @@ import axios from 'axios'
 import Constants from 'expo-constants'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {RootState} from './Store'
-import api from './Api'
+import api from '../Infra/Api'
 import {set} from 'date-fns'
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl

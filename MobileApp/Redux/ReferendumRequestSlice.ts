@@ -1,7 +1,7 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
 import Constants from 'expo-constants'
 import {RootState} from './Store'
-import api from './Api'
+import api from '../Infra/Api'
 
 const apiUrl = Constants.expoConfig?.extra?.apiUrl
 

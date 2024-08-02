@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
 import {RootState} from './Store'
-import api from './Api'
+import api from '../Infra/Api'
 
 interface Vote
 {
