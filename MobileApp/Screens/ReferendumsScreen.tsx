@@ -41,7 +41,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                 {
                     const eligibilityKey = `${userId}-${referendum.id}`
 
-                    if (!eligibilityMap[eligibilityKey])
+                    if (eligibilityMap[eligibilityKey] == undefined)
                     {
                         const eligibilityCheckResult = await dispatch(checkEligibility({
                             userId,
