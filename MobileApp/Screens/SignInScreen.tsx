@@ -84,7 +84,13 @@ const SignInScreen: React.FC<Props> = ({navigation}) =>
             <SignInButton onPress={handleSignIn} />
             {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" />}
             {errorMessage && <ErrorMessage message={errorMessage} />}
-            <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
+            <TouchableOpacity onPress={() =>
+            {
+                setErrorMessage('')
+                setEmail('')
+                setPassword('')
+                navigation.navigate('Registration')
+            }}>
                 <Text style={styles.link}>Don't have an account? Register here</Text>
             </TouchableOpacity>
             <Footer />
@@ -197,7 +203,6 @@ const styles = StyleSheet.create({
     link: {
         color: '#007BFF',
         fontWeight: '600',
-        marginTop: 20,
     },
     input: {
         width: '100%',
