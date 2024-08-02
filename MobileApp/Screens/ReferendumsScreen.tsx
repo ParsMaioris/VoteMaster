@@ -1,10 +1,11 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {View, Text, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
 import {useSelector} from 'react-redux'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {RootState} from '../Redux/Store'
-import {referendums} from '../Mocks/MockReferendums'
+import {referendums as mockReferendums} from '../Mocks/MockReferendums'
+import {Referendum} from '../DTOs/Referendums'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation'
@@ -28,6 +29,34 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
         handleCloseModal,
         renderItem
     } = useReferendumHandlers(userId, eligibilityMap, status, navigation)
+
+    const [activeReferendums, setActiveReferendums] = useState<Referendum[]>([])
+    const [expiredReferendums, setExpiredReferendums] = useState<Referendum[]>([])
+
+    useEffect(() =>
+    {
+        const today = new Date()
+        const active: Referendum[] = []
+        const expired: Referendum[] = []
+
+        mockReferendums.forEach(referendum =>
+        {
+            if (referendum.endTime)
+            {
+                const endDate = new Date(referendum.endTime)
+                if (endDate >= today)
+                {
+                    active.push(referendum)
+                } else
+                {
+                    expired.push(referendum)
+                }
+            }
+        })
+
+        setActiveReferendums(active)
+        setExpiredReferendums(expired)
+    }, [])
 
     if (loading || status === 'loading')
     {
@@ -67,21 +96,36 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                     </View>
                 </View>
             ) : (
-                isEligibleForAny ? (
-                    <Animatable.View animation="fadeInDown" duration={1000} style={styles.contentContainer}>
-                        <FlatList
-                            data={referendums}
-                            renderItem={renderItem}
-                            keyExtractor={(item) => item.id}
-                            contentContainerStyle={styles.listContainer}
-                            numColumns={2}
-                        />
-                    </Animatable.View>
-                ) : (
-                    <Animatable.View animation="fadeInDown" duration={1000} style={styles.notEligibleContainer}>
-                        <Text style={styles.notEligibleText}>It looks like there are no referendums available for you right now. Enjoy a well-deserved break and check back soon!</Text>
-                    </Animatable.View>
-                )
+                <>
+                    {isEligibleForAny ? (
+                        <Animatable.View animation="fadeInDown" duration={1000} style={styles.contentContainer}>
+                            <Text style={styles.sectionTitle}>Active Referendums</Text>
+                            <FlatList
+                                data={activeReferendums}
+                                renderItem={renderItem}
+                                keyExtractor={(item) => item.id}
+                                contentContainerStyle={styles.listContainer}
+                                numColumns={2}
+                            />
+                            {expiredReferendums.length > 0 && (
+                                <>
+                                    <Text style={styles.sectionTitle}>Expired Referendums</Text>
+                                    <FlatList
+                                        data={expiredReferendums}
+                                        renderItem={renderItem}
+                                        keyExtractor={(item) => item.id}
+                                        contentContainerStyle={styles.listContainer}
+                                        numColumns={2}
+                                    />
+                                </>
+                            )}
+                        </Animatable.View>
+                    ) : (
+                        <Animatable.View animation="fadeInDown" duration={1000} style={styles.notEligibleContainer}>
+                            <Text style={styles.notEligibleText}>It looks like there are no referendums available for you right now. Enjoy a well-deserved break and check back soon!</Text>
+                        </Animatable.View>
+                    )}
+                </>
             )}
             {selectedReferendum && (
                 <ReferendumModal
@@ -147,6 +191,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    sectionTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#007AFF',
+        marginVertical: 10,
+        textAlign: 'center',
     },
 })
 

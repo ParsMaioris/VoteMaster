@@ -8,7 +8,7 @@ import {Ionicons} from '@expo/vector-icons'
 import {addEligibility, checkEligibility} from '../Redux/EligibilitySlice'
 import * as Animatable from 'react-native-animatable'
 import useReferendumHelper from '../Hooks/useReferendumHelper'
-import {referendums} from '../Mocks/MockReferendums'
+import {referendums as mockReferendums} from '../Mocks/MockReferendums'
 
 const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 {
@@ -16,8 +16,6 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
     const voter = {id, name}
     const dispatch = useDispatch<AppDispatch>()
     const ownerId = useSelector((state: RootState) => state.user.id)
-    const allReferendumMap = referendums
-
     const [invitedReferendums, setInvitedReferendums] = useState<string[]>([])
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
     const eligibilityStatus = useSelector((state: RootState) => state.eligibility.status)
@@ -45,22 +43,26 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 
         fetchOwnedReferendums()
 
-        referendums.forEach(referendum =>
+        const today = new Date()
+        mockReferendums.forEach(referendum =>
         {
-            dispatch(checkEligibility({userId: voter.id, referendumId: referendum.id, userName: voter.name, referendumTitle: referendum.title, referendumTitle: referendum.title}))
+            if (referendum.endTime && new Date(referendum.endTime) >= today)
+            {
+                dispatch(checkEligibility({userId: voter.id, referendumId: referendum.id, userName: voter.name, referendumTitle: referendum.title}))
+            }
         })
-    }, [dispatch, ownerId, voter.id, referendums])
+    }, [dispatch, ownerId, voter.id, voter.name])
 
     const handleInvite = (referendumId: string) =>
     {
         dispatch(addEligibility({
             userId: voter.id,
             userName: voter.name,
-            referendumId: referendumId,
-            referendumTitle: referendums.find(referendum => referendum.id === referendumId)?.title || '',
+            referendumId,
+            referendumTitle: mockReferendums.find(referendum => referendum.id === referendumId)?.title || '',
         }))
         setInvitedReferendums([...invitedReferendums, referendumId])
-        setSuccessMessage(`${voter.name} has been successfully invited to ${referendums.find(referendum => referendum.id === referendumId)?.title}`)
+        setSuccessMessage(`${voter.name} has been successfully invited to ${mockReferendums.find(referendum => referendum.id === referendumId)?.title}`)
         setTimeout(() => setSuccessMessage(null), 3000)
     }
 
@@ -94,7 +96,7 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
                     </Animatable.View>
                 )}
                 <FlatList
-                    data={ownedReferendums}
+                    data={ownedReferendums.filter(referendum => new Date(referendum.endTime!) >= new Date())}
                     keyExtractor={(item) => item.id}
                     renderItem={({item, index}) =>
                     {
