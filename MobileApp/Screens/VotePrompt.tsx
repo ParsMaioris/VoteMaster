@@ -25,6 +25,8 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
     const [message, setMessage] = useState<string | null>(null)
+    const isExpired = referendum && new Date(referendum.endTime!) < new Date()
+
 
     useEffect(() =>
     {
@@ -59,6 +61,9 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
                 })
         }
     }
+
+    if (isExpired)
+        return (null)
 
     if (loading || submitting)
     {
