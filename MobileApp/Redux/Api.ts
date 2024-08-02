@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import Constants from 'expo-constants'
 
 const api = axios.create({
-    baseURL: Constants.expoConfig?.extra?.apiUrl
+    baseURL: Constants.expoConfig?.extra?.apiUrl,
 })
 
 api.interceptors.request.use(
@@ -14,8 +14,7 @@ api.interceptors.request.use(
             const user = await AsyncStorage.getItem('user')
             if (user)
             {
-                const parsedUser = JSON.parse(user)
-                const {token} = parsedUser
+                const {token} = JSON.parse(user)
                 if (token)
                 {
                     config.headers.Authorization = `Bearer ${token}`
@@ -27,41 +26,70 @@ api.interceptors.request.use(
         }
         return config
     },
-    (error) =>
-    {
-        return Promise.reject(error)
-    }
+    (error) => Promise.reject(error)
 )
+
+let isRefreshing = false
+let failedQueue: Array<{resolve: (token: string | null) => void, reject: (error: any) => void}> = []
+
+const processQueue = (error: any, token: string | null = null) =>
+{
+    failedQueue.forEach(({resolve, reject}) =>
+    {
+        if (error)
+        {
+            reject(error)
+        } else
+        {
+            resolve(token)
+        }
+    })
+    failedQueue = []
+}
 
 api.interceptors.response.use(
     (response) => response,
-    (error) =>
+    async (error) =>
     {
-        let errorMessage = 'An unexpected error occurred.'
-        if (error.response)
+        const originalRequest = error.config
+
+        if (originalRequest._retry)
         {
-            if (error.response.status === 404)
-            {
-                errorMessage = 'Resource not found.'
-            } else if (error.response.status === 500)
-            {
-                errorMessage = 'Internal server error.'
-            } else
-            {
-                errorMessage = `Error: ${error.response.status}`
-            }
-        } else if (error.request)
-        {
-            errorMessage = 'Network error. Please try again.'
-        } else
-        {
-            errorMessage = 'Error in setting up the request.'
+            return Promise.reject(error)
         }
-        return Promise.reject(errorMessage)
+
+        if (!isRefreshing)
+        {
+            isRefreshing = true
+            originalRequest._retry = true
+
+            try
+            {
+                const token = await signInUser()
+                processQueue(null, token)
+                return api(originalRequest)
+            } catch (err)
+            {
+                processQueue(err, null)
+                return Promise.reject(err)
+            } finally
+            {
+                isRefreshing = false
+            }
+        }
+
+        return new Promise((resolve, reject) =>
+        {
+            failedQueue.push({resolve, reject})
+        }).then((token) =>
+        {
+            originalRequest.headers['Authorization'] = 'Bearer ' + token
+            return api(originalRequest)
+        }).catch((err) => Promise.reject(err))
     }
 )
 
-const signInUser = async () =>
+const signInUser = async (): Promise<string | null> =>
 {
     try
     {
@@ -69,19 +97,19 @@ const signInUser = async () =>
         if (!user)
         {
             console.log('User not found in AsyncStorage.')
-            return
+            return null
         }
 
         const {email, passwordHash} = JSON.parse(user)
         if (!email || !passwordHash)
         {
             console.log('Email or password hash missing in user object.')
-            return
+            return null
         }
 
         const response = await api.post('/UserManager/signin', {
             email,
-            passwordHash
+            passwordHash,
         })
 
         const {token} = response.data.data
@@ -90,27 +118,13 @@ const signInUser = async () =>
 
         await AsyncStorage.setItem('user', JSON.stringify(parsedUser))
         console.log('Token refreshed successfully.')
+
+        return token
     } catch (error)
     {
         console.error('Error signing in user:', error)
+        return null
     }
 }
-
-const startTokenRefresh = () =>
-{
-    console.log('Starting token refresh process...')
-
-    // Refresh the token immediately when the app starts
-    signInUser()
-
-    // Refresh the token every 10 minutes
-    setInterval(() =>
-    {
-        signInUser()
-    }, 10 * 60 * 1000) // 10 minutes in milliseconds
-}
-
-// Start the token refresh process
-startTokenRefresh()
 
 export default api
