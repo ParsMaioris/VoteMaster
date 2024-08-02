@@ -83,6 +83,98 @@ export const fetchUsers = createAsyncThunk(
     }
 )
 
+export const addUser = createAsyncThunk(
+    'user/addUser',
+    async ({name, passwordHash, email}: {name: string; passwordHash: string; email: string}, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await axios.post(`${apiUrl}/usermanager/add`, {name, passwordHash, email})
+            return response.data.data
+        } catch (error: any)
+        {
+            return rejectWithValue(error.response?.data || error.message)
+        }
+    }
+)
+
+export const deleteUser = createAsyncThunk(
+    'user/deleteUser',
+    async (userId: string, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await api.post('/usermanager/delete', {userId})
+            return response.data
+        } catch (error: any)
+        {
+            return rejectWithValue(error.response?.data || error.message)
+        }
+    }
+)
+
+export const updatePassword = createAsyncThunk(
+    'user/updatePassword',
+    async ({userId, newPasswordHash}: {userId: string; newPasswordHash: string}, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await api.post('/usermanager/update/password', {userId, newPasswordHash})
+            return response.data
+        } catch (error: any)
+        {
+            return rejectWithValue(error.response?.data || error.message)
+        }
+    }
+)
+
+export const updateEmail = createAsyncThunk(
+    'user/updateEmail',
+    async ({userId, newEmail}: {userId: string; newEmail: string}, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await api.post('/usermanager/update/email', {userId, newEmail})
+            return response.data
+        } catch (error: any)
+        {
+            return rejectWithValue(error.response?.data || error.message)
+        }
+    }
+)
+
+export const updateUserName = createAsyncThunk(
+    'user/updateUserName',
+    async ({userId, newName}: {userId: string; newName: string}, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await api.post('/usermanager/update/name', {userId, newName})
+            return response.data
+        } catch (error: any)
+        {
+            return rejectWithValue(error.response?.data || error.message)
+        }
+    }
+)
+
+export const signInUser = createAsyncThunk(
+    'user/signInUser',
+    async ({email, passwordHash}: {email: string; passwordHash: string}, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await axios.post(`${apiUrl}/usermanager/signin`, {email, passwordHash})
+
+            saveTokenToStorage(response.data.data.token)
+            return response.data.data
+        } catch (error: any)
+        {
+            return rejectWithValue(error.response?.data || error.message)
+        }
+    }
+)
+
 export const inviteUserToReferendum = createAsyncThunk(
     'user/inviteUserToReferendum',
     async ({userId, referendumId}: {userId: string; referendumId: string}, {rejectWithValue}) =>
@@ -161,6 +253,104 @@ const userSlice = createSlice({
             {
                 state.status = 'failed'
                 state.error = action.payload as string
+            })
+            .addCase(addUser.pending, (state: UserState) =>
+            {
+                state.status = 'loading'
+                state.error = null
+            })
+            .addCase(addUser.fulfilled, (state: UserState, action: PayloadAction<any>) =>
+            {
+                state.status = 'idle'
+                state.users.push(action.payload)
+            })
+            .addCase(addUser.rejected, (state: UserState, action: PayloadAction<any>) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload
+            })
+            // Delete User
+            .addCase(deleteUser.pending, (state: UserState) =>
+            {
+                state.status = 'loading'
+                state.error = null
+            })
+            .addCase(deleteUser.fulfilled, (state: UserState, action: PayloadAction<string>) =>
+            {
+                state.status = 'idle'
+                state.users = state.users.filter((user) => user.id !== action.payload)
+            })
+            .addCase(deleteUser.rejected, (state: UserState, action: PayloadAction<any>) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload
+            })
+            // Update Password
+            .addCase(updatePassword.pending, (state: UserState) =>
+            {
+                state.status = 'loading'
+                state.error = null
+            })
+            .addCase(updatePassword.fulfilled, (state: UserState) =>
+            {
+                state.status = 'idle'
+            })
+            .addCase(updatePassword.rejected, (state: UserState, action: PayloadAction<any>) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload
+            })
+            // Update Email
+            .addCase(updateEmail.pending, (state: UserState) =>
+            {
+                state.status = 'loading'
+                state.error = null
+            })
+            .addCase(updateEmail.fulfilled, (state: UserState) =>
+            {
+                state.status = 'idle'
+            })
+            .addCase(updateEmail.rejected, (state: UserState, action: PayloadAction<any>) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload
+            })
+            // Update User Name
+            .addCase(updateUserName.pending, (state: UserState) =>
+            {
+                state.status = 'loading'
+                state.error = null
+            })
+            .addCase(updateUserName.fulfilled, (state: UserState) =>
+            {
+                state.status = 'idle'
+            })
+            .addCase(updateUserName.rejected, (state: UserState, action: PayloadAction<any>) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload
+            })
+            // Sign In User
+            .addCase(signInUser.pending, (state: UserState) =>
+            {
+                state.status = 'loading'
+                state.error = null
+            })
+            .addCase(signInUser.fulfilled, (state: UserState, action: PayloadAction<boolean>) =>
+            {
+                state.status = 'idle'
+                if (action.payload)
+                {
+                    // Handle successful sign-in, e.g., update state
+                } else
+                {
+                    state.error = 'Invalid email or password'
+                }
+            })
+            .addCase(signInUser.rejected, (state: UserState, action: PayloadAction<any>) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload
             })
     },
 })

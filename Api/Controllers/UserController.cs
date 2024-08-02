@@ -17,14 +17,16 @@ public class UserController : ControllerBase
     private readonly UserCommandService _commandService;
     private readonly UserQueryService _queryService;
     private readonly ILogger<UserController> _logger;
+    private readonly JwtTokenGenerator _jwtTokenGenerator;
     IConfiguration _configuration;
 
-    public UserController(UserCommandService commandService, UserQueryService queryService, ILogger<UserController> logger, IConfiguration configuration)
+    public UserController(UserCommandService commandService, UserQueryService queryService, ILogger<UserController> logger, IConfiguration configuration, JwtTokenGenerator jwtTokenGenerator)
     {
         _commandService = commandService;
         _queryService = queryService;
         _logger = logger;
         _configuration = configuration;
+        _jwtTokenGenerator = jwtTokenGenerator;
     }
 
     [HttpPost("create")]
@@ -63,7 +65,7 @@ public class UserController : ControllerBase
                 });
             }
 
-            var token = GenerateJwtToken(user.Id);
+            var token = _jwtTokenGenerator.GenerateJwtToken(user.Id);
 
             return Ok(new ApiResponse<string>
             {
@@ -96,26 +98,5 @@ public class UserController : ControllerBase
         {
             return ExceptionHandlerUtility.HandleException(ex, _logger);
         }
-    }
-
-    private string GenerateJwtToken(Guid userId)
-    {
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: creds);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

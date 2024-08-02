@@ -10,7 +10,7 @@ public interface IUserManagementRepository
     void UpdatePassword(Guid userId, string newPasswordHash);
     void UpdateEmail(Guid userId, string newEmail);
     void UpdateUserName(Guid userId, string newName);
-    bool SignInUser(string email, string passwordHash);
+    (bool IsSuccessful, Guid UserId) SignInUser(string email, string passwordHash);
 }
 
 public class UserManagementRepository : IUserManagementRepository
@@ -116,7 +116,7 @@ public class UserManagementRepository : IUserManagementRepository
         }
     }
 
-    public bool SignInUser(string email, string passwordHash)
+    public (bool IsSuccessful, Guid UserId) SignInUser(string email, string passwordHash)
     {
         using (var connection = new SqlConnection(_connectionString))
         {
@@ -128,17 +128,25 @@ public class UserManagementRepository : IUserManagementRepository
             command.Parameters.AddWithValue("@Email", email);
             command.Parameters.AddWithValue("@PasswordHash", passwordHash);
 
-            var outputParam = new SqlParameter("@IsSuccessful", SqlDbType.Bit)
+            var isSuccessfulParam = new SqlParameter("@IsSuccessful", SqlDbType.Bit)
+            {
+                Direction = ParameterDirection.Output
+            };
+            var userIdParam = new SqlParameter("@UserId", SqlDbType.UniqueIdentifier)
             {
                 Direction = ParameterDirection.Output
             };
 
-            command.Parameters.Add(outputParam);
+            command.Parameters.Add(isSuccessfulParam);
+            command.Parameters.Add(userIdParam);
 
             connection.Open();
             command.ExecuteNonQuery();
 
-            return (bool)outputParam.Value;
+            bool isSuccessful = (bool)isSuccessfulParam.Value;
+            Guid userId = isSuccessful ? (Guid)userIdParam.Value : Guid.Empty;
+
+            return (isSuccessful, userId);
         }
     }
 }

@@ -232,7 +232,6 @@ BEGIN
         
         COMMIT TRANSACTION;
         
-        -- Set the output parameter to the new UserId
         SET @NewUserId = @UserId;
     END TRY
     BEGIN CATCH
@@ -308,16 +307,17 @@ GO
 CREATE OR ALTER PROCEDURE sp_SignInUser
     @Email NVARCHAR(255),
     @PasswordHash NVARCHAR(255),
-    @IsSuccessful BIT OUTPUT
+    @IsSuccessful BIT OUTPUT,
+    @UserId UNIQUEIDENTIFIER OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (
-        SELECT 1 
-        FROM UserDetails 
-        WHERE Email = @Email AND PasswordHash = @PasswordHash
-    )
+    SELECT @UserId = UserId
+    FROM UserDetails
+    WHERE Email = @Email AND PasswordHash = @PasswordHash;
+
+    IF @UserId IS NOT NULL
     BEGIN
         SET @IsSuccessful = 1;
     END

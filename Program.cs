@@ -63,6 +63,7 @@ builder.Services.AddScoped<IReferendumRequestService, VoteMaster.Domain.Referend
 builder.Services.AddScoped<IReferendumRequestRepository, AdoNetReferendumRequestRepository>();
 builder.Services.AddScoped<ReferendumRequestManager>();
 builder.Services.AddScoped<IUserManagementRepository, UserManagementRepository>();
+builder.Services.AddScoped<JwtTokenGenerator>();
 
 // Register application services
 builder.Services.AddScoped<UserCommandService>();

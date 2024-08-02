@@ -9,11 +9,13 @@ namespace VoteMaster.Api;
 public class UserManagerController : ControllerBase
 {
     private readonly IUserManagementRepository _userManagementRepository;
+    private readonly JwtTokenGenerator _jwtTokenGenerator;
     private readonly ILogger<UserManagerController> _logger;
 
-    public UserManagerController(IUserManagementRepository userManagementRepository, ILogger<UserManagerController> logger)
+    public UserManagerController(IUserManagementRepository userManagementRepository, JwtTokenGenerator jwtTokenGenerator, ILogger<UserManagerController> logger)
     {
         _userManagementRepository = userManagementRepository;
+        _jwtTokenGenerator = jwtTokenGenerator;
         _logger = logger;
     }
 
@@ -121,13 +123,31 @@ public class UserManagerController : ControllerBase
     {
         try
         {
-            bool isSuccessful = _userManagementRepository.SignInUser(request.Email, request.PasswordHash);
-            return Ok(new ApiResponse<bool>
+            var result = _userManagementRepository.SignInUser(request.Email, request.PasswordHash);
+
+            if (result.IsSuccessful)
             {
-                Success = isSuccessful,
-                Message = isSuccessful ? "Sign-in successful." : "Invalid email or password.",
-                Data = isSuccessful
-            });
+                var token = _jwtTokenGenerator.GenerateJwtToken(result.UserId);
+                return Ok(new ApiResponse<SignInResponse>
+                {
+                    Success = true,
+                    Message = "Sign-in successful.",
+                    Data = new SignInResponse
+                    {
+                        UserId = result.UserId,
+                        Token = token
+                    }
+                });
+            }
+            else
+            {
+                return Ok(new ApiResponse<SignInResponse>
+                {
+                    Success = false,
+                    Message = "Invalid email or password.",
+                    Data = null
+                });
+            }
         }
         catch (Exception ex)
         {
@@ -170,4 +190,10 @@ public class UserSignInRequest
 {
     public string Email { get; set; }
     public string PasswordHash { get; set; }
+}
+
+public class SignInResponse
+{
+    public Guid UserId { get; set; }
+    public string Token { get; set; }
 }
