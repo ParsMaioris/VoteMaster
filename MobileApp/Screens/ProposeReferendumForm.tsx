@@ -131,7 +131,7 @@ const ProposeReferendumForm: React.FC = () =>
                                         {touched.endDate && errors.endDate && <Text style={styles.error}>{errors.endDate}</Text>}
                                     </View>
                                 </View>
-                                <Animatable.View animation="fadeInUp" delay={1000}>
+                                <Animatable.View animation="fadeInUp" delay={500}>
                                     <Button mode="contained" style={styles.submitButton} onPress={handleSubmit}>
                                         <Text style={styles.buttonText}>Submit</Text>
                                     </Button>
