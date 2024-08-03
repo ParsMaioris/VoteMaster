@@ -45,7 +45,7 @@ const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handl
                         {isExpired && (
                             <Animatable.View animation="fadeIn" delay={index * 500} style={styles.buttonWrapper}>
                                 <TouchableOpacity style={styles.promptButton} onPress={() => handleVote(item.id)}>
-                                    <Text style={styles.buttonText}>Prompt</Text>
+                                    <Text style={styles.buttonText}>Results</Text>
                                 </TouchableOpacity>
                             </Animatable.View>
                         )}
