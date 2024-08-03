@@ -21,8 +21,11 @@ interface FormValues
 const validationSchema = Yup.object().shape({
     question: Yup.string().required('Referendum question is required'),
     details: Yup.string().required('Details are required'),
-    startDate: Yup.string().required('Start date is required'),
-    endDate: Yup.string().required('End date is required'),
+    startDate: Yup.date().required('Start date is required').typeError('Invalid date format'),
+    endDate: Yup.date()
+        .required('End date is required')
+        .typeError('Invalid date format')
+        .min(Yup.ref('startDate'), 'End date cannot be before start date'),
 })
 
 const ProposeReferendumForm: React.FC = () =>
