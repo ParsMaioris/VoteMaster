@@ -107,7 +107,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                                 contentContainerStyle={styles.listContainer}
                                 numColumns={2}
                             />
-                            {expiredReferendums.length > 0 && (
+                            {expiredReferendums.length > 0 && expiredReferendums.some(r => eligibilityMap[`${userId}-${r.id}`]) && (
                                 <>
                                     <Text style={styles.sectionTitle}>Expired Referendums</Text>
                                     <FlatList
