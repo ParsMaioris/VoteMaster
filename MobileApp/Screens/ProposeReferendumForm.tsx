@@ -8,7 +8,7 @@ import * as Animatable from 'react-native-animatable'
 import useProposeReferendumForm from '../Hooks/useProposeReferendumForm'
 import FormInputField from '../Components/FormInputField'
 import DatePickerField from '../Components/DatePickerField'
-import {format} from 'date-fns'
+import {format, differenceInDays} from 'date-fns'
 
 interface FormValues
 {
@@ -25,7 +25,12 @@ const validationSchema = Yup.object().shape({
     endDate: Yup.date()
         .required('End date is required')
         .typeError('Invalid date format')
-        .min(Yup.ref('startDate'), 'End date cannot be before start date'),
+        .min(Yup.ref('startDate'), 'End date cannot be before start date')
+        .test('maxDuration', 'Referendum duration cannot exceed 10 days', function (value)
+        {
+            const {startDate} = this.parent
+            return !startDate || !value || differenceInDays(new Date(value), new Date(startDate)) <= 10
+        }),
 })
 
 const ProposeReferendumForm: React.FC = () =>
@@ -202,7 +207,7 @@ const styles = StyleSheet.create({
     error: {
         fontSize: 12,
         color: 'red',
-        marginTop: 10,
+        marginTop: 5,
         textAlign: 'center',
         width: '100%',
     },
