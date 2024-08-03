@@ -1,40 +1,53 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native'
-import {useTheme, Snackbar, Provider as PaperProvider} from 'react-native-paper'
-import {Formik} from 'formik'
+import {ScrollView, StyleSheet, View, Text} from 'react-native'
+import {useTheme, Snackbar, Provider as PaperProvider, Button} from 'react-native-paper'
+import {Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
-import {Ionicons} from '@expo/vector-icons'
 import useProposeReferendumForm from '../Hooks/useProposeReferendumForm'
 import FormInputField from '../Components/FormInputField'
 import DatePickerField from '../Components/DatePickerField'
+import {format} from 'date-fns'
+
+interface FormValues
+{
+    question: string
+    details: string
+    startDate: string
+    endDate: string
+}
 
 const validationSchema = Yup.object().shape({
     question: Yup.string().required('Referendum question is required'),
     details: Yup.string().required('Details are required'),
-    date: Yup.string().required('Date is required')
+    startDate: Yup.string().required('Start date is required'),
+    endDate: Yup.string().required('End date is required'),
 })
 
 const ProposeReferendumForm: React.FC = () =>
 {
     const theme = useTheme()
     const {
-        open,
-        date,
+        openStartDate,
+        openEndDate,
+        startDate,
+        endDate,
         snackbarVisible,
         snackbarMessage,
-        setOpen,
+        setOpenStartDate,
+        setOpenEndDate,
         handleSubmit,
         onDismiss,
-        onConfirm,
+        onConfirmStartDate,
+        onConfirmEndDate,
         filterDate,
         setSnackbarVisible
     } = useProposeReferendumForm()
 
     return (
         <PaperProvider>
-            <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
+            <LinearGradient colors={['#FFFFFF', '#F8F8F8']} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.content}>
                     <Animatable.Text animation="fadeInDown" style={styles.headerText}>Propose a New Referendum</Animatable.Text>
                     <Animatable.Text animation="fadeInDown" delay={200} style={styles.pitchText}>Voice Your Vision</Animatable.Text>
@@ -42,9 +55,17 @@ const ProposeReferendumForm: React.FC = () =>
                         Please allow up to five days for the review. Once approved, you will be notified by email, after which you may invite users to participate.
                     </Text>
                     <Formik
-                        initialValues={{question: '', details: '', date: ''}}
+                        initialValues={{question: '', details: '', startDate: '', endDate: ''}}
                         validationSchema={validationSchema}
-                        onSubmit={handleSubmit}
+                        onSubmit={(values: FormValues, {setSubmitting}: FormikHelpers<FormValues>) =>
+                        {
+                            handleSubmit({
+                                ...values,
+                                startDate: format(new Date(values.startDate), 'yyyy-MM-dd'),
+                                endDate: format(new Date(values.endDate), 'yyyy-MM-dd'),
+                            })
+                            setSubmitting(false)
+                        }}
                     >
                         {({handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched}) => (
                             <View style={styles.formContainer}>
@@ -68,19 +89,44 @@ const ProposeReferendumForm: React.FC = () =>
                                     multiline
                                     numberOfLines={6}
                                 />
-                                <DatePickerField
-                                    date={date}
-                                    open={open}
-                                    setOpen={setOpen}
-                                    onConfirm={(params: {date: Date}) => onConfirm(params, setFieldValue)}
-                                    filterDate={filterDate}
-                                />
-                                {touched.date && errors.date && <Text style={styles.error}>{errors.date}</Text>}
-                                <Animatable.View animation="fadeInUp" delay={200}>
-                                    <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={handleSubmit as any}>
-                                        <Ionicons name="checkmark-circle-outline" size={24} color="#fff" />
+                                <View style={styles.datePickersContainer}>
+                                    <View style={styles.datePickerWrapper}>
+                                        <DatePickerField
+                                            label="Start Date"
+                                            date={values.startDate}
+                                            open={openStartDate}
+                                            setOpen={setOpenStartDate}
+                                            onConfirm={(params: {date: Date}) =>
+                                            {
+                                                setFieldValue('startDate', params.date)
+                                                onConfirmStartDate(params)
+                                            }}
+                                            filterDate={filterDate}
+                                            style={styles.startDatePicker}
+                                        />
+                                        {touched.startDate && errors.startDate && <Text style={styles.error}>{errors.startDate}</Text>}
+                                    </View>
+                                    <View style={styles.datePickerWrapper}>
+                                        <DatePickerField
+                                            label="End Date"
+                                            date={values.endDate}
+                                            open={openEndDate}
+                                            setOpen={setOpenEndDate}
+                                            onConfirm={(params: {date: Date}) =>
+                                            {
+                                                setFieldValue('endDate', params.date)
+                                                onConfirmEndDate(params)
+                                            }}
+                                            filterDate={filterDate}
+                                            style={styles.endDatePicker}
+                                        />
+                                        {touched.endDate && errors.endDate && <Text style={styles.error}>{errors.endDate}</Text>}
+                                    </View>
+                                </View>
+                                <Animatable.View animation="fadeInUp" delay={1000}>
+                                    <Button mode="contained" style={styles.submitButton} onPress={handleSubmit}>
                                         <Text style={styles.buttonText}>Submit</Text>
-                                    </TouchableOpacity>
+                                    </Button>
                                 </Animatable.View>
                             </View>
                         )}
@@ -135,32 +181,43 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
     },
+    datePickersContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginVertical: 10,
+    },
+    datePickerWrapper: {
+        flex: 1,
+    },
+    startDatePicker: {
+        marginRight: 5,
+    },
+    endDatePicker: {
+        marginLeft: 5,
+    },
     error: {
         fontSize: 12,
         color: 'red',
-        marginBottom: 5,
+        marginTop: 10,
         textAlign: 'center',
         width: '100%',
     },
-    button: {
-        flexDirection: 'row',
+    submitButton: {
+        backgroundColor: '#34C759',
+        marginVertical: 20,
+        borderRadius: 30,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 15,
-        marginVertical: 12,
-        borderRadius: 30,
-        width: Dimensions.get('window').width * 0.9,
         shadowColor: '#000000',
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 5,
     },
-    submitButton: {
-        backgroundColor: '#34C759',
-    },
     buttonText: {
-        marginLeft: 10,
         fontSize: 18,
         color: '#ffffff',
         fontWeight: '600',

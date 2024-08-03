@@ -1,15 +1,17 @@
 import {useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {format, addDays, isBefore} from 'date-fns'
 import {AppDispatch, RootState} from '../Redux/Store'
 import {submitReferendumRequest} from '../Redux/ReferendumRequestSlice'
+import {format, addDays, isBefore} from 'date-fns'
 import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {RootStackParamList} from '../Infra/Navigation'
 
 const useProposeReferendumForm = () =>
 {
-    const [open, setOpen] = useState(false)
-    const [date, setDate] = useState<Date | undefined>(undefined)
+    const [openStartDate, setOpenStartDate] = useState(false)
+    const [openEndDate, setOpenEndDate] = useState(false)
+    const [startDate, setStartDate] = useState<Date | undefined>(undefined)
+    const [endDate, setEndDate] = useState<Date | undefined>(undefined)
     const [snackbarVisible, setSnackbarVisible] = useState(false)
     const [snackbarMessage, setSnackbarMessage] = useState('')
     const dispatch = useDispatch<AppDispatch>()
@@ -22,7 +24,9 @@ const useProposeReferendumForm = () =>
             userId,
             question: values.question,
             details: values.details,
-            referendumDate: values.date,
+            //referendumStartDate: values.startDate,
+            //referendumEndDate: values.endDate,
+            referendumDate: values.startDate,
         }))
 
         if (submitReferendumRequest.fulfilled.match(resultAction))
@@ -44,14 +48,20 @@ const useProposeReferendumForm = () =>
 
     const onDismiss = () =>
     {
-        setOpen(false)
+        setOpenStartDate(false)
+        setOpenEndDate(false)
     }
 
-    const onConfirm = (params: {date: Date}, setFieldValue: (field: string, value: any) => void) =>
+    const onConfirmStartDate = (params: {date: Date}) =>
     {
-        setOpen(false)
-        setDate(params.date)
-        setFieldValue('date', format(params.date, 'yyyy-MM-dd'))
+        setOpenStartDate(false)
+        setStartDate(params.date)
+    }
+
+    const onConfirmEndDate = (params: {date: Date}) =>
+    {
+        setOpenEndDate(false)
+        setEndDate(params.date)
     }
 
     const filterDate = (date: Date) =>
@@ -62,16 +72,20 @@ const useProposeReferendumForm = () =>
     }
 
     return {
-        open,
-        date,
+        openStartDate,
+        openEndDate,
+        startDate,
+        endDate,
         snackbarVisible,
         snackbarMessage,
-        setOpen,
+        setOpenStartDate,
+        setOpenEndDate,
         handleSubmit,
         onDismiss,
-        onConfirm,
+        onConfirmStartDate,
+        onConfirmEndDate,
         filterDate,
-        setSnackbarVisible
+        setSnackbarVisible,
     }
 }
 
