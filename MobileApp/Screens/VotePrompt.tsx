@@ -7,6 +7,7 @@ import {AppDispatch, RootState} from '../Redux/Store'
 import {selectReferendumById} from '../Redux/ReferendumSlice'
 import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {RootStackParamList} from '../Infra/Navigation'
+import ReferendumVoteCounts from '../Components/ReferendumVoteCounts'
 
 interface VotePromptProps
 {
@@ -26,7 +27,6 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
     const [submitting, setSubmitting] = useState(false)
     const [message, setMessage] = useState<string | null>(null)
     const isExpired = referendum && new Date(referendum.endTime!) < new Date()
-
 
     useEffect(() =>
     {
@@ -63,7 +63,13 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
     }
 
     if (isExpired)
-        return (null)
+    {
+        return (
+            <View style={styles.container}>
+                <ReferendumVoteCounts referendumId={referendumId} />
+            </View>
+        )
+    }
 
     if (loading || submitting)
     {
@@ -135,6 +141,16 @@ const styles = StyleSheet.create({
         color: 'green',
         textAlign: 'center',
         marginTop: 20,
+    },
+    voteCounts: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 10,
+        backgroundColor: '#f0f0f5',
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
     },
 })
 
