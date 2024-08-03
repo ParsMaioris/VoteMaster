@@ -24,9 +24,9 @@ const useProposeReferendumForm = () =>
             userId,
             question: values.question,
             details: values.details,
-            //referendumStartDate: values.startDate,
-            //referendumEndDate: values.endDate,
-            referendumDate: values.startDate,
+            referendumStartDate: values.startDate,
+            referendumEndDate: values.endDate,
+            referendumDate: values.endDate,
         }))
 
         if (submitReferendumRequest.fulfilled.match(resultAction))

@@ -33,6 +33,8 @@ interface ReferendumRequestPayload
     question: string
     details: string
     referendumDate: string
+    referendumStartDate: string
+    referendumEndDate: string
 }
 
 export const submitReferendumRequest = createAsyncThunk(
