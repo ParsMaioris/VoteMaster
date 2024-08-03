@@ -6,6 +6,7 @@ import {getOwnedReferendums} from '../Redux/OwnerSlice'
 import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {RootStackParamList} from '../Infra/Navigation'
 import VotersScreen from './VotersScreen'
+import * as Animatable from 'react-native-animatable'
 
 const InviteParticipantScreen: React.FC = () =>
 {
@@ -43,22 +44,24 @@ const InviteParticipantScreen: React.FC = () =>
     {
         return (
             <View style={styles.container}>
-                <View style={styles.messageContainer}>
-                    <Text style={styles.messageText}>No Referendums Created</Text>
+                <Animatable.View animation="fadeIn" duration={800} style={styles.messageContainer}>
+                    <Animatable.Text animation="fadeInDown" style={styles.messageText}>
+                        No Referendums Created
+                    </Animatable.Text>
                     <Text style={styles.subMessageText}>
                         Propose a referendum. Once approved, you can invite users to vote on it.
                     </Text>
-                </View>
-                <TouchableOpacity style={styles.button} onPress={handleCreateReferendum}>
-                    <Text style={styles.buttonText}>Propose Referendum</Text>
-                </TouchableOpacity>
+                </Animatable.View>
+                <Animatable.View animation="fadeInUp" duration={800} style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} onPress={handleCreateReferendum}>
+                        <Text style={styles.buttonText}>Propose Referendum</Text>
+                    </TouchableOpacity>
+                </Animatable.View>
             </View>
         )
     }
 
-    return (
-        <VotersScreen />
-    )
+    return <VotersScreen />
 }
 
 const styles = StyleSheet.create({
@@ -95,29 +98,25 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         marginRight: 20,
     },
+    buttonContainer: {
+        marginHorizontal: 20,
+        alignItems: 'center',
+    },
     button: {
         backgroundColor: '#007AFF',
         padding: 15,
         borderRadius: 8,
-        marginHorizontal: 20,
         alignItems: 'center',
     },
     buttonText: {
         color: '#FFFFFF',
         fontSize: 16,
+        fontWeight: '500',
     },
     errorText: {
         color: 'red',
         marginTop: 20,
         fontSize: 16,
-        textAlign: 'center',
-    },
-    headerText: {
-        fontSize: 26,
-        fontWeight: '700',
-        color: '#1D1D1F',
-        marginTop: 20,
-        marginBottom: 3,
         textAlign: 'center',
     },
 })
