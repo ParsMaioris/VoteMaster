@@ -8,7 +8,7 @@ export const referendums: Referendum[] = [
         image: 'https://images.pexels.com/photos/6931306/pexels-photo-6931306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
         key: 'infrastructure',
         publicationDate: '2024-07-23',
-        endTime: '2024-12-01',
+        endTime: '2024-10-01',
     },
     {
         id: 'a68d20bb-483b-4f34-889e-94e9054007f7',
@@ -17,7 +17,7 @@ export const referendums: Referendum[] = [
         image: 'https://images.pexels.com/photos/3646172/pexels-photo-3646172.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
         key: 'education',
         publicationDate: '2024-07-23',
-        endTime: '2024-12-01',
+        endTime: '2024-9-20',
     },
     {
         id: '7d918783-073f-4b99-bc38-0ee9a7762940',

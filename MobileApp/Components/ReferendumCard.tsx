@@ -17,6 +17,22 @@ const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handl
 {
     const isExpired = new Date(item.endTime!) < new Date()
 
+    const getTimeRemaining = (endTime: string) =>
+    {
+        const total = Date.parse(endTime) - Date.now()
+        if (total <= 0) return 'Expired'
+
+        const days = Math.floor(total / (1000 * 60 * 60 * 24))
+        const hours = Math.floor((total / (1000 * 60 * 60)) % 24)
+        const minutes = Math.floor((total / 1000 / 60) % 60)
+
+        if (days > 0)
+        {
+            return `${days}d`
+        }
+        return `${hours}h ${minutes}m`
+    }
+
     return (
         <Animatable.View animation="fadeInUp" duration={800} delay={index * 100} style={styles.card}>
             <TouchableOpacity onPress={() => handleOpenModal(item)} style={styles.cardContent}>
@@ -57,6 +73,11 @@ const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handl
                     </>
                 )}
             </View>
+            {!isExpired && (
+                <Animatable.Text animation="fadeIn" delay={index * 700} style={styles.expirationText}>
+                    Ends in: {getTimeRemaining(item.endTime!)}
+                </Animatable.Text>
+            )}
         </Animatable.View>
     )
 }
@@ -91,6 +112,12 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         textAlign: 'center',
         overflow: 'hidden',
+    },
+    expirationText: {
+        fontSize: 14,
+        color: '#4682B4',
+        marginTop: 10,
+        textAlign: 'center',
     },
     buttonContainer: {
         flexDirection: 'row',
