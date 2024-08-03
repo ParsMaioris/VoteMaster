@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
@@ -12,15 +12,28 @@ type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 
 
 type Props = {
     navigation: SignInScreenNavigationProp
+    route: {
+        params: {
+            initialEmail?: string
+            initialPassword?: string
+        }
+    }
 }
 
-const SignInScreen: React.FC<Props> = ({navigation}) =>
+const SignInScreen: React.FC<Props> = ({navigation, route}) =>
 {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const {initialEmail = '', initialPassword = ''} = route.params || {}
+    const [email, setEmail] = useState(initialEmail)
+    const [password, setPassword] = useState(initialPassword)
     const [errorMessage, setErrorMessage] = useState('')
     const dispatch = useAppDispatch()
     const {status} = useAppSelector((state) => state.user)
+
+    useEffect(() =>
+    {
+        setEmail(initialEmail)
+        setPassword(initialPassword)
+    }, [initialEmail, initialPassword])
 
     const saveUserToStorage = async (id: string, name: string, token: string, passwordHash: string, email: string) =>
     {

@@ -36,7 +36,7 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
         if (addUser.fulfilled.match(resultAction))
         {
             setErrorMessage('')
-            navigation.navigate('SignIn')
+            navigation.navigate('SignIn', {initialEmail: email, initialPassword: password})
         } else
         {
             const payload = resultAction.payload as {message: string}
