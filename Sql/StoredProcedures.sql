@@ -237,6 +237,7 @@ BEGIN
 
         EXEC dbo.AddEligibility @UserId, '7d918783-073f-4b99-bc38-0ee9a7762943';
         EXEC dbo.AddEligibility @UserId, 'a68d20bb-483b-4f34-889e-94e9054007f7';
+        EXEC dbo.AddEligibility @UserId, '7d918783-073f-4b99-bc38-0ee9a7762940';
         
         COMMIT TRANSACTION;
         
