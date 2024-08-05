@@ -87,6 +87,29 @@ export const checkEligibility = createAsyncThunk(
     }
 )
 
+interface FetchUserEligibleReferendumsPayload
+{
+    userId: string
+    userName: string
+}
+
+export const fetchUserEligibleReferendums = createAsyncThunk(
+    'eligibility/fetchUserEligibleReferendums',
+    async (payload: FetchUserEligibleReferendumsPayload, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await api.get('/eligibility/eligible-referendums', {
+                params: {userId: payload.userId, userName: payload.userName},
+            })
+            return {userId: payload.userId, referendums: response.data.data}
+        } catch (error)
+        {
+            return rejectWithValue(error.response?.data?.message || 'Failed to fetch eligible referendums')
+        }
+    }
+)
+
 const eligibilitySlice = createSlice({
     name: 'eligibility',
     initialState,
@@ -134,6 +157,21 @@ const eligibilitySlice = createSlice({
                 state.eligibilityMap[`${userId}-${referendumId}`] = isEligible
             })
             .addCase(checkEligibility.rejected, (state, action) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload as string
+            })
+            .addCase(fetchUserEligibleReferendums.fulfilled, (state, action) =>
+            {
+                const {userId, referendums} = action.payload
+                state.status = 'succeeded'
+                state.userReferendums[userId] = referendums
+                referendums.forEach(referendumId =>
+                {
+                    state.eligibilityMap[`${userId}-${referendumId}`] = true
+                })
+            })
+            .addCase(fetchUserEligibleReferendums.rejected, (state, action) =>
             {
                 state.status = 'failed'
                 state.error = action.payload as string

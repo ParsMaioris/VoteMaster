@@ -20,7 +20,8 @@ type Props = {
 const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 {
     const userId = useSelector((state: RootState) => state.user.id)
-    const {isEligibleForAny, loading, fetchError, status, eligibilityMap} = useEligibilityCheck(userId)
+    const userName = useSelector((state: RootState) => state.user.name)
+    const {isEligibleForAny, loading, fetchError, status, eligibilityMap} = useEligibilityCheck(userId, userName)
 
     const {
         modalVisible,
