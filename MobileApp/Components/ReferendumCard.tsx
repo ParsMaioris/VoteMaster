@@ -39,7 +39,7 @@ const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handl
                 <Animatable.Image
                     animation="fadeIn"
                     delay={index * 200}
-                    source={{uri: item.image}}
+                    source={typeof item.image === 'string' ? {uri: item.image} : item.image}
                     style={styles.image}
                 />
                 <Animatable.Text animation="fadeIn" delay={index * 300} style={styles.title}>

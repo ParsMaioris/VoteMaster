@@ -22,7 +22,8 @@ const ReferendumModal: React.FC<ReferendumModalProps> = ({visible, onClose, refe
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                     <Text style={styles.modalTitle}>{referendum.title}</Text>
-                    <Image source={{uri: referendum.image}} style={styles.modalImage} />
+                    <Image source={typeof referendum.image === 'string' ? {uri: referendum.image} : referendum.image}
+                        style={styles.modalImage} />
                     <Text style={styles.modalDescription}>{referendum.description}</Text>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                         <Text style={styles.closeButtonText}>Close</Text>
