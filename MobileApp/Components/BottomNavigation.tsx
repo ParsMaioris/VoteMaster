@@ -45,9 +45,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
     }
 
     const navItems = [
-        {name: 'Home', icon: 'home-outline', routeName: 'LandingPage'},
-        {name: 'Referendums', icon: 'list-circle-outline', routeName: 'Referendums'},
-        {name: 'Profile', icon: 'person-circle-outline', routeName: 'Profile'},
+        {name: 'Home', icon: 'home-outline', selectedIcon: 'home', routeName: 'LandingPage'},
+        {name: 'Referendums', icon: 'list-circle-outline', selectedIcon: 'list-circle', routeName: 'Referendums'},
+        {name: 'Profile', icon: 'person-circle-outline', selectedIcon: 'person-circle', routeName: 'Profile'},
     ]
 
     return (
@@ -56,7 +56,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
                 <NavItem
                     key={item.routeName}
                     name={item.name}
-                    icon={item.icon}
+                    icon={selected === item.routeName ? item.selectedIcon : item.icon}
                     isSelected={selected === item.routeName}
                     isLoading={isLoading === item.routeName}
                     onPress={() => handlePress(item.routeName)}
@@ -81,7 +81,7 @@ const NavItem: React.FC<NavItemProps> = ({name, icon, isSelected, isLoading, onP
             <ActivityIndicator size="small" color="#FFFFFF" />
         ) : (
             <>
-                <Ionicons name={icon} size={28} color={isSelected ? '#00FFFF' : '#FFFFFF'} style={isSelected && styles.selectedIcon} />
+                <Ionicons name={icon} size={28} color="#FFFFFF" />
                 <Text style={[styles.label, isSelected && styles.selectedLabel]}>{name}</Text>
             </>
         )}
@@ -117,11 +117,6 @@ const styles = StyleSheet.create({
     },
     selectedLabel: {
         fontWeight: 'bold',
-        color: '#00FFFF',
-    },
-    selectedIcon: {
-        fontWeight: 'bold',
-        color: '#00FFFF',
     },
 })
 
