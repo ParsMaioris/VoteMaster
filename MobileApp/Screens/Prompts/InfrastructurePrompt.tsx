@@ -23,12 +23,12 @@ const InfrastructurePrompt: React.FC<InfrastructurePromptProps> = ({referendumId
                     <Image source={require('../../assets/infrastructure.png')} style={styles.image} />
                 </View>
                 <Text style={styles.title}>Proposition 99: Improving Infrastructure</Text>
-                <Text style={styles.subtitle}>Official Patagonia Referendum</Text>
+                <Text style={styles.subtitle}>Mock Referendum for Demonstration</Text>
             </View>
             <View style={styles.content}>
                 <Text style={styles.description}>
                     Proposition 99 aims to improve infrastructure by increasing funding and implementing new policies to ensure
-                    better development and maintenance. The proposition includes provisions to:
+                    better development and maintenance.
                 </Text>
                 <TouchableOpacity onPress={toggleDetails} style={styles.button}>
                     <Text style={styles.buttonText}>{showDetails ? 'Show Less' : 'Show More'}</Text>
@@ -40,7 +40,7 @@ const InfrastructurePrompt: React.FC<InfrastructurePromptProps> = ({referendumId
                         <Text style={styles.listItem}>• Improve water and sewage systems</Text>
                         <Text style={styles.listItem}>• Enhance urban planning and development projects</Text>
                         <Text style={styles.description}>
-                            Voting "Yes" means you support these changes to improve infrastructure in Patagonia.
+                            Voting "Yes" means you support these changes to improve infrastructure in the mock scenario.
                             Voting "No" means you oppose these changes and prefer to maintain the current infrastructure structure.
                         </Text>
                     </View>

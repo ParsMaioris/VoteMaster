@@ -23,7 +23,7 @@ const HealthcarePrompt: React.FC<HealthcarePromptProps> = ({referendumId}) =>
                     <Image source={require('../../assets/healthcare.png')} style={styles.image} />
                 </View>
                 <Text style={styles.title}>Proposition 78: Improving Healthcare Services</Text>
-                <Text style={styles.subtitle}>Official Patagonia Referendum</Text>
+                <Text style={styles.subtitle}>Mock Referendum for Demonstration</Text>
             </View>
             <View style={styles.content}>
                 <Text style={styles.description}>
@@ -40,7 +40,7 @@ const HealthcarePrompt: React.FC<HealthcarePromptProps> = ({referendumId}) =>
                         <Text style={styles.listItem}>• Improve mental health and substance abuse programs</Text>
                         <Text style={styles.listItem}>• Implement preventive care initiatives</Text>
                         <Text style={styles.description}>
-                            Voting "Yes" means you support these changes to improve healthcare services in Patagonia.
+                            Voting "Yes" means you support these changes to improve healthcare services.
                             Voting "No" means you oppose these changes and prefer to maintain the current healthcare structure.
                         </Text>
                     </View>

@@ -23,7 +23,7 @@ const EducationPrompt: React.FC<EducationPromptProps> = ({referendumId}) =>
                     <Image source={require('../../assets/education.png')} style={styles.image} />
                 </View>
                 <Text style={styles.title}>Proposition 52: Enhancing Education Funding</Text>
-                <Text style={styles.subtitle}>Official Patagonia Referendum</Text>
+                <Text style={styles.subtitle}>Mock Referendum for Demonstration</Text>
             </View>
             <View style={styles.content}>
                 <Text style={styles.description}>
@@ -40,7 +40,7 @@ const EducationPrompt: React.FC<EducationPromptProps> = ({referendumId}) =>
                         <Text style={styles.listItem}>• Implement new technology and digital tools to support student learning</Text>
                         <Text style={styles.listItem}>• Provide additional support for special education programs</Text>
                         <Text style={styles.description}>
-                            Voting "Yes" means you support these changes to enhance the quality of education in Patagonia.
+                            Voting "Yes" means you support these changes to enhance the quality of education.
                             Voting "No" means you oppose these changes and prefer to maintain the current education funding structure.
                         </Text>
                     </View>

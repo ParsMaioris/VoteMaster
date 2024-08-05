@@ -5,7 +5,7 @@ import {Ionicons} from '@expo/vector-icons'
 const HealthcareLearnMore: React.FC = () => (
     <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.description}>
-            The <Text style={styles.highlight}>Healthcare Referendum</Text> aims to significantly enhance healthcare services in Patagonia. This initiative focuses on increasing funding for hospitals and clinics, expanding access to affordable healthcare, improving mental health and substance abuse programs, and implementing preventive care initiatives.
+            The <Text style={styles.highlight}>Mock Referendum</Text> aims to significantly enhance healthcare services. This initiative focuses on increasing funding for hospitals and clinics, expanding access to affordable healthcare, improving mental health and substance abuse programs, and implementing preventive care initiatives.
         </Text>
 
         <Text style={styles.financialImpactTitle}>Financial Impact</Text>

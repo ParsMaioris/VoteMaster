@@ -6,7 +6,7 @@ import EducationBarChart from '../../Components/EducationBarChart'
 const EducationLearnMore: React.FC = () => (
     <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.description}>
-            The <Text style={styles.highlight}>Education Referendum</Text> proposes significant investments in the education sector to improve the quality of education for all students. This initiative includes raising funds for teacher salaries, school supplies, infrastructure improvements, and extracurricular activities.
+            The <Text style={styles.highlight}>Mock Referendum</Text> proposes significant investments in the education sector to improve the quality of education for all students. This initiative includes raising funds for teacher salaries, school supplies, infrastructure improvements, and extracurricular activities.
         </Text>
 
         <Text style={styles.financialImpactTitle}>Financial Impact</Text>
