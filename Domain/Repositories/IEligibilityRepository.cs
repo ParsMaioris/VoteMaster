@@ -5,4 +5,5 @@ public interface IEligibilityRepository
     void AddEligibility(Eligibility eligibility);
     void RemoveEligibility(Eligibility eligibility);
     bool IsUserEligibleForReferendum(Eligibility eligibility);
+    IEnumerable<Guid> GetEligibleReferendumsForUser(Guid userId);
 }

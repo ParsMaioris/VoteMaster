@@ -1,33 +1,43 @@
 using VoteMaster.Domain;
 
-namespace VoteMaster.Application;
-
-public class EligibilityQueryService
+namespace VoteMaster.Application
 {
-    private readonly IEligibilityService _eligibilityService;
-    private readonly IUserService _userService;
-    private readonly IReferendumService _referendumService;
-    private readonly IVoteService _voteService;
-
-    public EligibilityQueryService(
-        IEligibilityService eligibilityService,
-        IUserService userService,
-        IReferendumService referendumService,
-        IVoteService voteService)
+    public class EligibilityQueryService
     {
-        _eligibilityService = eligibilityService;
-        _userService = userService;
-        _referendumService = referendumService;
-        _voteService = voteService;
-    }
+        private readonly IEligibilityService _eligibilityService;
+        private readonly IUserService _userService;
+        private readonly IReferendumService _referendumService;
+        private readonly IVoteService _voteService;
 
-    public Task<bool> IsUserEligibleForReferendum(Guid userId, string userName, Guid referendumId, string referendumTitle)
-    {
-        return Task.Run(() =>
+        public EligibilityQueryService(
+            IEligibilityService eligibilityService,
+            IUserService userService,
+            IReferendumService referendumService,
+            IVoteService voteService)
         {
-            var user = _userService.GetUserById(userId) ?? new User(userId, userName, _eligibilityService, _voteService);
-            var referendum = _referendumService.GetReferendumById(referendumId) ?? new Referendum(referendumId, referendumTitle, _voteService);
-            return user.IsEligibleForReferendum(referendum);
-        });
+            _eligibilityService = eligibilityService;
+            _userService = userService;
+            _referendumService = referendumService;
+            _voteService = voteService;
+        }
+
+        public Task<bool> IsUserEligibleForReferendum(Guid userId, string userName, Guid referendumId, string referendumTitle)
+        {
+            return Task.Run(() =>
+            {
+                var user = _userService.GetUserById(userId) ?? new User(userId, userName, _eligibilityService, _voteService);
+                var referendum = _referendumService.GetReferendumById(referendumId) ?? new Referendum(referendumId, referendumTitle, _voteService);
+                return user.IsEligibleForReferendum(referendum);
+            });
+        }
+
+        public Task<IEnumerable<Guid>> GetUserEligibleReferendums(Guid userId, string userName)
+        {
+            return Task.Run(() =>
+            {
+                var user = _userService.GetUserById(userId) ?? new User(userId, userName, _eligibilityService, _voteService);
+                return user.GetEligibleReferendums().Select(r => r.Id);
+            });
+        }
     }
 }

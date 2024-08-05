@@ -336,3 +336,15 @@ BEGIN
     END
 END
 GO
+
+CREATE OR ALTER PROCEDURE GetEligibleReferendumsForUser
+    @UserId UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT ReferendumId
+    FROM Eligibilities
+    WHERE UserId = @UserId;
+END
+GO

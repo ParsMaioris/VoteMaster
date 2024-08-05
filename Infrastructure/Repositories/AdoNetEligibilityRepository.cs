@@ -61,4 +61,29 @@ public class AdoNetEligibilityRepository : IEligibilityRepository
             return result != null && (int)result == 1;
         }
     }
+
+    public IEnumerable<Guid> GetEligibleReferendumsForUser(Guid userId)
+    {
+        var eligibleReferendums = new List<Guid>();
+
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            var command = new SqlCommand("GetEligibleReferendumsForUser", connection)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            command.Parameters.AddWithValue("@UserId", userId);
+
+            connection.Open();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    eligibleReferendums.Add(reader.GetGuid(0));
+                }
+            }
+        }
+
+        return eligibleReferendums;
+    }
 }

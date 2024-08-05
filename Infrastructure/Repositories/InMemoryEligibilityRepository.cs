@@ -20,4 +20,9 @@ public class InMemoryEligibilityRepository : IEligibilityRepository
     {
         return _eligibilities.Contains(eligibility);
     }
+
+    public IEnumerable<Guid> GetEligibleReferendumsForUser(Guid userId)
+    {
+        throw new NotImplementedException();
+    }
 }

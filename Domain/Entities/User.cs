@@ -53,4 +53,9 @@ public class User
     {
         return _voteService.GetVotesByReferendum(Id, 1, int.MaxValue).Where(v => v.UserId == Id);
     }
+
+    public IEnumerable<Referendum> GetEligibleReferendums()
+    {
+        return _eligibilityService.GetEligibleReferendumsForUser(this).Select(r => new Referendum(r, "", _voteService));
+    }
 }

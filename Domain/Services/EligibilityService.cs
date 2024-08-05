@@ -23,4 +23,9 @@ public class EligibilityService : IEligibilityService
     {
         return _eligibilityRepository.IsUserEligibleForReferendum(new Eligibility(user.Id, referendum.Id));
     }
+
+    public IEnumerable<Guid> GetEligibleReferendumsForUser(User user)
+    {
+        return _eligibilityRepository.GetEligibleReferendumsForUser(user.Id);
+    }
 }
