@@ -49,7 +49,7 @@ const InviteParticipantScreen: React.FC = () =>
                         No Referendums Created
                     </Animatable.Text>
                     <Text style={styles.subMessageText}>
-                        Propose a referendum. Once approved, you can invite users to vote on it.
+                        Propose a referendum. This helps us create more prototypes and mock referendums. The ability to take ownership and invite participants will be available in a future update.
                     </Text>
                 </Animatable.View>
                 <Animatable.View animation="fadeInUp" duration={800} style={styles.buttonContainer}>

@@ -113,8 +113,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
         {
             return (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007BFF" />
-                    {/* <Text style={styles.loadingText}>Loading Recent Activity...</Text> */}
+                    <ActivityIndicator size="large" color="#007AFF" />
                 </View>
             )
         }
@@ -143,15 +142,14 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
         {
             return (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007BFF" />
-                    {/* <Text style={styles.loadingText}>Loading User Referendums...</Text> */}
+                    <ActivityIndicator size="large" color="#007AFF" />
                 </View>
             )
         }
         if (ownedReferendums.length === 0)
         {
             return (
-                <Text style={styles.noActivity}>No referendums found</Text>
+                <Text style={styles.noActivity}>No referendums found. The ability to take ownership of referendums will be available in a future update.</Text>
             )
         }
         return ownedReferendums.map((ref, index) => (
@@ -349,4 +347,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default ProfileScreen
+export default ProfileScreen 
