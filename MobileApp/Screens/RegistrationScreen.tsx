@@ -22,11 +22,35 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
     const dispatch = useAppDispatch()
     const {status} = useAppSelector((state) => state.user)
 
+    const validateEmail = (email: string) =>
+    {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return re.test(email)
+    }
+
+    const validatePassword = (password: string) =>
+    {
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{5,}$/
+        return re.test(password)
+    }
+
     const handleRegister = async () =>
     {
         if (!name || !email || !password)
         {
             setErrorMessage('Please fill in all fields.')
+            return
+        }
+
+        if (!validateEmail(email))
+        {
+            setErrorMessage('Please enter a valid email address.')
+            return
+        }
+
+        if (!validatePassword(password))
+        {
+            setErrorMessage('Password must be at least 5 characters long and include a number, an uppercase letter, and a lowercase letter.')
             return
         }
 
@@ -211,6 +235,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         fontSize: 16,
         fontWeight: '500',
+        marginBottom: 10,
     },
     link: {
         color: '#007BFF',
