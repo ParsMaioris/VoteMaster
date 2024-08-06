@@ -2,21 +2,20 @@ import React from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {LinearGradient} from 'expo-linear-gradient'
-import BottomNavigation from '../Components/BottomNavigation'
-import {RootStackParamList} from '../Infra/Navigation'
+import {Ionicons} from '@expo/vector-icons'
 import {NavigationProp, useNavigation} from '@react-navigation/native'
 import {deleteUser, resetUserState} from '../Redux/UserSlice'
 import {resetEligibility} from '../Redux/EligibilitySlice'
 import {resetReferendumState} from '../Redux/ReferendumSlice'
 import {resetVoteState} from '../Redux/VoteSlice'
 import {AppDispatch, RootState} from '../Redux/Store'
+import {RootStackParamList} from '../Infra/Navigation'
 
 const ManageAccountPage: React.FC = () =>
 {
     const dispatch = useDispatch<AppDispatch>()
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
     const userId = useSelector((state: RootState) => state.user.id)
-
 
     const handleSignOut = () =>
     {
@@ -47,12 +46,14 @@ const ManageAccountPage: React.FC = () =>
             <View style={styles.content}>
                 <Image source={require('../assets/logo.png')} style={styles.logo} />
                 <Text style={styles.headerText}>Manage Account</Text>
-                <Text style={styles.contextText}>Manage your account settings</Text>
+                <Text style={styles.contextText}>Manage Your Account Access</Text>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={[styles.button, styles.signOutButton]} onPress={handleSignOut}>
+                        <Ionicons name="log-out-outline" size={24} color="white" style={styles.icon} />
                         <Text style={styles.buttonText}>Sign Out</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.button, styles.deleteAccountButton]} onPress={handleDeleteAccount}>
+                        <Ionicons name="trash-outline" size={24} color="white" style={styles.icon} />
                         <Text style={styles.buttonText}>Delete Account</Text>
                     </TouchableOpacity>
                 </View>
@@ -125,10 +126,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#C62828',
     },
     buttonText: {
-        marginLeft: 10,
         fontSize: 18,
         color: '#ffffff',
         fontWeight: '600',
+    },
+    icon: {
+        marginRight: 10,
     },
 })
 
