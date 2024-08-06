@@ -254,24 +254,34 @@ CREATE OR ALTER PROCEDURE sp_DeleteUser
     @UserId UNIQUEIDENTIFIER
 AS
 BEGIN
-    SET NOCOUNT ON;
-    
+    BEGIN TRANSACTION;
+
     BEGIN TRY
-        BEGIN TRANSACTION;
-        
+        DELETE FROM Votes
+        WHERE UserId = @UserId;
+
+        DELETE FROM Eligibilities
+        WHERE UserId = @UserId;
+
+        DELETE FROM ReferendumOwners
+        WHERE UserId = @UserId;
+
+        DELETE FROM ReferendumRequests
+        WHERE UserId = @UserId;
+
         DELETE FROM UserDetails
         WHERE UserId = @UserId;
-        
+
         DELETE FROM Users
         WHERE Id = @UserId;
-        
+
         COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
         ROLLBACK TRANSACTION;
         THROW;
     END CATCH
-END
+END;
 GO
 
 CREATE OR ALTER PROCEDURE sp_UpdatePassword

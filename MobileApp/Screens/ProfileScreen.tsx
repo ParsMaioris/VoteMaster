@@ -94,18 +94,9 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
         }, [userId, dispatch])
     )
 
-    const handleSignOut = () =>
+    const handleManageAccount = () =>
     {
-        dispatch(resetUserState())
-        dispatch(resetEligibility())
-        dispatch(resetOwnerState())
-        dispatch(resetReferendumState())
-        dispatch(resetVoteState())
-
-        navigation.reset({
-            index: 0,
-            routes: [{name: 'SignIn'}],
-        })
+        navigation.navigate("ManageAccount")
     }
 
     const renderVoteActivity = () =>
@@ -191,6 +182,10 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                         <Ionicons name="person-circle-outline" size={100} color="#007BFF" style={styles.profileIcon} />
                         <Text style={styles.userName}>{userName}</Text>
                     </View>
+                    <TouchableOpacity style={styles.manageAccountButton} onPress={handleManageAccount}>
+                        <Ionicons name="lock-closed-outline" size={20} color="#fff" />
+                        <Text style={styles.manageAccountButtonText}>Manage Account</Text>
+                    </TouchableOpacity>
                     <View style={styles.sectionContainer}>
                         <Text style={styles.sectionTitle}>User Information</Text>
                         <View style={styles.infoContainer}>
@@ -203,10 +198,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                         </View>
                     </View>
                     {renderSections()}
-                    <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-                        <Ionicons name="log-out-outline" size={20} color="#fff" />
-                        <Text style={styles.signOutButtonText}>Sign Out</Text>
-                    </TouchableOpacity>
+
                 </ScrollView>
             </Animatable.View>
             <View style={styles.bottomNavigationWrapper}>
@@ -324,18 +316,18 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 10,
     },
-    signOutButton: {
+    manageAccountButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#DC3545',
+        backgroundColor: '#007BFF',
         padding: 12,
         borderRadius: 10,
         marginHorizontal: 20,
         marginBottom: 20,
     },
-    signOutButtonText: {
-        marginLeft: 5,
+    manageAccountButtonText: {
+        marginLeft: 10,
         fontSize: 16,
         color: '#fff',
         fontWeight: '600',
