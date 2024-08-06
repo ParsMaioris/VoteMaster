@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet, View, Text} from 'react-native'
+import {ScrollView, StyleSheet, View, Text, Linking, TouchableOpacity} from 'react-native'
 import {useTheme, Snackbar, Provider as PaperProvider, Button} from 'react-native-paper'
 import {Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
@@ -139,6 +139,14 @@ const ProposeReferendumForm: React.FC = () =>
                             </View>
                         )}
                     </Formik>
+                    <View style={styles.footerContainer}>
+                        <Text style={styles.footerText}>
+                            For high-volume referendums, please contact us at{' '}
+                            <TouchableOpacity onPress={() => Linking.openURL('https://directdemocracy.global')}>
+                                <Text style={styles.footerLink}>Direct Democracy Corporation</Text>
+                            </TouchableOpacity>
+                        </Text>
+                    </View>
                 </ScrollView>
                 <Snackbar
                     visible={snackbarVisible}
@@ -232,6 +240,20 @@ const styles = StyleSheet.create({
     },
     snackbar: {
         backgroundColor: '#333333',
+    },
+    footerContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    footerText: {
+        fontSize: 14,
+        color: '#666666',
+        textAlign: 'center',
+    },
+    footerLink: {
+        marginTop: 3,
+        color: '#007AFF',
+        textDecorationLine: 'underline',
     },
 })
 
