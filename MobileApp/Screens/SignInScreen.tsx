@@ -102,6 +102,15 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
                 setErrorMessage('')
                 setEmail('')
                 setPassword('')
+                navigation.navigate('ForgotPassword')
+            }}>
+                <Text style={styles.link}>Forgot Password?</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() =>
+            {
+                setErrorMessage('')
+                setEmail('')
+                setPassword('')
                 navigation.navigate('Registration')
             }}>
                 <Text style={styles.link}>Don't have an account? Register here</Text>
@@ -216,6 +225,7 @@ const styles = StyleSheet.create({
     link: {
         color: '#007BFF',
         fontWeight: '600',
+        marginTop: 5,
     },
     input: {
         width: '100%',

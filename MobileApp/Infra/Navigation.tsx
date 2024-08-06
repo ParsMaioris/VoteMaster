@@ -16,6 +16,7 @@ import ProposeReferendumForm from '../Screens/ProposeReferendumForm'
 import RegistrationScreen from '../Screens/RegistrationScreen'
 import ErrorScreen from '../Screens/ErrorScreen'
 import ManageAccountPage from '../Screens/ManageAccountPage'
+import ForgotPasswordScreen from '../Screens/ForgotPasswordScreen'
 
 export type RootStackParamList = {
     SignIn: undefined
@@ -31,6 +32,7 @@ export type RootStackParamList = {
     Registration: undefined
     ErrorScreen: undefined
     ManageAccount: undefined
+    ForgotPassword: undefined
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -67,6 +69,7 @@ const Navigation: React.FC = () =>
                 <Stack.Screen name="Registration" component={RegistrationScreen} options={{title: '', headerShown: false}} />
                 <Stack.Screen name="ErrorScreen" component={ErrorScreen} options={{title: '', headerShown: false}} />
                 <Stack.Screen name="ManageAccount" component={ManageAccountPage} options={{title: ''}} />
+                <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{title: '', headerShown: false}} />
             </Stack.Navigator>
         </NavigationContainer>
     )
