@@ -1,7 +1,7 @@
 import React from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, ActivityIndicator} from 'react-native'
 import * as Animatable from 'react-native-animatable'
-import {Referendum} from '../DTOs/Referendums'
+import {Referendum} from '../Redux/ReferendumSlice'
 
 type Props = {
     item: Referendum
@@ -53,20 +53,20 @@ const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handl
                     <>
                         {!isExpired && isEligible && (
                             <Animatable.View animation="fadeIn" delay={index * 500} style={styles.buttonWrapper}>
-                                <TouchableOpacity style={styles.voteButton} onPress={() => handleVote(item.id)}>
+                                <TouchableOpacity style={styles.voteButton} onPress={() => handleVote(item.referendumId)}>
                                     <Text style={styles.buttonText}>Vote</Text>
                                 </TouchableOpacity>
                             </Animatable.View>
                         )}
                         {isExpired && (
                             <Animatable.View animation="fadeIn" delay={index * 500} style={styles.buttonWrapper}>
-                                <TouchableOpacity style={styles.promptButton} onPress={() => handleVote(item.id)}>
+                                <TouchableOpacity style={styles.promptButton} onPress={() => handleVote(item.referendumId)}>
                                     <Text style={styles.buttonText}>Results</Text>
                                 </TouchableOpacity>
                             </Animatable.View>
                         )}
                         <Animatable.View animation="fadeIn" delay={index * 600} style={styles.buttonWrapper}>
-                            <TouchableOpacity style={styles.learnButton} onPress={() => handleLearnMore(item.id)}>
+                            <TouchableOpacity style={styles.learnButton} onPress={() => handleLearnMore(item.referendumId)}>
                                 <Text style={styles.buttonText}>Info</Text>
                             </TouchableOpacity>
                         </Animatable.View>

@@ -1,6 +1,6 @@
 import React from 'react'
 import {Modal, View, Text, Image, TouchableOpacity, StyleSheet, Dimensions} from 'react-native'
-import {Referendum} from '../DTOs/Referendums'
+import {Referendum} from '../Redux/ReferendumSlice'
 
 type ReferendumModalProps = {
     visible: boolean

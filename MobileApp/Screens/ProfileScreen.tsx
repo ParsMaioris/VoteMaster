@@ -4,7 +4,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import {AppDispatch, RootState} from '../Redux/Store'
 import {resetUserState} from '../Redux/UserSlice'
 import {fetchVotesByUserId, resetVoteState} from '../Redux/VoteSlice'
-import {getReferendumById, resetReferendumState} from '../Redux/ReferendumSlice'
+import {getReferendumById, resetReferendumState, selectReferendums} from '../Redux/ReferendumSlice'
 import {Ionicons} from '@expo/vector-icons'
 import useReferendumHelper from '../Hooks/useReferendumHelper'
 import {LinearGradient} from 'expo-linear-gradient'
@@ -13,7 +13,6 @@ import BottomNavigation from '../Components/BottomNavigation' // Adjust the impo
 import {checkEligibility, resetEligibility, selectEligibility} from '../Redux/EligibilitySlice'
 import {getOwnedReferendums, resetOwenrState as resetOwnerState} from '../Redux/OwnerSlice'
 import {useFocusEffect} from '@react-navigation/native'
-import {referendums} from '../Mocks/MockReferendums'
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
@@ -26,6 +25,8 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     const ownedReferendums = useReferendumHelper()
     const [fetchError, setFetchError] = useState<string | null>(null)
     const eligibilityMap = useSelector(selectEligibility)
+    const referendums = useSelector(selectReferendums)
+
 
     useFocusEffect(
         useCallback(() =>
@@ -36,14 +37,14 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
                 {
                     for (const referendum of referendums)
                     {
-                        const eligibilityKey = `${userId}-${referendum.id}`
+                        const eligibilityKey = `${userId}-${referendum.referendumId}`
 
                         if (eligibilityMap[eligibilityKey] == undefined)
                         {
                             await dispatch(checkEligibility({
                                 userId: userId,
                                 userName: 'currentUserName',
-                                referendumId: referendum.id,
+                                referendumId: referendum.referendumId,
                                 referendumTitle: referendum.title,
                             })).unwrap()
                         }
@@ -125,7 +126,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
         }
         return votes.map((vote) =>
         {
-            const referendum = referendums.find((ref) => ref.id === vote.referendumId)
+            const referendum = referendums.find((ref) => ref.referendumId === vote.referendumId)
             return (
                 <Animatable.View animation="fadeInUp" duration={800} delay={300} key={vote.id} style={styles.activityItemContainer}>
                     <Text style={styles.activityItem}>
@@ -153,7 +154,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
             )
         }
         return ownedReferendums.map((ref, index) => (
-            <Animatable.View animation="fadeInUp" duration={800} delay={index * 100 + 400} key={ref.id} style={styles.referendumItemContainer}>
+            <Animatable.View animation="fadeInUp" duration={800} delay={index * 100 + 400} key={ref.referendumId} style={styles.referendumItemContainer}>
                 <Text style={styles.referendumItem}>
                     {ref.title}
                 </Text>

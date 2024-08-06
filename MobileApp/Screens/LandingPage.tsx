@@ -1,12 +1,26 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native'
 import {LandingPageProps} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
 import {LinearGradient} from 'expo-linear-gradient'
 import BottomNavigation from '../Components/BottomNavigation'
+import {useDispatch, useSelector} from 'react-redux'
+import {AppDispatch} from '../Redux/Store'
+import {getAllReferendumDetails, selectReferendumStatus} from '../Redux/ReferendumSlice'
 
 const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
+    const dispatch = useDispatch<AppDispatch>()
+    const status = useSelector(selectReferendumStatus)
+
+    useEffect(() =>
+    {
+        if (status === 'idle')
+        {
+            dispatch(getAllReferendumDetails())
+        }
+    }, [dispatch, status])
+
     const handleProposeReferendum = () =>
     {
         navigation.navigate('ProposeReferendumForm')

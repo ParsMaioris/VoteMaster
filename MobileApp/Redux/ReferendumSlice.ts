@@ -1,55 +1,54 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
-import Constants from 'expo-constants'
 import {RootState} from './Store'
-import {referendums} from '../Mocks/MockReferendums'
 import api from '../Infra/Api'
 
-interface Referendum
+export interface Referendum
 {
-    id: string
+    referendumId: string
     title: string
-    key: string
+    description: string
+    image: string | number
+    key?: string
+    publicationDate?: string
+    endTime?: string
 }
 
 interface ReferendumState
 {
     referendums: Referendum[]
-    referendumMap: {[key: string]: Referendum}
-    status: 'idle' | 'loading' | 'failed'
+    status: 'idle' | 'loading' | 'succeeded' | 'failed'
     error: string | null
 }
 
 const initialState: ReferendumState = {
     referendums: [],
-    referendumMap: {
-        '7d918783-073f-4b99-bc38-0ee9a7762943': {
-            id: '7d918783-073f-4b99-bc38-0ee9a7762943',
-            title: 'Infrastructure Referendum',
-            key: 'infrastructure',
-        },
-        'a68d20bb-483b-4f34-889e-94e9054007f7': {
-            id: 'a68d20bb-483b-4f34-889e-94e9054007f7',
-            title: 'Education Referendum',
-            key: 'education',
-        },
-        '7d918783-073f-4b99-bc38-0ee9a7762940': {
-            id: '7d918783-073f-4b99-bc38-0ee9a7762940',
-            title: 'Healthcare Referendum',
-            key: 'healthcare',
-        },
-    },
     status: 'idle',
     error: null,
 }
 
 export const getReferendumById = createAsyncThunk(
     'referendum/getReferendumById',
-    async (id, {rejectWithValue}) =>
+    async (id: string, {rejectWithValue}) =>
     {
         try
         {
             const response = await api.get(`/Referendum/${id}`)
             return response.data
+        } catch (error)
+        {
+            return rejectWithValue(error)
+        }
+    }
+)
+
+export const getAllReferendumDetails = createAsyncThunk(
+    'referendum/getAllReferendumDetails',
+    async (_, {rejectWithValue}) =>
+    {
+        try
+        {
+            const response = await api.get('/Referendum/all')
+            return response.data.data
         } catch (error)
         {
             return rejectWithValue(error)
@@ -64,7 +63,6 @@ const referendumSlice = createSlice({
         resetReferendumState(state)
         {
             state.referendums = []
-            state.referendumMap = {}
             state.status = 'idle'
             state.error = null
         }
@@ -78,11 +76,41 @@ const referendumSlice = createSlice({
             })
             .addCase(getReferendumById.fulfilled, (state, action: PayloadAction<Referendum>) =>
             {
-                const referendum = action.payload
-                state.referendumMap[referendum.id] = referendum
                 state.status = 'idle'
             })
             .addCase(getReferendumById.rejected, (state, action) =>
+            {
+                state.status = 'failed'
+                state.error = action.payload as string
+            })
+            .addCase(getAllReferendumDetails.pending, (state) =>
+            {
+                state.status = 'loading'
+            })
+            .addCase(getAllReferendumDetails.fulfilled, (state, action: PayloadAction<Referendum[]>) =>
+            {
+                const getImageSource = (imagePath: string) =>
+                {
+                    switch (imagePath)
+                    {
+                        case '../assets/infrastructureimage.png':
+                            return require('../assets/infrastructureimage.png')
+                        case '../assets/educationimage.png':
+                            return require('../assets/educationimage.png')
+                        case '../assets/healthcareimage.png':
+                            return require('../assets/healthcareimage.png')
+                        default:
+                            return {uri: imagePath}
+                    }
+                }
+
+                state.referendums = action.payload.map(referendum => ({
+                    ...referendum,
+                    image: getImageSource(referendum.image as string)
+                }))
+                state.status = 'succeeded'
+            })
+            .addCase(getAllReferendumDetails.rejected, (state, action) =>
             {
                 state.status = 'failed'
                 state.error = action.payload as string
@@ -93,7 +121,8 @@ const referendumSlice = createSlice({
 export const selectReferendums = (state: RootState) => state.referendum.referendums
 export const selectReferendumStatus = (state: RootState) => state.referendum.status
 export const selectReferendumError = (state: RootState) => state.referendum.error
-export const selectReferendumById = (state: RootState, id: string) => referendums.find(referendum => referendum.id === id)
+export const selectReferendumById = (state: RootState, id: string) =>
+    state.referendum.referendums.find((referendum) => referendum.referendumId === id)
 export const resetReferendumState = referendumSlice.actions.resetReferendumState
 
 export default referendumSlice.reducer

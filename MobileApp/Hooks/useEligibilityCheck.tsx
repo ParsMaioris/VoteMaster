@@ -1,8 +1,8 @@
 import {useState, useEffect} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchUserEligibleReferendums, selectEligibility, selectEligibilityStatus} from '../Redux/EligibilitySlice'
-import {AppDispatch} from '../Redux/Store'
-import {referendums} from '../Mocks/MockReferendums'
+import {AppDispatch, RootState} from '../Redux/Store'
+import {getAllReferendumDetails, selectReferendums} from '../Redux/ReferendumSlice'
 
 const useEligibilityCheck = (userId: string, userName: string) =>
 {
@@ -12,6 +12,7 @@ const useEligibilityCheck = (userId: string, userName: string) =>
     const [isEligibleForAny, setIsEligibleForAny] = useState(false)
     const [loading, setLoading] = useState(true)
     const [fetchError, setFetchError] = useState<string | null>(null)
+    const referendums = useSelector(selectReferendums)
 
     useEffect(() =>
     {
@@ -20,7 +21,10 @@ const useEligibilityCheck = (userId: string, userName: string) =>
             try
             {
                 setLoading(true)
-                await dispatch(fetchUserEligibleReferendums({userId, userName})).unwrap()
+                if (Object.keys(eligibilityMap).length === 0)
+                {
+                    await dispatch(fetchUserEligibleReferendums({userId, userName})).unwrap()
+                }
             } catch (error: any)
             {
                 setFetchError(error)
@@ -35,13 +39,18 @@ const useEligibilityCheck = (userId: string, userName: string) =>
 
     useEffect(() =>
     {
-        const checkEligibilityInMap = () =>
+        const checkEligibilityInMap = async () =>
         {
             let eligible = false
 
+            if (referendums.length === 0)
+            {
+                await dispatch(getAllReferendumDetails())
+            }
+
             for (const referendum of referendums)
             {
-                const eligibilityKey = `${userId}-${referendum.id}`
+                const eligibilityKey = `${userId}-${referendum.referendumId}`
                 if (eligibilityMap[eligibilityKey])
                 {
                     eligible = true

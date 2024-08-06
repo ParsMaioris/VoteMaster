@@ -8,7 +8,7 @@ import {Ionicons} from '@expo/vector-icons'
 import {addEligibility, checkEligibility} from '../Redux/EligibilitySlice'
 import * as Animatable from 'react-native-animatable'
 import useReferendumHelper from '../Hooks/useReferendumHelper'
-import {referendums as mockReferendums} from '../Mocks/MockReferendums'
+import {selectReferendums} from '../Redux/ReferendumSlice'
 
 const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
 {
@@ -18,6 +18,7 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
     const ownerId = useSelector((state: RootState) => state.user.id)
     const [invitedReferendums, setInvitedReferendums] = useState<string[]>([])
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
+    const referendums = useSelector(selectReferendums)
     const eligibilityStatus = useSelector((state: RootState) => state.eligibility.status)
     const eligibilityError = useSelector((state: RootState) => state.eligibility.error)
     const ownedReferendums = useReferendumHelper()
@@ -44,11 +45,11 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
         fetchOwnedReferendums()
 
         const today = new Date()
-        mockReferendums.forEach(referendum =>
+        referendums.forEach(referendum =>
         {
             if (referendum.endTime && new Date(referendum.endTime) >= today)
             {
-                dispatch(checkEligibility({userId: voter.id, referendumId: referendum.id, userName: voter.name, referendumTitle: referendum.title}))
+                dispatch(checkEligibility({userId: voter.id, referendumId: referendum.referendumId, userName: voter.name, referendumTitle: referendum.title}))
             }
         })
     }, [dispatch, ownerId, voter.id, voter.name])
@@ -59,10 +60,10 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
             userId: voter.id,
             userName: voter.name,
             referendumId,
-            referendumTitle: mockReferendums.find(referendum => referendum.id === referendumId)?.title || '',
+            referendumTitle: referendums.find(referendum => referendum.referendumId === referendumId)?.title || '',
         }))
         setInvitedReferendums([...invitedReferendums, referendumId])
-        setSuccessMessage(`${voter.name} has been successfully invited to ${mockReferendums.find(referendum => referendum.id === referendumId)?.title}`)
+        setSuccessMessage(`${voter.name} has been successfully invited to ${referendums.find(referendum => referendum.referendumId === referendumId)?.title}`)
         setTimeout(() => setSuccessMessage(null), 3000)
     }
 
@@ -97,28 +98,28 @@ const VoterDetailScreen: React.FC<VoterDetailRouteProp> = ({route}) =>
                 )}
                 <FlatList
                     data={ownedReferendums.filter(referendum => new Date(referendum.endTime!) >= new Date())}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.referendumId}
                     renderItem={({item, index}) =>
                     {
-                        const isEligible = eligibilityMap[`${voter.id}-${item.id}`]
+                        const isEligible = eligibilityMap[`${voter.id}-${item.referendumId}`]
                         return (
                             <Animatable.View animation="fadeInUp" duration={800} delay={index * 100} style={styles.referendumContainer}>
                                 <TouchableOpacity
                                     style={[
                                         styles.referendumButton,
-                                        (invitedReferendums.includes(item.id) || isEligible) && styles.invitedContainer
+                                        (invitedReferendums.includes(item.referendumId) || isEligible) && styles.invitedContainer
                                     ]}
-                                    onPress={() => handleInvite(item.id)}
-                                    disabled={invitedReferendums.includes(item.id) || isEligible}
+                                    onPress={() => handleInvite(item.referendumId)}
+                                    disabled={invitedReferendums.includes(item.referendumId) || isEligible}
                                 >
                                     <View style={styles.referendumInfo}>
                                         <Ionicons name="document-text-outline" size={24} color="#007AFF" />
                                         <Text style={styles.referendumText}>{item.title}</Text>
                                     </View>
                                     <Ionicons
-                                        name={(invitedReferendums.includes(item.id) || isEligible) ? "checkmark-circle-outline" : "add-circle-outline"}
+                                        name={(invitedReferendums.includes(item.referendumId) || isEligible) ? "checkmark-circle-outline" : "add-circle-outline"}
                                         size={24}
-                                        color={(invitedReferendums.includes(item.id) || isEligible) ? "#4CAF50" : "#007AFF"}
+                                        color={(invitedReferendums.includes(item.referendumId) || isEligible) ? "#4CAF50" : "#007AFF"}
                                     />
                                 </TouchableOpacity>
                             </Animatable.View>

@@ -1,8 +1,8 @@
 import {useState} from 'react'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
-import {Referendum} from '../DTOs/Referendums'
 import {RootStackParamList} from '../Infra/Navigation'
 import ReferendumCard from '../Components/ReferendumCard'
+import {Referendum} from '../Redux/ReferendumSlice'
 
 const useReferendumHandlers = (
     userId: string,
@@ -38,7 +38,7 @@ const useReferendumHandlers = (
 
     const renderItem = ({item, index}: {item: Referendum; index: number}) =>
     {
-        const eligibilityKey = `${userId}-${item.id}`
+        const eligibilityKey = `${userId}-${item.referendumId}`
         const isEligible = eligibilityMap[eligibilityKey]
 
         if (!isEligible)

@@ -4,14 +4,13 @@ import {useSelector} from 'react-redux'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {RootState} from '../Redux/Store'
-import {referendums as mockReferendums} from '../Mocks/MockReferendums'
-import {Referendum} from '../DTOs/Referendums'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation'
 import useEligibilityCheck from '../Hooks/useEligibilityCheck'
 import ReferendumModal from '../Components/ReferendumModal'
 import useReferendumHandlers from '../Hooks/useReferendumHandlers'
+import {Referendum, selectReferendums} from '../Redux/ReferendumSlice'
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Referendums'>
@@ -22,6 +21,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
     const userId = useSelector((state: RootState) => state.user.id)
     const userName = useSelector((state: RootState) => state.user.name)
     const {isEligibleForAny, loading, fetchError, status, eligibilityMap} = useEligibilityCheck(userId, userName)
+    const referendums = useSelector(selectReferendums)
 
     const {
         modalVisible,
@@ -40,7 +40,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
         const active: Referendum[] = []
         const expired: Referendum[] = []
 
-        mockReferendums.forEach(referendum =>
+        referendums.forEach(referendum =>
         {
             if (referendum.endTime)
             {
@@ -104,17 +104,17 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
                             <FlatList
                                 data={activeReferendums}
                                 renderItem={renderItem}
-                                keyExtractor={(item) => item.id}
+                                keyExtractor={(item) => item.referendumId}
                                 contentContainerStyle={styles.listContainer}
                                 numColumns={2}
                             />
-                            {expiredReferendums.length > 0 && expiredReferendums.some(r => eligibilityMap[`${userId}-${r.id}`]) && (
+                            {expiredReferendums.length > 0 && expiredReferendums.some(r => eligibilityMap[`${userId}-${r.referendumId}`]) && (
                                 <>
                                     <Text style={styles.sectionTitle}>Past Referendums</Text>
                                     <FlatList
                                         data={expiredReferendums}
                                         renderItem={renderItem}
-                                        keyExtractor={(item) => item.id}
+                                        keyExtractor={(item) => item.referendumId}
                                         contentContainerStyle={styles.listContainer}
                                         numColumns={2}
                                     />
