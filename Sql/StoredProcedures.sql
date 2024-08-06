@@ -348,3 +348,21 @@ BEGIN
     WHERE UserId = @UserId;
 END
 GO
+
+CREATE OR ALTER PROCEDURE GetAllReferendumDetails
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        ReferendumId,
+        Title,
+        Description,
+        Image,
+        [Key],
+        PublicationDate,
+        EndTime
+    FROM 
+        ReferendumDetails;
+END;
+GO

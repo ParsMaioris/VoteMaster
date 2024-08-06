@@ -11,7 +11,7 @@ export const referendums: Referendum[] = [
         image: infrastructureImage,
         key: 'infrastructure',
         publicationDate: '2024-07-23',
-        endTime: '2024-10-01',
+        endTime: '2024-10-17',
     },
     {
         id: 'a68d20bb-483b-4f34-889e-94e9054007f7',

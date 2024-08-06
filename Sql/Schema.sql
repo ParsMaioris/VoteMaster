@@ -51,10 +51,11 @@ CREATE TABLE UserDetails (
 
 CREATE TABLE ReferendumDetails (
     ReferendumId UNIQUEIDENTIFIER PRIMARY KEY,
+    Title NVARCHAR(255) NOT NULL,
+    Description NVARCHAR(MAX) NOT NULL,
+    Image NVARCHAR(MAX),
+    [Key] NVARCHAR(50) NOT NULL,
     PublicationDate DATETIME NOT NULL,
-    StartTime DATETIME NOT NULL,
     EndTime DATETIME NOT NULL,
-    Status NVARCHAR(50) NOT NULL,
-    FOREIGN KEY (ReferendumId) REFERENCES Referendums(Id),
-    CONSTRAINT CHK_Status CHECK (Status IN ('Draft', 'Published', 'Voting Closed'))
+    FOREIGN KEY (ReferendumId) REFERENCES Referendums(Id)
 );
