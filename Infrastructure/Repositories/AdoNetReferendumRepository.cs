@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.SqlClient;
+using VoteMaster.Api;
 using VoteMaster.Domain;
 
 namespace VoteMaster.Infrastructure;
@@ -55,5 +56,39 @@ public class AdoNetReferendumRepository : IReferendumRepository
             }
         }
         return null;
+    }
+
+    public IEnumerable<ReferendumDetailsDTO> GetAllReferendumDetails()
+    {
+        var referendums = new List<ReferendumDetailsDTO>();
+
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            var command = new SqlCommand("GetAllReferendumDetails", connection)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            connection.Open();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var referendum = new ReferendumDetailsDTO
+                    {
+                        ReferendumId = reader.GetGuid(reader.GetOrdinal("ReferendumId")),
+                        Title = reader.GetString(reader.GetOrdinal("Title")),
+                        Description = reader.GetString(reader.GetOrdinal("Description")),
+                        Image = reader.GetString(reader.GetOrdinal("Image")),
+                        Key = reader.GetString(reader.GetOrdinal("Key")),
+                        PublicationDate = reader.GetDateTime(reader.GetOrdinal("PublicationDate")),
+                        EndTime = reader.GetDateTime(reader.GetOrdinal("EndTime"))
+                    };
+                    referendums.Add(referendum);
+                }
+            }
+        }
+
+        return referendums;
     }
 }

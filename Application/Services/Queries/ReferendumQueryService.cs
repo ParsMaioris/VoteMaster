@@ -1,21 +1,36 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using VoteMaster.Api;
 using VoteMaster.Domain;
 
-namespace VoteMaster.Application;
-
-public class ReferendumQueryService
+namespace VoteMaster.Application
 {
-    private readonly IReferendumService _referendumService;
-
-    public ReferendumQueryService(IReferendumService referendumService)
+    public class ReferendumQueryService
     {
-        _referendumService = referendumService;
-    }
+        private readonly IReferendumService _referendumService;
+        private readonly IReferendumRepository _referendumRepository;
 
-    public Task<Referendum> GetReferendumById(Guid referendumId)
-    {
-        return Task.Run(() =>
+        public ReferendumQueryService(IReferendumService referendumService, IReferendumRepository referendumRepository)
         {
-            return _referendumService.GetReferendumById(referendumId);
-        });
+            _referendumService = referendumService;
+            _referendumRepository = referendumRepository;
+        }
+
+        public Task<Referendum> GetReferendumById(Guid referendumId)
+        {
+            return Task.Run(() =>
+            {
+                return _referendumService.GetReferendumById(referendumId);
+            });
+        }
+
+        public Task<IEnumerable<ReferendumDetailsDTO>> GetAllReferendumDetails()
+        {
+            return Task.Run(() =>
+            {
+                return _referendumRepository.GetAllReferendumDetails();
+            });
+        }
     }
 }

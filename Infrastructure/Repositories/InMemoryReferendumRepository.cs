@@ -1,3 +1,4 @@
+using VoteMaster.Api;
 using VoteMaster.Domain;
 
 namespace VoteMaster.Infrastructure;
@@ -9,6 +10,11 @@ public class InMemoryReferendumRepository : IReferendumRepository
     public void AddReferendum(Referendum referendum)
     {
         _referendums.Add(referendum);
+    }
+
+    public IEnumerable<ReferendumDetailsDTO> GetAllReferendumDetails()
+    {
+        throw new NotImplementedException();
     }
 
     public Referendum GetReferendumById(Guid referendumId)
