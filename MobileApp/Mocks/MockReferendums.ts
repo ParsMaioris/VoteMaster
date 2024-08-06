@@ -20,7 +20,7 @@ export const referendums: Referendum[] = [
         image: educationImage,
         key: 'education',
         publicationDate: '2024-07-23',
-        endTime: '2024-9-20',
+        endTime: '2024-07-24',
     },
     {
         id: '7d918783-073f-4b99-bc38-0ee9a7762940',
@@ -29,6 +29,6 @@ export const referendums: Referendum[] = [
         image: healthcareImage,
         key: 'healthcare',
         publicationDate: '2024-07-23',
-        endTime: '2024-07-24',
+        endTime: '2024-10-01',
     },
 ]
