@@ -1,12 +1,11 @@
 import * as React from 'react'
 import {ScrollView, StyleSheet, View, Text, Linking, TouchableOpacity} from 'react-native'
-import {useTheme, Snackbar, Provider as PaperProvider, Button} from 'react-native-paper'
+import {useTheme, Snackbar, Provider as PaperProvider, Button, TextInput} from 'react-native-paper'
 import {Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import useProposeReferendumForm from '../Hooks/useProposeReferendumForm'
-import FormInputField from '../Components/FormInputField'
 import DatePickerField from '../Components/DatePickerField'
 import {format, differenceInDays} from 'date-fns'
 
@@ -19,9 +18,15 @@ interface FormValues
 }
 
 const validationSchema = Yup.object().shape({
-    question: Yup.string().required('Referendum question is required'),
-    details: Yup.string().required('Details are required'),
-    startDate: Yup.date().required('Start date is required').typeError('Invalid date format'),
+    question: Yup.string()
+        .max(150, 'Referendum question must be at most 150 characters')
+        .required('Referendum question is required'),
+    details: Yup.string()
+        .max(1000, 'Details must be at most 1000 characters')
+        .required('Details are required'),
+    startDate: Yup.date()
+        .required('Start date is required')
+        .typeError('Invalid date format'),
     endDate: Yup.date()
         .required('End date is required')
         .typeError('Invalid date format')
@@ -77,26 +82,34 @@ const ProposeReferendumForm: React.FC = () =>
                     >
                         {({handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched}) => (
                             <View style={styles.formContainer}>
-                                <FormInputField
-                                    label="Referendum Question"
-                                    value={values.question}
-                                    onChangeText={handleChange('question')}
-                                    onBlur={handleBlur('question')}
-                                    error={errors.question}
-                                    touched={touched.question}
-                                    multiline
-                                    numberOfLines={4}
-                                />
-                                <FormInputField
-                                    label="Details"
-                                    value={values.details}
-                                    onChangeText={handleChange('details')}
-                                    onBlur={handleBlur('details')}
-                                    error={errors.details}
-                                    touched={touched.details}
-                                    multiline
-                                    numberOfLines={6}
-                                />
+                                <View style={styles.inputContainer}>
+                                    <TextInput
+                                        label="Referendum Question"
+                                        value={values.question}
+                                        onChangeText={handleChange('question')}
+                                        onBlur={handleBlur('question')}
+                                        multiline
+                                        numberOfLines={4}
+                                        maxLength={150}
+                                        style={styles.textInput}
+                                    />
+                                    {touched.question && errors.question && <Text style={styles.error}>{errors.question}</Text>}
+                                    <Text style={styles.characterCount}>{values.question.length}/150</Text>
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <TextInput
+                                        label="Details"
+                                        value={values.details}
+                                        onChangeText={handleChange('details')}
+                                        onBlur={handleBlur('details')}
+                                        multiline
+                                        numberOfLines={6}
+                                        maxLength={1000}
+                                        style={styles.textInput}
+                                    />
+                                    {touched.details && errors.details && <Text style={styles.error}>{errors.details}</Text>}
+                                    <Text style={styles.characterCount}>{values.details.length}/1000</Text>
+                                </View>
                                 <View style={styles.datePickersContainer}>
                                     <View style={styles.datePickerWrapper}>
                                         <DatePickerField
@@ -197,6 +210,10 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
     },
+    inputContainer: {
+        width: '100%',
+        marginBottom: 10,
+    },
     datePickersContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -219,15 +236,24 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         width: '100%',
     },
+    characterCount: {
+        fontSize: 12,
+        color: '#666666',
+        textAlign: 'right',
+        width: '100%',
+    },
+    textInput: {
+        backgroundColor: 'white',
+    },
     submitButton: {
-        backgroundColor: '#34C759',
+        backgroundColor: '#004AAD',
         marginVertical: 20,
         borderRadius: 30,
         paddingVertical: 10,
         paddingHorizontal: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#000000',
+        shadowColor: '#004AAD',
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.1,
         shadowRadius: 8,
