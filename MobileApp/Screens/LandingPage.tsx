@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native'
+import {useDispatch, useSelector} from 'react-redux'
 import {LandingPageProps} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
 import {LinearGradient} from 'expo-linear-gradient'
 import BottomNavigation from '../Components/BottomNavigation'
-import {useDispatch, useSelector} from 'react-redux'
-import {AppDispatch} from '../Redux/Store'
 import {getAllReferendumDetails, selectReferendumStatus} from '../Redux/ReferendumSlice'
+import {RootState, AppDispatch} from '../Redux/Store'
 
 const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
@@ -18,8 +18,11 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
         if (status === 'idle')
         {
             dispatch(getAllReferendumDetails())
+        } else if (status === 'failed')
+        {
+            navigation.navigate('ErrorScreen')
         }
-    }, [dispatch, status])
+    }, [dispatch, status, navigation])
 
     const handleProposeReferendum = () =>
     {
@@ -128,7 +131,7 @@ const styles = StyleSheet.create({
         color: '#0056b3',
         textAlign: 'center',
         position: 'absolute',
-        bottom: '15%', // This will place the tagline in the middle between the button and bottom navigation
+        bottom: '15%',
     },
 })
 
