@@ -8,6 +8,7 @@ import
     TouchableOpacity,
     Platform,
     Keyboard,
+    Alert,
 } from 'react-native'
 import {useTheme, Snackbar, Provider as PaperProvider, Button, TextInput} from 'react-native-paper'
 import {Formik, FormikHelpers} from 'formik'
@@ -18,6 +19,7 @@ import useProposeReferendumForm from '../Hooks/useProposeReferendumForm'
 import DatePickerField from '../Components/DatePickerField'
 import {format, differenceInDays} from 'date-fns'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
+import * as Clipboard from 'expo-clipboard'
 
 interface FormValues
 {
@@ -25,6 +27,17 @@ interface FormValues
     details: string
     startDate: string
     endDate: string
+}
+
+const handleCopyEmail = async () =>
+{
+    await Clipboard.setStringAsync('contact@directdemocracy.global')
+    Alert.alert('Copied to Clipboard', 'Email address copied to clipboard.')
+}
+
+const handleOpenEmailApp = () =>
+{
+    Linking.openURL('mailto:contact@directdemocracy.global')
 }
 
 const validationSchema = Yup.object().shape({
@@ -169,8 +182,8 @@ const ProposeReferendumForm: React.FC = () =>
                     <View style={styles.footerContainer}>
                         <Text style={styles.footerText}>
                             For high-volume referendums, please contact us at{' '}
-                            <TouchableOpacity onPress={() => Linking.openURL('https://directdemocracy.global')}>
-                                <Text style={styles.footerLink}>Direct Democracy Corporation</Text>
+                            <TouchableOpacity onPress={handleOpenEmailApp} onLongPress={handleCopyEmail}>
+                                <Text style={styles.footerLink}>contact@directdemocracy.global</Text>
                             </TouchableOpacity>
                         </Text>
                     </View>
@@ -291,7 +304,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     footerLink: {
-        marginTop: 3,
+        marginTop: 5,
         color: '#007AFF',
         textDecorationLine: 'underline',
     },
