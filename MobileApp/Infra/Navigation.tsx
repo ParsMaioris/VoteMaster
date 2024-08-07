@@ -17,6 +17,7 @@ import RegistrationScreen from '../Screens/RegistrationScreen'
 import ErrorScreen from '../Screens/ErrorScreen'
 import ManageAccountPage from '../Screens/ManageAccountPage'
 import ForgotPasswordScreen from '../Screens/ForgotPasswordScreen'
+import SplashScreen from './SplashScreen'
 
 export type RootStackParamList = {
     SignIn: undefined
@@ -33,6 +34,7 @@ export type RootStackParamList = {
     ErrorScreen: undefined
     ManageAccount: undefined
     ForgotPassword: undefined
+    SplashScreen: undefined
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -70,6 +72,7 @@ const Navigation: React.FC = () =>
                 <Stack.Screen name="ErrorScreen" component={ErrorScreen} options={{title: '', headerShown: false}} />
                 <Stack.Screen name="ManageAccount" component={ManageAccountPage} options={{title: ''}} />
                 <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{title: '', headerShown: false}} />
+                <Stack.Screen name="SplashScreen" component={SplashScreen} options={{title: '', headerShown: false}} />
             </Stack.Navigator>
         </NavigationContainer>
     )
