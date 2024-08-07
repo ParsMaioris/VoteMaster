@@ -1,5 +1,13 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet, View, Text, Linking, TouchableOpacity} from 'react-native'
+import
+    {
+        StyleSheet,
+        View,
+        Text,
+        Linking,
+        TouchableOpacity,
+        Platform,
+    } from 'react-native'
 import {useTheme, Snackbar, Provider as PaperProvider, Button, TextInput} from 'react-native-paper'
 import {Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
@@ -8,6 +16,7 @@ import * as Animatable from 'react-native-animatable'
 import useProposeReferendumForm from '../Hooks/useProposeReferendumForm'
 import DatePickerField from '../Components/DatePickerField'
 import {format, differenceInDays} from 'date-fns'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
 interface FormValues
 {
@@ -61,7 +70,7 @@ const ProposeReferendumForm: React.FC = () =>
     return (
         <PaperProvider>
             <LinearGradient colors={['#FFFFFF', '#F8F8F8']} style={styles.container}>
-                <ScrollView contentContainerStyle={styles.content}>
+                <KeyboardAwareScrollView contentContainerStyle={styles.content}>
                     <Animatable.Text animation="fadeInDown" style={styles.headerText}>Propose a New Referendum</Animatable.Text>
                     <Animatable.Text animation="fadeInDown" delay={200} style={styles.pitchText}>Voice Your Vision</Animatable.Text>
                     <Text style={styles.infoText}>
@@ -91,6 +100,8 @@ const ProposeReferendumForm: React.FC = () =>
                                         multiline
                                         numberOfLines={4}
                                         maxLength={150}
+                                        scrollEnabled={false} // Disable scrolling
+                                        textAlignVertical="top" // Align text to the top
                                         style={styles.textInput}
                                     />
                                     {touched.question && errors.question && <Text style={styles.error}>{errors.question}</Text>}
@@ -105,6 +116,8 @@ const ProposeReferendumForm: React.FC = () =>
                                         multiline
                                         numberOfLines={6}
                                         maxLength={1000}
+                                        scrollEnabled={false} // Disable scrolling
+                                        textAlignVertical="top" // Align text to the top
                                         style={styles.textInput}
                                     />
                                     {touched.details && errors.details && <Text style={styles.error}>{errors.details}</Text>}
@@ -160,7 +173,7 @@ const ProposeReferendumForm: React.FC = () =>
                             </TouchableOpacity>
                         </Text>
                     </View>
-                </ScrollView>
+                </KeyboardAwareScrollView>
                 <Snackbar
                     visible={snackbarVisible}
                     onDismiss={() => setSnackbarVisible(false)}
