@@ -1,15 +1,9 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import {View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
-import {useAppDispatch, useAppSelector} from '../Redux/Hooks'
-import {signInUser, fetchUsers, setUser} from '../Redux/UserSlice'
 import {LinearGradient} from 'expo-linear-gradient'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import CryptoJS from 'crypto-js'
-import {resetEligibility} from '../Redux/EligibilitySlice'
-import {resetReferendumState} from '../Redux/ReferendumSlice'
-import {resetVoteState} from '../Redux/VoteSlice'
+import {useSigningHandler} from '../Hooks/useSigningHandler'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -26,90 +20,7 @@ type Props = {
 const SignInScreen: React.FC<Props> = ({navigation, route}) =>
 {
     const {initialEmail = '', initialPassword = ''} = route.params || {}
-    const [email, setEmail] = useState(initialEmail)
-    const [password, setPassword] = useState(initialPassword)
-    const [errorMessage, setErrorMessage] = useState('')
-    const dispatch = useAppDispatch()
-    const {status} = useAppSelector((state) => state.user)
-
-    useEffect(() =>
-    {
-        dispatch(resetEligibility())
-        dispatch(resetReferendumState())
-        dispatch(resetVoteState())
-        removeUserFromStorage()
-    }, [])
-
-    useEffect(() =>
-    {
-        setEmail(initialEmail)
-        setPassword(initialPassword)
-    }, [initialEmail, initialPassword])
-
-    const saveUserToStorage = async (id: string, name: string, token: string, passwordHash: string, email: string) =>
-    {
-        try
-        {
-            await AsyncStorage.setItem('user', JSON.stringify({id, name, token, passwordHash, email}))
-        } catch (e)
-        {
-            console.error('Failed to save user to storage', e)
-        }
-    }
-
-    const removeUserFromStorage = async () =>
-    {
-        try
-        {
-            await AsyncStorage.removeItem('user')
-            console.log('User removed from storage')
-        } catch (e)
-        {
-            console.error('Failed to remove user from storage', e)
-        }
-    }
-
-    const handleSignIn = async () =>
-    {
-        if (!email || !password)
-        {
-            setErrorMessage('Please enter a valid email and password.')
-            return
-        }
-
-        const passwordHash = CryptoJS.SHA256(password).toString()
-        const resultAction = await dispatch(signInUser({email, passwordHash}))
-
-        if (signInUser.fulfilled.match(resultAction) && resultAction.payload)
-        {
-            const {userId, token} = resultAction.payload
-            await saveUserToStorage(userId, "", token, passwordHash, email)
-            const allUsers = await dispatch(fetchUsers())
-            const currentUser = allUsers.payload.find((user: any) => user.id === userId)
-
-            if (currentUser)
-            {
-                saveUserToStorage(currentUser.id, currentUser.name, token, passwordHash, email)
-                dispatch(setUser(currentUser))
-                setErrorMessage('')
-                navigateToLandingPage(currentUser)
-            } else
-            {
-                setErrorMessage('User not found.')
-            }
-        } else
-        {
-            setErrorMessage('Invalid email or password.')
-        }
-    }
-
-    const navigateToLandingPage = (userData: any) =>
-    {
-        navigation.reset({
-            index: 0,
-            routes: [{name: 'LandingPage', params: {userId: userData.id, userName: userData.name}}],
-        })
-    }
+    const {email, setEmail, password, setPassword, errorMessage, handleSignIn, status, setErrorMessage} = useSigningHandler(initialEmail, initialPassword, navigation)
 
     return (
         <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
@@ -154,9 +65,7 @@ const Title: React.FC = () => (
 const Footer: React.FC = () => (
     <View style={styles.footer}>
         <Text style={styles.appName}>VoteMaster</Text>
-        <Text style={styles.subtitle}>
-            Powered by Direct Democracy Corporation
-        </Text>
+        <Text style={styles.subtitle}>Powered by Direct Democracy Corporation</Text>
     </View>
 )
 
