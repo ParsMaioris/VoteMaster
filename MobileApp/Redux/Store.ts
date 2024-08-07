@@ -5,6 +5,7 @@ import referendumSlice from './ReferendumSlice'
 import ownerSlice from './OwnerSlice'
 import EligibilitySlice from './EligibilitySlice'
 import referendumRequestSlice from './ReferendumRequestSlice'
+import errorHandlingMiddleware from '../Infra/ErrorHandlingMiddleware'
 
 const store = configureStore({
     reducer: {
@@ -15,6 +16,7 @@ const store = configureStore({
         eligibility: EligibilitySlice,
         referendumRequest: referendumRequestSlice,
     },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(errorHandlingMiddleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>
