@@ -1,10 +1,25 @@
 import React from 'react'
-import {View, Text, StyleSheet, Image} from 'react-native'
+import {Text, StyleSheet, TouchableOpacity} from 'react-native'
 import * as Animatable from 'react-native-animatable'
 import {LinearGradient} from 'expo-linear-gradient'
+import {useAsyncStorage} from '../Hooks/useAsyncStorage'
+import {NavigationProp, useNavigation} from '@react-navigation/native'
+import {RootStackParamList} from '../Infra/Navigation'
 
 const ErrorScreen: React.FC = () =>
 {
+    const {removeUserFromStorage} = useAsyncStorage()
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+
+    const handleReload = () =>
+    {
+        removeUserFromStorage()
+        navigation.reset({
+            index: 0,
+            routes: [{name: 'SignIn'}],
+        })
+    }
+
     return (
         <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
             <Animatable.View animation="fadeIn" duration={1500} style={styles.content}>
@@ -23,6 +38,9 @@ const ErrorScreen: React.FC = () =>
                 <Animatable.Text animation="fadeInUp" duration={1500} style={styles.tagline}>
                     Something unexpected has happened.
                 </Animatable.Text>
+                <TouchableOpacity style={styles.reloadButton} onPress={handleReload}>
+                    <Text style={styles.reloadButtonText}>Reload</Text>
+                </TouchableOpacity>
             </Animatable.View>
         </LinearGradient>
     )
@@ -65,6 +83,20 @@ const styles = StyleSheet.create({
         color: '#0056b3',
         textAlign: 'center',
         fontFamily: 'sans-serif-light',
+    },
+    reloadButton: {
+        marginTop: 20,
+        paddingVertical: 12,
+        paddingHorizontal: 30,
+        backgroundColor: '#0056b3',
+        borderRadius: 25,
+    },
+    reloadButtonText: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#FFFFFF',
+        textAlign: 'center',
+        fontFamily: 'sans-serif',
     },
 })
 
