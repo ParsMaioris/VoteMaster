@@ -27,7 +27,6 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) =>
             }
         } catch (error)
         {
-            console.error('Failed to open email link', error)
             Alert.alert('Error', 'An error occurred while trying to open the email link.')
         }
     }

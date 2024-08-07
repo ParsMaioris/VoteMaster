@@ -27,7 +27,6 @@ const useInitialRoute = () =>
                 }
             } catch (e)
             {
-                console.error('Failed to load user session', e)
                 setInitialRouteName('SignIn')
             }
         }

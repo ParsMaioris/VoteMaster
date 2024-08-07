@@ -96,14 +96,12 @@ const signInUser = async (): Promise<string | null> =>
         const user = await AsyncStorage.getItem('user')
         if (!user)
         {
-            console.log('User not found in AsyncStorage.')
             return null
         }
 
         const {email, passwordHash} = JSON.parse(user)
         if (!email || !passwordHash)
         {
-            console.log('Email or password hash missing in user object.')
             return null
         }
 
@@ -117,7 +115,6 @@ const signInUser = async (): Promise<string | null> =>
         parsedUser.token = token
 
         await AsyncStorage.setItem('user', JSON.stringify(parsedUser))
-        console.log('Token refreshed successfully.')
 
         return token
     } catch (error)

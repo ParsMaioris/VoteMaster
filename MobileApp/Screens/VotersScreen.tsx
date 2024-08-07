@@ -28,7 +28,6 @@ const VotersScreen: React.FC = () =>
         await dispatch(fetchUsers()).unwrap()
       } catch (err)
       {
-        console.error('Failed to fetch users:', err)
       }
     }
     fetchData()
