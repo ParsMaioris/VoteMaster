@@ -27,10 +27,12 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     const eligibilityMap = useSelector(selectEligibility)
     const referendums = useSelector(selectReferendums)
 
-
     useFocusEffect(
         useCallback(() =>
         {
+            if (!userId)
+                return
+
             const fetchEligibility = async () =>
             {
                 try
@@ -93,6 +95,9 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
             fetchData()
         }, [userId, dispatch])
     )
+
+    if (!userId)
+        return null
 
     const handleManageAccount = () =>
     {
