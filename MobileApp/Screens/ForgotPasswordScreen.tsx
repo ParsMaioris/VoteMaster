@@ -42,8 +42,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) =>
                 <Text style={styles.email}>contact@directdemocracy.global</Text>
             </TouchableOpacity>
             <Text style={styles.reason}>
-                For security reasons and to ensure your data is protected, we handle password recovery
-                through direct communication.
+                For security reasons, we are unable to reset your password. If you would like to delete your account, please email us at the address above.
             </Text>
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                 <Text style={styles.backButtonText}>Back to Sign In</Text>
