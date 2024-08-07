@@ -105,7 +105,7 @@ export const fetchUserEligibleReferendums = createAsyncThunk(
             return {userId: payload.userId, referendums: response.data.data}
         } catch (error)
         {
-            return rejectWithValue(error.response?.data?.message || 'Failed to fetch eligible referendums')
+            return rejectWithValue(error)
         }
     }
 )
@@ -164,12 +164,12 @@ const eligibilitySlice = createSlice({
             .addCase(fetchUserEligibleReferendums.fulfilled, (state, action) =>
             {
                 const {userId, referendums} = action.payload
-                state.status = 'succeeded'
                 state.userReferendums[userId] = referendums
                 referendums.forEach(referendumId =>
                 {
                     state.eligibilityMap[`${userId}-${referendumId}`] = true
                 })
+                state.status = 'succeeded'
             })
             .addCase(fetchUserEligibleReferendums.rejected, (state, action) =>
             {

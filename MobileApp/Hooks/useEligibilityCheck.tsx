@@ -2,13 +2,14 @@ import {useState, useEffect} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {fetchUserEligibleReferendums, selectEligibility, selectEligibilityStatus} from '../Redux/EligibilitySlice'
 import {AppDispatch, RootState} from '../Redux/Store'
-import {getAllReferendumDetails, selectReferendums} from '../Redux/ReferendumSlice'
+import {getAllReferendumDetails, selectReferendums, selectReferendumStatus} from '../Redux/ReferendumSlice'
 
 const useEligibilityCheck = (userId: string, userName: string) =>
 {
     const dispatch = useDispatch<AppDispatch>()
     const eligibilityMap = useSelector(selectEligibility)
-    const status = useSelector(selectEligibilityStatus) as 'idle' | 'loading' | 'succeeded' | 'failed'
+    const eligibilityStatus = useSelector(selectEligibilityStatus) as 'idle' | 'loading' | 'succeeded' | 'failed'
+    const referendumStatus = useSelector(selectReferendumStatus) as 'idle' | 'loading' | 'succeeded' | 'failed'
     const [isEligibleForAny, setIsEligibleForAny] = useState(false)
     const [loading, setLoading] = useState(true)
     const [fetchError, setFetchError] = useState<string | null>(null)
@@ -16,37 +17,38 @@ const useEligibilityCheck = (userId: string, userName: string) =>
 
     useEffect(() =>
     {
-        const fetchEligibility = async () =>
+        const fetchData = async () =>
         {
             try
             {
                 setLoading(true)
-                if (Object.keys(eligibilityMap).length === 0)
+
+                if (referendumStatus === 'idle')
+                {
+                    await dispatch(getAllReferendumDetails()).unwrap()
+                }
+
+                if (eligibilityStatus === 'idle')
                 {
                     await dispatch(fetchUserEligibleReferendums({userId, userName})).unwrap()
                 }
             } catch (error: any)
             {
-                setFetchError(error)
+                setFetchError(error.message || 'An error occurred')
             } finally
             {
                 setLoading(false)
             }
         }
 
-        fetchEligibility()
-    }, [dispatch, userId, userName])
+        fetchData()
+    }, [dispatch, userId, userName, referendumStatus, eligibilityStatus, eligibilityMap])
 
     useEffect(() =>
     {
-        const checkEligibilityInMap = async () =>
+        const checkEligibilityInMap = () =>
         {
             let eligible = false
-
-            if (referendums.length === 0)
-            {
-                await dispatch(getAllReferendumDetails())
-            }
 
             for (const referendum of referendums)
             {
@@ -61,13 +63,13 @@ const useEligibilityCheck = (userId: string, userName: string) =>
             setIsEligibleForAny(eligible)
         }
 
-        if (status === 'succeeded')
+        if (eligibilityStatus === 'succeeded' && referendumStatus === 'succeeded')
         {
             checkEligibilityInMap()
         }
-    }, [eligibilityMap, status, userId])
+    }, [eligibilityMap, eligibilityStatus, referendumStatus, userId, referendums])
 
-    return {isEligibleForAny, loading, fetchError, status, eligibilityMap}
+    return {isEligibleForAny, loading, fetchError, eligibilityStatus, referendumStatus, eligibilityMap}
 }
 
 export default useEligibilityCheck

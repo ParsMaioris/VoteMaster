@@ -20,7 +20,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 {
     const userId = useSelector((state: RootState) => state.user.id)
     const userName = useSelector((state: RootState) => state.user.name)
-    const {isEligibleForAny, loading, fetchError, status, eligibilityMap} = useEligibilityCheck(userId, userName)
+    const {isEligibleForAny, loading, fetchError, eligibilityStatus, eligibilityMap} = useEligibilityCheck(userId, userName)
     const referendums = useSelector(selectReferendums)
 
     const {
@@ -29,7 +29,7 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
         handleOpenModal,
         handleCloseModal,
         renderItem
-    } = useReferendumHandlers(userId, eligibilityMap, status, navigation)
+    } = useReferendumHandlers(userId, eligibilityMap, eligibilityStatus, navigation)
 
     const [activeReferendums, setActiveReferendums] = useState<Referendum[]>([])
     const [expiredReferendums, setExpiredReferendums] = useState<Referendum[]>([])
@@ -57,9 +57,9 @@ const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 
         setActiveReferendums(active)
         setExpiredReferendums(expired)
-    }, [])
+    }, [referendums])
 
-    if (loading || status === 'loading')
+    if (loading || eligibilityStatus === 'loading')
     {
         return (
             <View style={styles.loadingContainer}>
