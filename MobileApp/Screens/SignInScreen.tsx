@@ -60,7 +60,7 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
         if (signInUser.fulfilled.match(resultAction) && resultAction.payload)
         {
             const {userId, token} = resultAction.payload
-
+            await saveUserToStorage(userId, "", token, passwordHash, email)
             const allUsers = await dispatch(fetchUsers())
             const currentUser = allUsers.payload.find((user: any) => user.id === userId)
 

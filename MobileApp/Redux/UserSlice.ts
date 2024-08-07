@@ -25,16 +25,6 @@ const initialState: UserState = {
     error: null,
 }
 
-const saveTokenToStorage = async (token: string) =>
-{
-    try
-    {
-        await AsyncStorage.setItem('token', token)
-    } catch (e)
-    {
-        console.error('Failed to save token to storage', e)
-    }
-}
 
 export const fetchUserName = createAsyncThunk(
     'user/fetchUserName',
@@ -46,7 +36,6 @@ export const fetchUserName = createAsyncThunk(
             if (response.status === 200)
             {
                 const data = response.data.data
-                saveTokenToStorage(data)
                 return {id: data.id, name: data.name, status: response.status}
             } else
             {
@@ -165,8 +154,6 @@ export const signInUser = createAsyncThunk(
         try
         {
             const response = await axios.post(`${apiUrl}/usermanager/signin`, {email, passwordHash})
-
-            saveTokenToStorage(response.data.data.token)
             return response.data.data
         } catch (error: any)
         {
