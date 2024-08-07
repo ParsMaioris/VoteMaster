@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
-import {View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator} from 'react-native'
+import {View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Keyboard, TouchableWithoutFeedback} from 'react-native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {useAppDispatch, useAppSelector} from '../Redux/Hooks'
 import {addUser} from '../Redux/UserSlice'
 import {LinearGradient} from 'expo-linear-gradient'
 import CryptoJS from 'crypto-js'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
 type RegistrationScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Registration'>
 
@@ -69,20 +70,29 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
     }
 
     return (
-        <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
-            <Logo />
-            <Title />
-            <NameInput value={name} onChange={setName} />
-            <EmailInput value={email} onChange={setEmail} />
-            <PasswordInput value={password} onChange={setPassword} />
-            <RegisterButton onPress={handleRegister} />
-            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" style={{marginBottom: 10}} />}
-            {errorMessage && <ErrorMessage message={errorMessage} />}
-            <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-                <Text style={styles.link}>Already have an account? Sign In</Text>
-            </TouchableOpacity>
-            <Footer />
-        </LinearGradient>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
+                <KeyboardAwareScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    resetScrollToCoords={{x: 0, y: 0}}
+                    scrollEnabled={true}
+                    onScrollBeginDrag={Keyboard.dismiss}
+                >
+                    <Logo />
+                    <Title />
+                    <NameInput value={name} onChange={setName} />
+                    <EmailInput value={email} onChange={setEmail} />
+                    <PasswordInput value={password} onChange={setPassword} />
+                    <RegisterButton onPress={handleRegister} />
+                    {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" style={{marginBottom: 10}} />}
+                    {errorMessage && <ErrorMessage message={errorMessage} />}
+                    <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+                        <Text style={styles.link}>Already have an account? Sign In</Text>
+                    </TouchableOpacity>
+                    <Footer />
+                </KeyboardAwareScrollView>
+            </LinearGradient>
+        </TouchableWithoutFeedback>
     )
 }
 
@@ -170,6 +180,9 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({message}) => (
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,

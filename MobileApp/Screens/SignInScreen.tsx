@@ -1,9 +1,10 @@
 import React from 'react'
-import {View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator} from 'react-native'
+import {View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Keyboard, TouchableWithoutFeedback} from 'react-native'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {LinearGradient} from 'expo-linear-gradient'
 import {useSigningHandler} from '../Hooks/useSigningHandler'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -23,34 +24,43 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
     const {email, setEmail, password, setPassword, errorMessage, handleSignIn, status, setErrorMessage} = useSigningHandler(initialEmail, initialPassword, navigation)
 
     return (
-        <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
-            <Logo />
-            <Title />
-            <EmailInput value={email} onChange={setEmail} />
-            <PasswordInput value={password} onChange={setPassword} />
-            <SignInButton onPress={handleSignIn} />
-            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" style={{marginBottom: 10}} />}
-            {errorMessage && <ErrorMessage message={errorMessage} />}
-            <TouchableOpacity onPress={() =>
-            {
-                setErrorMessage('')
-                setEmail('')
-                setPassword('')
-                navigation.navigate('ForgotPassword')
-            }}>
-                <Text style={styles.link}>Forgot Password?</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() =>
-            {
-                setErrorMessage('')
-                setEmail('')
-                setPassword('')
-                navigation.navigate('Registration')
-            }}>
-                <Text style={styles.link}>Don't have an account? Register here</Text>
-            </TouchableOpacity>
-            <Footer />
-        </LinearGradient>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
+                <KeyboardAwareScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    resetScrollToCoords={{x: 0, y: 0}}
+                    scrollEnabled={true}
+                    onScrollBeginDrag={Keyboard.dismiss}
+                >
+                    <Logo />
+                    <Title />
+                    <EmailInput value={email} onChange={setEmail} />
+                    <PasswordInput value={password} onChange={setPassword} />
+                    <SignInButton onPress={handleSignIn} />
+                    {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" style={{marginBottom: 10}} />}
+                    {errorMessage && <ErrorMessage message={errorMessage} />}
+                    <TouchableOpacity onPress={() =>
+                    {
+                        setErrorMessage('')
+                        setEmail('')
+                        setPassword('')
+                        navigation.navigate('ForgotPassword')
+                    }}>
+                        <Text style={styles.link}>Forgot Password?</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() =>
+                    {
+                        setErrorMessage('')
+                        setEmail('')
+                        setPassword('')
+                        navigation.navigate('Registration')
+                    }}>
+                        <Text style={styles.link}>Don't have an account? Register here</Text>
+                    </TouchableOpacity>
+                    <Footer />
+                </KeyboardAwareScrollView>
+            </LinearGradient>
+        </TouchableWithoutFeedback>
     )
 }
 
@@ -122,6 +132,9 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({message}) => (
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
