@@ -37,6 +37,8 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
 
     const handleRegister = async () =>
     {
+        Keyboard.dismiss()
+
         if (!name || !email || !password)
         {
             setErrorMessage('Please fill in all fields.')
@@ -77,6 +79,7 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
                     resetScrollToCoords={{x: 0, y: 0}}
                     scrollEnabled={true}
                     onScrollBeginDrag={Keyboard.dismiss}
+                    keyboardShouldPersistTaps='always'
                 >
                     <Logo />
                     <Title />
@@ -86,7 +89,11 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
                     <RegisterButton onPress={handleRegister} />
                     {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" style={{marginBottom: 10}} />}
                     {errorMessage && <ErrorMessage message={errorMessage} />}
-                    <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+                    <TouchableOpacity onPress={() =>
+                    {
+                        Keyboard.dismiss()
+                        navigation.navigate('SignIn')
+                    }}>
                         <Text style={styles.link}>Already have an account? Sign In</Text>
                     </TouchableOpacity>
                     <Footer />

@@ -7,6 +7,7 @@ import {useResetActions} from '../Hooks/useResetActions'
 import {useFormInput} from '../Hooks/useFormInput'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
+import {Keyboard} from 'react-native'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -21,6 +22,8 @@ export const useSigningHandler = (initialEmail: string, initialPassword: string,
 
     const handleSignIn = async () =>
     {
+        Keyboard.dismiss()
+
         if (!email || !password)
         {
             setErrorMessage('Please enter a valid email and password.')

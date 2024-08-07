@@ -31,6 +31,7 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
                     resetScrollToCoords={{x: 0, y: 0}}
                     scrollEnabled={true}
                     onScrollBeginDrag={Keyboard.dismiss}
+                    keyboardShouldPersistTaps='always'
                 >
                     <Logo />
                     <Title />
@@ -41,6 +42,7 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
                     {errorMessage && <ErrorMessage message={errorMessage} />}
                     <TouchableOpacity onPress={() =>
                     {
+                        Keyboard.dismiss()
                         setErrorMessage('')
                         setEmail('')
                         setPassword('')
@@ -50,6 +52,7 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() =>
                     {
+                        Keyboard.dismiss()
                         setErrorMessage('')
                         setEmail('')
                         setPassword('')

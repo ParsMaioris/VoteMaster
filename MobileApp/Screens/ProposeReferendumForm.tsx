@@ -1,13 +1,14 @@
 import * as React from 'react'
 import
-    {
-        StyleSheet,
-        View,
-        Text,
-        Linking,
-        TouchableOpacity,
-        Platform,
-    } from 'react-native'
+{
+    StyleSheet,
+    View,
+    Text,
+    Linking,
+    TouchableOpacity,
+    Platform,
+    Keyboard,
+} from 'react-native'
 import {useTheme, Snackbar, Provider as PaperProvider, Button, TextInput} from 'react-native-paper'
 import {Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
@@ -70,7 +71,7 @@ const ProposeReferendumForm: React.FC = () =>
     return (
         <PaperProvider>
             <LinearGradient colors={['#FFFFFF', '#F8F8F8']} style={styles.container}>
-                <KeyboardAwareScrollView contentContainerStyle={styles.content}>
+                <KeyboardAwareScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='always'>
                     <Animatable.Text animation="fadeInDown" style={styles.headerText}>Propose a New Referendum</Animatable.Text>
                     <Animatable.Text animation="fadeInDown" delay={200} style={styles.pitchText}>Voice Your Vision</Animatable.Text>
                     <Text style={styles.infoText}>
