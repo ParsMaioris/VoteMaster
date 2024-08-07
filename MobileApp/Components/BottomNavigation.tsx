@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
     iconContainer: {
         alignItems: 'center',
         justifyContent: 'center',
+        flex: 1,
         paddingVertical: 10,
-        paddingHorizontal: 15,
     },
     label: {
         color: '#FFFFFF',
