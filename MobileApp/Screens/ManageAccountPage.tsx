@@ -18,43 +18,20 @@ const ManageAccountPage: React.FC = () =>
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
     const userId = useSelector((state: RootState) => state.user.id)
 
-    const removeUserFromStorage = async () =>
-    {
-        try
-        {
-            await AsyncStorage.removeItem('user')
-            console.log('User removed from storage')
-        } catch (e)
-        {
-            console.error('Failed to remove user from storage', e)
-        }
-    }
-
     const handleSignOut = () =>
     {
-        dispatch(resetEligibility())
-        dispatch(resetUserState())
-        dispatch(resetReferendumState())
-        dispatch(resetVoteState())
-        removeUserFromStorage().then(() =>
-        {
-            navigation.reset({
-                index: 0,
-                routes: [{name: 'SignIn'}],
-            })
+        navigation.reset({
+            index: 0,
+            routes: [{name: 'SignIn'}],
         })
     }
 
     const handleDeleteAccount = () =>
     {
         const id = userId
-        dispatch(resetEligibility())
-        dispatch(resetReferendumState())
-        dispatch(resetVoteState())
-
         dispatch(deleteUser(id)).then(() =>
         {
-            removeUserFromStorage()
+
             navigation.reset({
                 index: 0,
                 routes: [{name: 'SignIn'}],

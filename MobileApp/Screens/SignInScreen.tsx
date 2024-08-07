@@ -7,6 +7,9 @@ import {signInUser, fetchUsers, setUser} from '../Redux/UserSlice'
 import {LinearGradient} from 'expo-linear-gradient'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import CryptoJS from 'crypto-js'
+import {resetEligibility} from '../Redux/EligibilitySlice'
+import {resetReferendumState} from '../Redux/ReferendumSlice'
+import {resetVoteState} from '../Redux/VoteSlice'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -31,6 +34,14 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
 
     useEffect(() =>
     {
+        dispatch(resetEligibility())
+        dispatch(resetReferendumState())
+        dispatch(resetVoteState())
+        removeUserFromStorage()
+    }, [])
+
+    useEffect(() =>
+    {
         setEmail(initialEmail)
         setPassword(initialPassword)
     }, [initialEmail, initialPassword])
@@ -43,6 +54,18 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
         } catch (e)
         {
             console.error('Failed to save user to storage', e)
+        }
+    }
+
+    const removeUserFromStorage = async () =>
+    {
+        try
+        {
+            await AsyncStorage.removeItem('user')
+            console.log('User removed from storage')
+        } catch (e)
+        {
+            console.error('Failed to remove user from storage', e)
         }
     }
 

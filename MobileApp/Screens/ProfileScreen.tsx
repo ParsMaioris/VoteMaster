@@ -30,9 +30,6 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
     useFocusEffect(
         useCallback(() =>
         {
-            if (!userId)
-                return
-
             const fetchEligibility = async () =>
             {
                 try
@@ -95,9 +92,6 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
             fetchData()
         }, [userId, dispatch])
     )
-
-    if (!userId)
-        return null
 
     const handleManageAccount = () =>
     {
