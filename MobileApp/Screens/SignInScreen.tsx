@@ -133,14 +133,14 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     title: {
-        fontSize: 36,
-        fontWeight: '700',
+        fontSize: 32,
+        fontWeight: '600',
         textAlign: 'center',
         color: '#333',
-        marginBottom: 20,
+        marginBottom: 30,
     },
     footer: {
-        marginTop: 30,
+        marginTop: 50,
         alignItems: 'center',
     },
     appName: {
@@ -150,14 +150,14 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     subtitle: {
-        fontSize: 14,
+        fontSize: 12,
         color: '#666',
         textAlign: 'center',
     },
     link: {
         color: '#007BFF',
         fontWeight: '600',
-        marginTop: 5,
+        marginTop: 10,
     },
     input: {
         width: '100%',

@@ -97,9 +97,7 @@ const Title: React.FC = () => (
 const Footer: React.FC = () => (
     <View style={styles.footer}>
         <Text style={styles.appName}>VoteMaster</Text>
-        <Text style={styles.subtitle}>
-            Powered by Direct Democracy Corporation
-        </Text>
+        <Text style={styles.subtitle}>Powered by Direct Democracy Corporation</Text>
     </View>
 )
 
@@ -183,14 +181,14 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     title: {
-        fontSize: 36,
-        fontWeight: '700',
+        fontSize: 32,
+        fontWeight: '600',
         textAlign: 'center',
         color: '#333',
-        marginBottom: 20,
+        marginBottom: 30,
     },
     footer: {
-        marginTop: 30,
+        marginTop: 50,
         alignItems: 'center',
     },
     appName: {
@@ -200,7 +198,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     subtitle: {
-        fontSize: 14,
+        fontSize: 12,
         color: '#666',
         textAlign: 'center',
     },
