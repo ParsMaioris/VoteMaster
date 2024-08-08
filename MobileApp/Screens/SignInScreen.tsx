@@ -118,11 +118,10 @@ type SignInButtonProps = {
 
 const SignInButton: React.FC<SignInButtonProps> = ({onPress, loading}) => (
     <TouchableOpacity style={styles.signInButton} onPress={onPress} disabled={loading}>
-        {loading ? (
-            <ActivityIndicator size="large" color="#fff" />
-        ) : (
-            <Text style={styles.signInButtonText}>Sign In</Text>
-        )}
+        <View style={styles.signInButtonContent}>
+            {loading && <ActivityIndicator size="small" color="#fff" style={styles.loader} />}
+            <Text style={[styles.signInButtonText, loading && styles.textWithLoader]}>Sign In</Text>
+        </View>
     </TouchableOpacity>
 )
 
@@ -197,17 +196,28 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
     },
-    signInButtonText: {
-        fontSize: 18,
-        color: '#fff',
-        fontWeight: '600',
-    },
     error: {
         color: '#FF3B30',
         textAlign: 'center',
         marginTop: 10,
         fontSize: 16,
         fontWeight: '500',
+    },
+    signInButtonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    signInButtonText: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: '600',
+    },
+    textWithLoader: {
+        marginLeft: 10,
+    },
+    loader: {
+        marginRight: 10,
     },
 })
 

@@ -1,16 +1,16 @@
 import * as React from 'react'
 import
-    {
-        StyleSheet,
-        View,
-        Text,
-        Linking,
-        TouchableOpacity,
-        Platform,
-        Keyboard,
-        Alert,
-        ActivityIndicator,
-    } from 'react-native'
+{
+    StyleSheet,
+    View,
+    Text,
+    Linking,
+    TouchableOpacity,
+    Platform,
+    Keyboard,
+    Alert,
+    ActivityIndicator,
+} from 'react-native'
 import {useTheme, Snackbar, Provider as PaperProvider, Button, TextInput} from 'react-native-paper'
 import {Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
@@ -174,17 +174,20 @@ const ProposeReferendumForm: React.FC = () =>
                                     </View>
                                 </View>
                                 <Animatable.View animation="fadeInUp" delay={500}>
-                                    <Button
-                                        mode="contained"
+                                    <TouchableOpacity
                                         style={styles.submitButton}
                                         onPress={handleSubmit}
                                         disabled={isSubmitting || loading}
                                     >
-                                        <Text style={styles.buttonText}>Submit</Text>
-                                    </Button>
-                                    {(isSubmitting || loading) && (
-                                        <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />
-                                    )}
+                                        <View style={styles.submitButtonContent}>
+                                            {(isSubmitting || loading) && (
+                                                <ActivityIndicator size="small" color="#fff" style={styles.loader} />
+                                            )}
+                                            <Text style={[styles.buttonText, (isSubmitting || loading) && styles.textWithLoader]}>
+                                                Submit
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
                                 </Animatable.View>
                             </View>
                         )}
@@ -286,8 +289,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#004AAD',
         marginVertical: 20,
         borderRadius: 30,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
+        paddingVertical: 15,
+        paddingHorizontal: 30,
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: '#004AAD',
@@ -296,13 +299,21 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 5,
     },
+    submitButtonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     buttonText: {
         fontSize: 18,
         color: '#ffffff',
         fontWeight: '600',
     },
+    textWithLoader: {
+        marginLeft: 10,
+    },
     loader: {
-        marginTop: 10,
+        marginRight: 2,
     },
     snackbar: {
         backgroundColor: '#333333',
