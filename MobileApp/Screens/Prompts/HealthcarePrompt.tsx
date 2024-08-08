@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
-import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Dimensions} from 'react-native'
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions} from 'react-native'
+import ImageWithLoader from '../../Components/ImageWithLoader'
 import VotePrompt from '../VotePrompt'
 
 interface HealthcarePromptProps
@@ -20,7 +21,7 @@ const HealthcarePrompt: React.FC<HealthcarePromptProps> = ({referendumId}) =>
         <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.imageContainer}>
-                    <Image source={require('../../assets/healthcare.png')} style={styles.image} />
+                    <ImageWithLoader source={require('../../assets/healthcare.png')} style={styles.image} />
                 </View>
                 <Text style={styles.title}>Proposition 78: Improving Healthcare Services</Text>
                 <Text style={styles.subtitle}>Mock Referendum for Demonstration</Text>

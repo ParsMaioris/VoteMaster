@@ -1,5 +1,5 @@
-import React from 'react'
-import {Modal, View, Text, Image, TouchableOpacity, StyleSheet, Dimensions} from 'react-native'
+import React, {useState} from 'react'
+import {Modal, View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native'
 import {Referendum} from '../Redux/ReferendumSlice'
 
 type ReferendumModalProps = {
@@ -10,6 +10,8 @@ type ReferendumModalProps = {
 
 const ReferendumModal: React.FC<ReferendumModalProps> = ({visible, onClose, referendum}) =>
 {
+    const [loading, setLoading] = useState(true)
+
     if (!referendum) return null
 
     return (
@@ -22,8 +24,16 @@ const ReferendumModal: React.FC<ReferendumModalProps> = ({visible, onClose, refe
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                     <Text style={styles.modalTitle}>{referendum.title}</Text>
-                    <Image source={typeof referendum.image === 'string' ? {uri: referendum.image} : referendum.image}
-                        style={styles.modalImage} />
+                    <View style={styles.imageContainer}>
+                        {loading && (
+                            <ActivityIndicator size="large" color="#007AFF" style={styles.loader} />
+                        )}
+                        <Image
+                            source={typeof referendum.image === 'string' ? {uri: referendum.image} : referendum.image}
+                            style={styles.modalImage}
+                            onLoadEnd={() => setLoading(false)}
+                        />
+                    </View>
                     <Text style={styles.modalDescription}>{referendum.description}</Text>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                         <Text style={styles.closeButtonText}>Close</Text>
@@ -60,11 +70,22 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         textAlign: 'center',
     },
-    modalImage: {
+    imageContainer: {
         width: '100%',
         height: 200,
         borderRadius: 15,
         marginBottom: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loader: {
+        position: 'absolute',
+        zIndex: 1,
+    },
+    modalImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 15,
     },
     modalDescription: {
         fontSize: 16,

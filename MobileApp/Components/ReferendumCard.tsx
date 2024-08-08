@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, ActivityIndicator} from 'react-native'
 import * as Animatable from 'react-native-animatable'
 import {Referendum} from '../Redux/ReferendumSlice'
@@ -13,8 +13,18 @@ type Props = {
     handleLearnMore: (id: string) => void
 }
 
-const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handleOpenModal, handleVote, handleLearnMore}) =>
+const ReferendumCard: React.FC<Props> = ({
+    item,
+    index,
+    isEligible,
+    status,
+    handleOpenModal,
+    handleVote,
+    handleLearnMore
+}) =>
 {
+    const [loading, setLoading] = useState(true)
+
     const isExpired = new Date(item.endTime!) < new Date()
 
     const getTimeRemaining = (endTime: string) =>
@@ -36,11 +46,15 @@ const ReferendumCard: React.FC<Props> = ({item, index, isEligible, status, handl
     return (
         <Animatable.View animation="fadeInUp" duration={800} delay={index * 100} style={styles.card}>
             <TouchableOpacity onPress={() => handleOpenModal(item)} style={styles.cardContent}>
+                {loading && (
+                    <ActivityIndicator size="large" color="#007AFF" style={styles.loader} />
+                )}
                 <Animatable.Image
                     animation="fadeIn"
                     delay={index * 200}
                     source={typeof item.image === 'string' ? {uri: item.image} : item.image}
                     style={styles.image}
+                    onLoadEnd={() => setLoading(false)}
                 />
                 <Animatable.Text animation="fadeIn" delay={index * 300} style={styles.title}>
                     {item.title}
@@ -98,6 +112,13 @@ const styles = StyleSheet.create({
     },
     cardContent: {
         alignItems: 'center',
+    },
+    loader: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: [{translateX: -25}, {translateY: -25}],
+        zIndex: 1,
     },
     image: {
         width: '100%',
