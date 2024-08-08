@@ -6,6 +6,7 @@ import {RootStackParamList} from '../Infra/Navigation'
 import {Keyboard} from 'react-native'
 import CryptoJS from 'crypto-js'
 import api from '../Infra/Api'
+import {useResetActions} from './useResetActions'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -14,6 +15,7 @@ export const useSigningHandler = (initialEmail: string, initialPassword: string,
     const {email, setEmail, password, setPassword, errorMessage, setErrorMessage} = useFormInput(initialEmail, initialPassword)
     const {saveUserToStorage, removeUserFromStorage} = useAsyncStorage()
     const [status, setStatus] = useState<'idle' | 'loading' | 'succeeded' | 'failed'>('idle')
+    useResetActions(removeUserFromStorage)
 
     const handleSignIn = async () =>
     {

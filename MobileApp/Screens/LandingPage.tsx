@@ -1,14 +1,14 @@
 import React from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native'
+import {View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator} from 'react-native'
 import {LandingPageProps} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
 import {LinearGradient} from 'expo-linear-gradient'
 import BottomNavigation from '../Components/BottomNavigation'
-import useFetchReferendumDetails from '../Hooks/useFetchReferendumDetails'
+import usePopulateEligibilityMap from '../Hooks/usePopulateEligibilityMap'
 
 const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
-    useFetchReferendumDetails()
+    const loading = usePopulateEligibilityMap()
 
     const handleProposeReferendum = () =>
     {
@@ -18,6 +18,16 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
     const handleInviteVoter = () =>
     {
         navigation.navigate('InviteVoter')
+    }
+
+    if (loading)
+    {
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#007BFF" />
+                <Text style={styles.loadingText}>Loading...</Text>
+            </View>
+        )
     }
 
     return (
@@ -118,6 +128,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         position: 'absolute',
         bottom: '15%',
+    },
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 18,
+        color: '#666666',
     },
 })
 
