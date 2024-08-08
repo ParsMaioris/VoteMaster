@@ -21,6 +21,13 @@ export const useSigningHandler = (initialEmail: string, initialPassword: string,
     {
         Keyboard.dismiss()
 
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!email || !emailPattern.test(email))
+        {
+            setErrorMessage('Please enter a valid email address.')
+            return
+        }
+
         if (!email || !password)
         {
             setErrorMessage('Please enter a valid email and password.')
