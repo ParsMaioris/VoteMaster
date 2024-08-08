@@ -51,8 +51,6 @@ const usePopulateEligibilityMap = () =>
         {
             if (referendumStatus === 'succeeded' && userId)
             {
-                console.log("*** referendums", referendums.length)
-
                 const promises = referendums.map(referendum =>
                 {
                     const eligibilityKey = `${userId}-${referendum.referendumId}`

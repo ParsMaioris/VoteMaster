@@ -13,21 +13,26 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
     const loading = usePopulateEligibilityMap()
     const fadeAnim = useRef(new Animated.Value(0)).current
     const [showLoadingMessage, setShowLoadingMessage] = useState(true)
+    const firstRender = useRef(true)
 
     useEffect(() =>
     {
-        Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true,
-        }).start()
-
-        const timer = setTimeout(() =>
+        if (firstRender.current)
         {
-            setShowLoadingMessage(false)
-        }, 3000)
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 2000,
+                useNativeDriver: true,
+            }).start()
 
-        return () => clearTimeout(timer)
+            const timer = setTimeout(() =>
+            {
+                setShowLoadingMessage(false)
+                firstRender.current = false
+            }, 3000)
+
+            return () => clearTimeout(timer)
+        }
     }, [fadeAnim])
 
     const handleProposeReferendum = () =>
@@ -55,6 +60,20 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
                     <Text style={styles.subHeaderText}>Loading data to get you started</Text>
                     <ActivityIndicator size="large" color="#007BFF" style={styles.indicator} />
                 </Animated.View>
+            </LinearGradient>
+        )
+    }
+
+    if (loading)
+    {
+        return (
+            <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
+                <View style={styles.loaderOnlyContainer}>
+                    <ActivityIndicator size="large" color="#007BFF" />
+                </View>
+                <View style={styles.bottomNavigationWrapper}>
+                    <BottomNavigation />
+                </View>
             </LinearGradient>
         )
     }
@@ -170,6 +189,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fff',
+    },
+    loaderOnlyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     loadingText: {
         marginTop: 10,
