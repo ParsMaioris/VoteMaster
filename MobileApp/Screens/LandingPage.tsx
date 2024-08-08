@@ -4,9 +4,12 @@ import {LandingPageProps} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
 import {LinearGradient} from 'expo-linear-gradient'
 import BottomNavigation from '../Components/BottomNavigation'
+import useFetchReferendumDetails from '../Hooks/useFetchReferendumDetails'
 
 const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
+    useFetchReferendumDetails()
+
     const handleProposeReferendum = () =>
     {
         navigation.navigate('ProposeReferendumForm')

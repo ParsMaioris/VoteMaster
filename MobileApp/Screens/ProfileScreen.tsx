@@ -1,21 +1,23 @@
-import React, {useCallback, useEffect, useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
 import {AppDispatch, RootState} from '../Redux/Store'
-import {resetUserState} from '../Redux/UserSlice'
-import {fetchVotesByUserId, resetVoteState} from '../Redux/VoteSlice'
-import {getReferendumById, resetReferendumState, selectReferendums} from '../Redux/ReferendumSlice'
+import {fetchVotesByUserId} from '../Redux/VoteSlice'
+import {selectReferendums} from '../Redux/ReferendumSlice'
 import {Ionicons} from '@expo/vector-icons'
 import useReferendumHelper from '../Hooks/useReferendumHelper'
 import {LinearGradient} from 'expo-linear-gradient'
 import * as Animatable from 'react-native-animatable'
 import BottomNavigation from '../Components/BottomNavigation' // Adjust the import path as needed
-import {checkEligibility, resetEligibility, selectEligibility} from '../Redux/EligibilitySlice'
-import {getOwnedReferendums, resetOwenrState as resetOwnerState} from '../Redux/OwnerSlice'
+import {checkEligibility, selectEligibility} from '../Redux/EligibilitySlice'
+import {getOwnedReferendums} from '../Redux/OwnerSlice'
 import {useFocusEffect} from '@react-navigation/native'
+import useFetchReferendumDetails from '../Hooks/useFetchReferendumDetails'
 
 const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
 {
+    useFetchReferendumDetails()
+
     const dispatch = useDispatch<AppDispatch>()
     const userName = useSelector((state: RootState) => state.user.name)
     const userId = useSelector((state: RootState) => state.user.id)

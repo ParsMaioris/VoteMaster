@@ -11,6 +11,7 @@ import useEligibilityCheck from '../Hooks/useEligibilityCheck'
 import ReferendumModal from '../Components/ReferendumModal'
 import useReferendumHandlers from '../Hooks/useReferendumHandlers'
 import {Referendum, selectReferendums} from '../Redux/ReferendumSlice'
+import useFetchReferendumDetails from '../Hooks/useFetchReferendumDetails'
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Referendums'>
@@ -18,6 +19,8 @@ type Props = {
 
 const ReferendumsScreen: React.FC<Props> = ({navigation}) =>
 {
+    useFetchReferendumDetails()
+
     const userId = useSelector((state: RootState) => state.user.id)
     const userName = useSelector((state: RootState) => state.user.name)
     const {isEligibleForAny, loading, fetchError, eligibilityStatus, eligibilityMap} = useEligibilityCheck(userId, userName)
