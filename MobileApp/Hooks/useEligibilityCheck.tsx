@@ -42,7 +42,7 @@ const useEligibilityCheck = (userId: string, userName: string) =>
         }
 
         fetchData()
-    }, [dispatch, userId, userName, referendumStatus, eligibilityStatus, eligibilityMap])
+    }, [])
 
     useEffect(() =>
     {
@@ -67,7 +67,7 @@ const useEligibilityCheck = (userId: string, userName: string) =>
         {
             checkEligibilityInMap()
         }
-    }, [eligibilityMap, eligibilityStatus, referendumStatus, userId, referendums])
+    }, [])
 
     return {isEligibleForAny, loading, fetchError, eligibilityStatus, referendumStatus, eligibilityMap}
 }

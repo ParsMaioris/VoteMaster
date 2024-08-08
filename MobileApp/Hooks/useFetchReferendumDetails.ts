@@ -21,7 +21,7 @@ const useFetchReferendumDetails = () =>
         {
             navigation.navigate('ErrorScreen')
         }
-    }, [referendumStatus, dispatch])
+    }, [])
 }
 
 export default useFetchReferendumDetails

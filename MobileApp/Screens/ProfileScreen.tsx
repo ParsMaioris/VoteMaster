@@ -92,7 +92,7 @@ const ProfileScreen: React.FC<{navigation: any}> = ({navigation}) =>
             }
 
             fetchData()
-        }, [userId, dispatch])
+        }, [])
     )
 
     const handleManageAccount = () =>
