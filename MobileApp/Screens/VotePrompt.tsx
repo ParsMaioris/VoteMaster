@@ -94,10 +94,10 @@ const VotePrompt: React.FC<VotePromptProps> = ({referendumId}) =>
         <View style={styles.container}>
             <Text style={styles.question}>Do you support this referendum?</Text>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => handleVote(true)}>
+                <TouchableOpacity style={[styles.button, styles.buttonYes]} onPress={() => handleVote(true)}>
                     <Text style={styles.buttonText}>Yes</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => handleVote(false)}>
+                <TouchableOpacity style={[styles.button, styles.buttonNo]} onPress={() => handleVote(false)}>
                     <Text style={styles.buttonText}>No</Text>
                 </TouchableOpacity>
             </View>
@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
+        marginBottom: 50,
     },
     question: {
         fontSize: 18,
@@ -123,11 +124,19 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     button: {
-        backgroundColor: '#007BFF',
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 8,
         marginHorizontal: 10,
+        borderWidth: 1,
+    },
+    buttonYes: {
+        backgroundColor: '#388E3C',
+        borderColor: '#388E3C',
+    },
+    buttonNo: {
+        backgroundColor: '#C9302C',
+        borderColor: '#C9302C',
     },
     buttonText: {
         color: '#ffffff',
