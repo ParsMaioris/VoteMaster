@@ -1,5 +1,8 @@
-import React, {useState} from 'react'
-import {View, Image, ActivityIndicator, StyleSheet, ImageSourcePropType} from 'react-native'
+import React, {useState, useEffect} from 'react'
+import {View, StyleSheet, ImageSourcePropType, Dimensions} from 'react-native'
+import * as Animatable from 'react-native-animatable'
+import LottieView from 'lottie-react-native'
+import {LinearGradient} from 'expo-linear-gradient'
 
 interface ImageWithLoaderProps
 {
@@ -11,16 +14,36 @@ const ImageWithLoader: React.FC<ImageWithLoaderProps> = ({source, style}) =>
 {
     const [loading, setLoading] = useState(true)
 
+    useEffect(() =>
+    {
+        const timer = setTimeout(() => setLoading(false), 1000)
+        return () => clearTimeout(timer)
+    }, [])
+
     return (
         <View style={[styles.container, style]}>
             {loading && (
-                <ActivityIndicator size="large" color="#007AFF" style={styles.loader} />
+                <LinearGradient
+                    colors={['#d1ebff', '#97bce0']}
+                    style={styles.gradientBackground}
+                >
+                    <LottieView
+                        source={require('../assets/loading-animation.json')}
+                        autoPlay
+                        loop
+                        style={styles.lottie}
+                    />
+                </LinearGradient>
             )}
-            <Image
-                source={source}
-                style={[style, loading && styles.hiddenImage]}
-                onLoadEnd={() => setLoading(false)}
-            />
+            {!loading && (
+                <Animatable.Image
+                    animation="fadeIn"
+                    duration={2000}
+                    source={source}
+                    style={style}
+                    onLoadEnd={() => setLoading(false)}
+                />
+            )}
         </View>
     )
 }
@@ -30,12 +53,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    loader: {
-        position: 'absolute',
-        zIndex: 1,
+    gradientBackground: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    hiddenImage: {
-        opacity: 0,
+    lottie: {
+        width: 100,
+        height: 100,
     },
 })
 
