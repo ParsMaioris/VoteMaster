@@ -1,14 +1,34 @@
-import React from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator} from 'react-native'
+import React, {useEffect, useRef, useState} from 'react'
+import {View, Text, TouchableOpacity, StyleSheet, Image, Animated, Dimensions, ActivityIndicator} from 'react-native'
 import {LandingPageProps} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
 import {LinearGradient} from 'expo-linear-gradient'
 import BottomNavigation from '../Components/BottomNavigation'
 import usePopulateEligibilityMap from '../Hooks/usePopulateEligibilityMap'
 
+const {width, height} = Dimensions.get('window')
+
 const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
     const loading = usePopulateEligibilityMap()
+    const fadeAnim = useRef(new Animated.Value(0)).current
+    const [showLoadingMessage, setShowLoadingMessage] = useState(true)
+
+    useEffect(() =>
+    {
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+        }).start()
+
+        const timer = setTimeout(() =>
+        {
+            setShowLoadingMessage(false)
+        }, 3000)
+
+        return () => clearTimeout(timer)
+    }, [fadeAnim])
 
     const handleProposeReferendum = () =>
     {
@@ -20,13 +40,22 @@ const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
         navigation.navigate('InviteVoter')
     }
 
-    if (loading)
+    if (loading && showLoadingMessage)
     {
         return (
-            <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color="#007BFF" />
-                <Text style={styles.loadingText}>Loading...</Text>
-            </View>
+            <LinearGradient colors={['#FFFAFA', '#F5F5F7']} style={styles.container}>
+                <Animated.View style={[styles.loaderContainer, {opacity: fadeAnim}]}>
+                    <Image
+                        source={require('../assets/logo.png')}
+                        style={styles.logo}
+                        accessibilityLabel="VoteMaster logo"
+                        onError={(e) => console.log('Error loading image', e.nativeEvent.error)}
+                    />
+                    <Text style={styles.headerText}>Authentication successful</Text>
+                    <Text style={styles.subHeaderText}>Loading data to get you started</Text>
+                    <ActivityIndicator size="large" color="#007BFF" style={styles.indicator} />
+                </Animated.View>
+            </LinearGradient>
         )
     }
 
@@ -80,6 +109,13 @@ const styles = StyleSheet.create({
         fontSize: 36,
         fontWeight: '700',
         color: '#333333',
+        textAlign: 'center',
+        marginBottom: 8,
+    },
+    subHeaderText: {
+        fontSize: 20,
+        fontWeight: '500',
+        color: '#666666',
         textAlign: 'center',
         marginBottom: 8,
     },
@@ -139,6 +175,9 @@ const styles = StyleSheet.create({
         marginTop: 10,
         fontSize: 18,
         color: '#666666',
+    },
+    indicator: {
+        marginTop: height * 0.02,
     },
 })
 
