@@ -1,13 +1,11 @@
-import {useState, useEffect} from 'react'
-import {useAppDispatch, useAppSelector} from '../Redux/Hooks'
-import {signInUser, fetchUsers, setUser} from '../Redux/UserSlice'
-import CryptoJS from 'crypto-js'
+import {useState} from 'react'
 import {useAsyncStorage} from '../Hooks/useAsyncStorage'
-import {useResetActions} from '../Hooks/useResetActions'
 import {useFormInput} from '../Hooks/useFormInput'
 import {NativeStackNavigationProp} from '@react-navigation/native-stack'
 import {RootStackParamList} from '../Infra/Navigation'
 import {Keyboard} from 'react-native'
+import CryptoJS from 'crypto-js'
+import api from '../Infra/Api'
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignIn'>
 
@@ -15,10 +13,7 @@ export const useSigningHandler = (initialEmail: string, initialPassword: string,
 {
     const {email, setEmail, password, setPassword, errorMessage, setErrorMessage} = useFormInput(initialEmail, initialPassword)
     const {saveUserToStorage, removeUserFromStorage} = useAsyncStorage()
-    const dispatch = useAppDispatch()
-    const {status} = useAppSelector((state) => state.user)
-
-    useResetActions(removeUserFromStorage)
+    const [status, setStatus] = useState<'idle' | 'loading' | 'succeeded' | 'failed'>('idle')
 
     const handleSignIn = async () =>
     {
@@ -30,29 +25,36 @@ export const useSigningHandler = (initialEmail: string, initialPassword: string,
             return
         }
 
-        const passwordHash = CryptoJS.SHA256(password).toString()
-        const resultAction = await dispatch(signInUser({email, passwordHash}))
+        setStatus('loading')
+        setErrorMessage('')
 
-        if (signInUser.fulfilled.match(resultAction) && resultAction.payload)
+        try
         {
-            const {userId, token} = resultAction.payload
+            const passwordHash = CryptoJS.SHA256(password).toString()
+            const signInResponse = await api.post('/usermanager/signin', {email, passwordHash})
+            const {userId, token} = signInResponse.data.data
+
             await saveUserToStorage({id: userId, name: '', token, passwordHash, email})
-            const allUsers = await dispatch(fetchUsers())
-            const currentUser = allUsers.payload.find((user: any) => user.id === userId)
+
+            const fetchUsersResponse = await api.get('/user')
+            const users = fetchUsersResponse.data.data
+
+            const currentUser = users.find((user: any) => user.id === userId)
 
             if (currentUser)
             {
-                saveUserToStorage({id: currentUser.id, name: currentUser.name, token, passwordHash, email})
-                dispatch(setUser(currentUser))
-                setErrorMessage('')
+                await saveUserToStorage({id: currentUser.id, name: currentUser.name, token, passwordHash, email})
+                setStatus('succeeded')
                 navigateToLandingPage(currentUser)
             } else
             {
                 setErrorMessage('User not found.')
+                setStatus('failed')
             }
-        } else
+        } catch (error)
         {
             setErrorMessage('Invalid email or password.')
+            setStatus('failed')
         }
     }
 

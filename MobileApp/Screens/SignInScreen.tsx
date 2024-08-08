@@ -21,7 +21,7 @@ type Props = {
 const SignInScreen: React.FC<Props> = ({navigation, route}) =>
 {
     const {initialEmail = '', initialPassword = ''} = route.params || {}
-    const {email, setEmail, password, setPassword, errorMessage, handleSignIn, status, setErrorMessage} = useSigningHandler(initialEmail, initialPassword, navigation)
+    const {email, setEmail, password, setPassword, errorMessage, handleSignIn, status} = useSigningHandler(initialEmail, initialPassword, navigation)
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -37,13 +37,11 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
                     <Title />
                     <EmailInput value={email} onChange={setEmail} />
                     <PasswordInput value={password} onChange={setPassword} />
-                    <SignInButton onPress={handleSignIn} />
-                    {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" style={{marginBottom: 10}} />}
+                    <SignInButton onPress={handleSignIn} loading={status === 'loading'} />
                     {errorMessage && <ErrorMessage message={errorMessage} />}
                     <TouchableOpacity onPress={() =>
                     {
                         Keyboard.dismiss()
-                        setErrorMessage('')
                         setEmail('')
                         setPassword('')
                         navigation.navigate('ForgotPassword')
@@ -53,7 +51,6 @@ const SignInScreen: React.FC<Props> = ({navigation, route}) =>
                     <TouchableOpacity onPress={() =>
                     {
                         Keyboard.dismiss()
-                        setErrorMessage('')
                         setEmail('')
                         setPassword('')
                         navigation.navigate('Registration')
@@ -116,11 +113,16 @@ const PasswordInput: React.FC<PasswordInputProps> = ({value, onChange}) => (
 
 type SignInButtonProps = {
     onPress: () => void
+    loading: boolean
 }
 
-const SignInButton: React.FC<SignInButtonProps> = ({onPress}) => (
-    <TouchableOpacity style={styles.signInButton} onPress={onPress}>
-        <Text style={styles.signInButtonText}>Sign In</Text>
+const SignInButton: React.FC<SignInButtonProps> = ({onPress, loading}) => (
+    <TouchableOpacity style={styles.signInButton} onPress={onPress} disabled={loading}>
+        {loading ? (
+            <ActivityIndicator size="large" color="#fff" />
+        ) : (
+            <Text style={styles.signInButtonText}>Sign In</Text>
+        )}
     </TouchableOpacity>
 )
 
