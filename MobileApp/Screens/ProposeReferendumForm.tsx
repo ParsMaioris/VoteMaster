@@ -1,15 +1,16 @@
 import * as React from 'react'
 import
-{
-    StyleSheet,
-    View,
-    Text,
-    Linking,
-    TouchableOpacity,
-    Platform,
-    Keyboard,
-    Alert,
-} from 'react-native'
+    {
+        StyleSheet,
+        View,
+        Text,
+        Linking,
+        TouchableOpacity,
+        Platform,
+        Keyboard,
+        Alert,
+        ActivityIndicator,
+    } from 'react-native'
 import {useTheme, Snackbar, Provider as PaperProvider, Button, TextInput} from 'react-native-paper'
 import {Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
@@ -78,7 +79,8 @@ const ProposeReferendumForm: React.FC = () =>
         onConfirmStartDate,
         onConfirmEndDate,
         filterDate,
-        setSnackbarVisible
+        setSnackbarVisible,
+        loading,
     } = useProposeReferendumForm()
 
     return (
@@ -103,7 +105,7 @@ const ProposeReferendumForm: React.FC = () =>
                             setSubmitting(false)
                         }}
                     >
-                        {({handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched}) => (
+                        {({handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched, isSubmitting}) => (
                             <View style={styles.formContainer}>
                                 <View style={styles.inputContainer}>
                                     <TextInput
@@ -172,9 +174,17 @@ const ProposeReferendumForm: React.FC = () =>
                                     </View>
                                 </View>
                                 <Animatable.View animation="fadeInUp" delay={500}>
-                                    <Button mode="contained" style={styles.submitButton} onPress={handleSubmit}>
+                                    <Button
+                                        mode="contained"
+                                        style={styles.submitButton}
+                                        onPress={handleSubmit}
+                                        disabled={isSubmitting || loading}
+                                    >
                                         <Text style={styles.buttonText}>Submit</Text>
                                     </Button>
+                                    {(isSubmitting || loading) && (
+                                        <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />
+                                    )}
                                 </Animatable.View>
                             </View>
                         )}
@@ -290,6 +300,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#ffffff',
         fontWeight: '600',
+    },
+    loader: {
+        marginTop: 10,
     },
     snackbar: {
         backgroundColor: '#333333',

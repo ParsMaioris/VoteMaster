@@ -14,12 +14,14 @@ const useProposeReferendumForm = () =>
     const [endDate, setEndDate] = useState<Date | undefined>(undefined)
     const [snackbarVisible, setSnackbarVisible] = useState(false)
     const [snackbarMessage, setSnackbarMessage] = useState('')
+    const [loading, setLoading] = useState(false)
     const dispatch = useDispatch<AppDispatch>()
     const userId = useSelector((state: RootState) => state.user.id)
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
     const handleSubmit = async (values: any) =>
     {
+        setLoading(true)
         const resultAction = await dispatch(submitReferendumRequest({
             userId,
             question: values.question,
@@ -33,16 +35,17 @@ const useProposeReferendumForm = () =>
         {
             setSnackbarMessage('Referendum request submitted successfully!')
             setSnackbarVisible(true)
-
             setTimeout(() =>
             {
                 setSnackbarVisible(false)
                 navigation.navigate('LandingPage')
+                setLoading(false)
             }, 2000)
         } else
         {
             setSnackbarMessage('Failed to submit referendum request.')
             setSnackbarVisible(true)
+            setLoading(false)
         }
     }
 
@@ -86,6 +89,7 @@ const useProposeReferendumForm = () =>
         onConfirmEndDate,
         filterDate,
         setSnackbarVisible,
+        loading,
     }
 }
 
