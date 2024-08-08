@@ -1,4 +1,4 @@
-import React, { } from 'react'
+import React, {useEffect} from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native'
 import {LandingPageProps} from '../Infra/Navigation'
 import {Ionicons} from '@expo/vector-icons'
@@ -9,7 +9,15 @@ import LottieView from 'lottie-react-native'
 
 const LandingPage: React.FC<LandingPageProps> = ({navigation}) =>
 {
-    const loading = usePopulateEligibilityMap()
+    const {loading, userError, referendumStatus, eligibilityStatus} = usePopulateEligibilityMap()
+
+    useEffect(() =>
+    {
+        if (userError || referendumStatus === 'failed' || eligibilityStatus === 'failed')
+        {
+            navigation.navigate('ErrorScreen')
+        }
+    }, [userError, referendumStatus, eligibilityStatus, navigation])
 
     const handleProposeReferendum = () =>
     {

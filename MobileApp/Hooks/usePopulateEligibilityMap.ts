@@ -1,19 +1,23 @@
 import {useEffect, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {RootState} from '../Redux/Store'
-import {getAllReferendumDetails} from '../Redux/ReferendumSlice'
-import {checkEligibility, fetchUserEligibleReferendums, selectEligibility} from '../Redux/EligibilitySlice'
+import {getAllReferendumDetails, selectReferendumStatus, selectReferendumError} from '../Redux/ReferendumSlice'
+import {checkEligibility, selectEligibility, selectEligibilityStatus, selectEligibilityError} from '../Redux/EligibilitySlice'
 import {setUser} from '../Redux/UserSlice'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const usePopulateEligibilityMap = () =>
 {
     const [loading, setLoading] = useState(true)
+    const [userError, setUserError] = useState<string | null>(null)
     const dispatch = useDispatch()
     const userId = useSelector((state: RootState) => state.user.id)
     const referendums = useSelector((state: RootState) => state.referendum.referendums)
-    const referendumStatus = useSelector((state: RootState) => state.referendum.status)
+    const referendumStatus = useSelector(selectReferendumStatus)
+    const referendumError = useSelector(selectReferendumError)
     const eligibilityMap = useSelector(selectEligibility)
+    const eligibilityStatus = useSelector(selectEligibilityStatus)
+    const eligibilityError = useSelector(selectEligibilityError)
 
     useEffect(() =>
     {
@@ -33,7 +37,8 @@ const usePopulateEligibilityMap = () =>
                     }
                 } catch (error)
                 {
-                    console.error('Failed to fetch user data from AsyncStorage', error)
+                    setUserError('Failed to fetch user data from local storage')
+                    return
                 }
             }
 
@@ -73,9 +78,9 @@ const usePopulateEligibilityMap = () =>
         }
 
         checkAllReferendums()
-    }, [referendumStatus, dispatch, userId, referendums])
+    }, [referendumStatus, dispatch, userId, referendums, eligibilityMap])
 
-    return loading
+    return {loading, userError, referendumStatus, referendumError, eligibilityStatus, eligibilityError}
 }
 
 export default usePopulateEligibilityMap
