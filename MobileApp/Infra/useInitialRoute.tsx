@@ -23,11 +23,11 @@ const useInitialRoute = () =>
                     setInitialRouteName('LandingPage')
                 } else
                 {
-                    setInitialRouteName('SignIn')
+                    setInitialRouteName('Registration')
                 }
             } catch (e)
             {
-                setInitialRouteName('SignIn')
+                setInitialRouteName('ErrorScreen')
             }
         }
 

@@ -39,7 +39,7 @@ const ErrorScreen: React.FC = () =>
                     Something unexpected has happened.
                 </Animatable.Text>
                 <TouchableOpacity style={styles.reloadButton} onPress={handleReload}>
-                    <Text style={styles.reloadButtonText}>Retry Sign-In</Text>
+                    <Text style={styles.reloadButtonText}>Start Over</Text>
                 </TouchableOpacity>
             </Animatable.View>
         </LinearGradient>
