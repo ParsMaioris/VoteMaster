@@ -17,7 +17,7 @@ const store = configureStore({
         eligibility: EligibilitySlice,
         referendumRequest: referendumRequestSlice,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(errorHandlingMiddleware, gracefulLoggingMiddleware)
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(errorHandlingMiddleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>
