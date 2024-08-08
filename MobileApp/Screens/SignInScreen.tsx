@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     loader: {
-        marginRight: 10,
+        marginRight: 2,
     },
 })
 
