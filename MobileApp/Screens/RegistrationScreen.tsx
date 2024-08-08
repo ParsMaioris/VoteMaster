@@ -82,7 +82,8 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
                     keyboardShouldPersistTaps='always'
                 >
                     <Logo />
-                    <Title />
+                    <AppTitle />
+                    <Subtitle />
                     <NameInput value={name} onChange={setName} />
                     <EmailInput value={email} onChange={setEmail} />
                     <PasswordInput value={password} onChange={setPassword} />
@@ -96,7 +97,7 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) =>
                     }}>
                         <Text style={styles.link}>Already have an account? Sign In</Text>
                     </TouchableOpacity>
-                    <Footer />
+                    {/* <Footer /> */}
                 </KeyboardAwareScrollView>
             </LinearGradient>
         </TouchableWithoutFeedback>
@@ -107,14 +108,18 @@ const Logo: React.FC = () => (
     <Image source={require('../assets/logo.png')} style={styles.logo} />
 )
 
-const Title: React.FC = () => (
-    <Text style={styles.title}>Register</Text>
+const AppTitle: React.FC = () => (
+    <Text style={styles.headerText}>VoteMaster</Text>
+)
+
+const Subtitle: React.FC = () => (
+    <Text style={styles.contextText}>Prototype for a Better Democracy</Text>
 )
 
 const Footer: React.FC = () => (
     <View style={styles.footer}>
-        <Text style={styles.appName}>VoteMaster</Text>
-        <Text style={styles.subtitle}>Powered by Direct Democracy Corporation</Text>
+        <Text style={styles.tagline}>Designing the Future of Governance</Text>
+        <Text style={styles.poweredBy}>Powered by Direct Democracy Corporation</Text>
     </View>
 )
 
@@ -200,27 +205,19 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginBottom: 20,
     },
-    title: {
-        fontSize: 32,
-        fontWeight: '600',
+    headerText: {
+        fontSize: 36,
+        fontWeight: '700',
+        color: '#333333',
         textAlign: 'center',
-        color: '#333',
+        marginBottom: 8,
+    },
+    contextText: {
+        fontSize: 20,
+        fontWeight: '400',
+        color: '#666666',
+        textAlign: 'center',
         marginBottom: 30,
-    },
-    footer: {
-        marginTop: 50,
-        alignItems: 'center',
-    },
-    appName: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#2C2C2E',
-        marginBottom: 5,
-    },
-    subtitle: {
-        fontSize: 12,
-        color: '#666',
-        textAlign: 'center',
     },
     input: {
         width: '100%',
@@ -258,6 +255,26 @@ const styles = StyleSheet.create({
     link: {
         color: '#007BFF',
         fontWeight: '600',
+    },
+    footer: {
+        position: 'absolute', // This ensures the footer stays at the bottom
+        bottom: 40, // 20 units from the bottom of the screen
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+    },
+    tagline: {
+        fontSize: 18,
+        fontWeight: '400',
+        color: '#0056b3', // Different from the blue button
+        textAlign: 'center',
+        marginBottom: 5,
+    },
+    poweredBy: {
+        fontSize: 12,
+        fontWeight: '300',
+        color: '#888888',
+        textAlign: 'center',
     },
 })
 
