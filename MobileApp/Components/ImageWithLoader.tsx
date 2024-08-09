@@ -16,7 +16,7 @@ const ImageWithLoader: React.FC<ImageWithLoaderProps> = ({source, style}) =>
 
     useEffect(() =>
     {
-        const timer = setTimeout(() => setLoading(false), 1000)
+        const timer = setTimeout(() => setLoading(false), 2000)
         return () => clearTimeout(timer)
     }, [])
 
@@ -38,7 +38,7 @@ const ImageWithLoader: React.FC<ImageWithLoaderProps> = ({source, style}) =>
             {!loading && (
                 <Animatable.Image
                     animation="fadeIn"
-                    duration={2000}
+                    duration={3000}
                     source={source}
                     style={style}
                     onLoadEnd={() => setLoading(false)}
