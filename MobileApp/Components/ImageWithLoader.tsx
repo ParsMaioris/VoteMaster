@@ -54,7 +54,6 @@ const ImageWithLoader: React.FC<ImageWithLoaderProps> = ({source, style}) =>
                     duration={2000}
                     source={source}
                     style={style}
-                    onLoadEnd={() => setLoading(false)}
                 />
             )}
         </View>
@@ -65,6 +64,7 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#b0d4f1',
     },
     gradientBackground: {
         ...StyleSheet.absoluteFillObject,
