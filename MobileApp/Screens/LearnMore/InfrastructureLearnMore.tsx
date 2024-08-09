@@ -67,7 +67,7 @@ const PieChartComponent: React.FC = () =>
 const InfrastructureLearnMore: React.FC = () => (
     <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.description}>
-            The <Text style={styles.highlight}>Mock Referendum</Text> introduces a transformative tax reform designed to fund public infrastructure upgrades and social welfare initiatives. This initiative will elevate the quality of public services and foster sustainable development, generating an additional $150 million annually.
+            The <Text style={styles.highlight}>Mock Referendum</Text> introduces a transformative tax reform designed to fund public infrastructure upgrades and social welfare initiatives. This initiative will elevate the quality of public services and foster sustainable development, which will generate an additional $150 million annually.
         </Text>
 
         <Text style={styles.sectionTitle}>Pros and Cons</Text>

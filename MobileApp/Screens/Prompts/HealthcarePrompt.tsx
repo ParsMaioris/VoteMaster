@@ -29,7 +29,7 @@ const HealthcarePrompt: React.FC<HealthcarePromptProps> = ({referendumId}) =>
             <View style={styles.content}>
                 <Text style={styles.description}>
                     Proposition 78 aims to improve healthcare services by increasing funding and implementing new policies to ensure
-                    better access and quality of care. The proposition includes provisions to:
+                    better access and quality of care.
                 </Text>
                 <TouchableOpacity onPress={toggleDetails} style={styles.button}>
                     <Text style={styles.buttonText}>{showDetails ? 'Show Less' : 'Show More'}</Text>
