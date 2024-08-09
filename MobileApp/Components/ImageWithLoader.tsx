@@ -1,8 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import {View, StyleSheet, ImageSourcePropType, Dimensions} from 'react-native'
+import {View, StyleSheet, ImageSourcePropType} from 'react-native'
 import * as Animatable from 'react-native-animatable'
 import LottieView from 'lottie-react-native'
 import {LinearGradient} from 'expo-linear-gradient'
+import {useSelector, useDispatch} from 'react-redux'
+import {markImageAsLoaded} from '../Redux/ImageLoaderSlice'
+import {AppDispatch, RootState} from '../Redux/Store'
 
 interface ImageWithLoaderProps
 {
@@ -12,13 +15,23 @@ interface ImageWithLoaderProps
 
 const ImageWithLoader: React.FC<ImageWithLoaderProps> = ({source, style}) =>
 {
-    const [loading, setLoading] = useState(true)
+    const dispatch = useDispatch<AppDispatch>()
+    const sourceKey = JSON.stringify(source)
+    const isLoaded = useSelector((state: RootState) => state.imageLoader.loadedImages[sourceKey])
+    const [loading, setLoading] = useState(!isLoaded)
 
     useEffect(() =>
     {
-        const timer = setTimeout(() => setLoading(false), 2000)
-        return () => clearTimeout(timer)
-    }, [])
+        if (!isLoaded)
+        {
+            const timer = setTimeout(() =>
+            {
+                setLoading(false)
+                dispatch(markImageAsLoaded({source: sourceKey}))
+            }, 2000)
+            return () => clearTimeout(timer)
+        }
+    }, [isLoaded, dispatch, sourceKey])
 
     return (
         <View style={[styles.container, style]}>
@@ -38,7 +51,7 @@ const ImageWithLoader: React.FC<ImageWithLoaderProps> = ({source, style}) =>
             {!loading && (
                 <Animatable.Image
                     animation="fadeIn"
-                    duration={3000}
+                    duration={2000}
                     source={source}
                     style={style}
                     onLoadEnd={() => setLoading(false)}

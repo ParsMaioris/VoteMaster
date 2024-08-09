@@ -7,6 +7,7 @@ import EligibilitySlice from './EligibilitySlice'
 import referendumRequestSlice from './ReferendumRequestSlice'
 import errorHandlingMiddleware from '../Infra/ErrorHandlingMiddleware'
 import gracefulLoggingMiddleware from '../Infra/gracefulLoggingMiddleware'
+import imageLoaderSlice from './ImageLoaderSlice'
 
 const store = configureStore({
     reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
         owner: ownerSlice,
         eligibility: EligibilitySlice,
         referendumRequest: referendumRequestSlice,
+        imageLoader: imageLoaderSlice,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(errorHandlingMiddleware)
 })
